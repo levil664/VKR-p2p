@@ -1,14 +1,40 @@
-import React from 'react';
 import { Box, Button, Link, TextField, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
+import Cookies from 'universal-cookie';
+import { useLoginMutation } from '../../../entities/auth/api/authApi';
+import { LoginRequest } from '../../../entities/auth/model';
 
 interface AuthFormProps {
   title: string;
-  fields: { label: string; type: string }[];
+  fields: { label: string; type: string; name: string }[];
   buttonText: string;
   links: { text: string; href: string }[];
 }
 
 export const AuthForm: React.FC<AuthFormProps> = ({ title, fields, buttonText, links }) => {
+  const [formData, setFormData] = useState<{ [key: string]: string }>({});
+  const [login, { isLoading, error }] = useLoginMutation();
+  const navigate = useNavigate();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await login(formData as LoginRequest).unwrap();
+      console.log('Login successful:', response);
+      const cookies = new Cookies();
+      cookies.set('jwtToken', response.data.accessToken, { path: '/' });
+      navigate('/');
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -38,24 +64,35 @@ export const AuthForm: React.FC<AuthFormProps> = ({ title, fields, buttonText, l
         </Typography>
 
         <Box
+          component="form"
           sx={{
             width: '100%',
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
           }}
+          onSubmit={handleSubmit}
         >
           {fields.map((field, index) => (
             <TextField
               key={index}
               label={field.label}
               type={field.type}
+              name={field.name}
               variant="outlined"
               fullWidth
               margin="normal"
+              onChange={handleInputChange}
             />
           ))}
-          <Button variant="contained" fullWidth color="primary" sx={{ marginTop: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            color="primary"
+            sx={{ marginTop: 2 }}
+            disabled={isLoading}
+          >
             {buttonText}
           </Button>
         </Box>
@@ -63,7 +100,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({ title, fields, buttonText, l
         <Typography variant="body2" sx={{ marginTop: 2, color: '#757575' }}>
           {links.map((link, index) => (
             <React.Fragment key={index}>
-              <Link href={link.href} underline="hover" sx={{ color: '#1976d2', mr: 1 }}>
+              <Link
+                component="button"
+                onClick={() => navigate(link.href)}
+                underline="hover"
+                sx={{ color: '#1976d2', mr: 1 }}
+              >
                 {link.text}
               </Link>
               {index < links.length - 1 && ' '}

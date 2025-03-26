@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   AppBar,
   Box,
@@ -12,10 +11,24 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
+import React, { useState } from 'react';
 import { FaBars, FaClipboardList, FaUser } from 'react-icons/fa';
-import { Outlet } from 'react-router';
+import { Link, Outlet } from 'react-router';
 
 const drawerWidth = 240;
+
+const menuItems = [
+  {
+    icon: <FaClipboardList />,
+    text: 'Заявки',
+    link: '/applications',
+  },
+  {
+    icon: <FaUser />,
+    text: 'Мои заявки',
+    link: '/my-applications',
+  },
+];
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -31,10 +44,10 @@ export const MainLayout: React.FC = () => {
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
+            aria-label="toggle drawer"
             onClick={toggleDrawer}
             edge="start"
-            sx={{ mr: 2, ...(isOpen && { display: 'none' }) }}
+            sx={{ mr: 2 }}
           >
             <FaBars />
           </IconButton>
@@ -58,11 +71,12 @@ export const MainLayout: React.FC = () => {
       </AppBar>
       <Drawer
         sx={{
-          width: drawerWidth,
+          width: isOpen ? drawerWidth : 0,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
+            width: isOpen ? drawerWidth : 0,
             boxSizing: 'border-box',
+            transition: 'width 0.3s ease',
           },
         }}
         variant="persistent"
@@ -71,21 +85,29 @@ export const MainLayout: React.FC = () => {
       >
         <Toolbar />
         <List>
-          <ListItem button>
-            <ListItemIcon>
-              <FaClipboardList />
-            </ListItemIcon>
-            <ListItemText primary="Заявки" />
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <FaUser />
-            </ListItemIcon>
-            <ListItemText primary="Мои заявки" />
-          </ListItem>
+          {menuItems.map((item, index) => (
+            <ListItem
+              button
+              component={Link}
+              to={item.link}
+              key={index}
+              sx={{ userSelect: 'none' }}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItem>
+          ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          bgcolor: 'background.default',
+          p: 3,
+          transition: 'margin-left 0.3s ease',
+        }}
+      >
         <Toolbar />
         <Outlet />
       </Box>

@@ -6,8 +6,8 @@ export const Login: React.FC = () => {
     <AuthForm
       title="Вход"
       fields={[
-        { label: 'Email', type: 'email' },
-        { label: 'Пароль', type: 'password' },
+        { label: 'Email', type: 'email', name: 'username' },
+        { label: 'Пароль', type: 'password', name: 'password' },
       ]}
       buttonText="Войти"
       links={[
