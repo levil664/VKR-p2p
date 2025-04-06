@@ -83,7 +83,7 @@ export const Advert = () => {
 
   const onSubmit = async (formData: CreateAdvertRequest) => {
     try {
-      const requestBody = { data: formData };
+      const requestBody = formData;
       await createAdvert(requestBody).unwrap();
       handleClose();
     } catch (error) {

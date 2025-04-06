@@ -5,7 +5,8 @@ services:
     build: .
     ports:
       - "3000:3000"
+    environment:
+      - VITE_BACKEND_URL=${VITE_BACKEND_URL}
     volumes:
       - .:/app
-    environment:
-      - NODE_ENV=development
+    command: npm run preview

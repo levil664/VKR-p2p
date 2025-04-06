@@ -44,7 +44,7 @@ export const CreateAdvertModal: React.FC<CreateAdvertModalProps> = ({
   const selectedSubjectId = watch('subjectId');
   const selectedTopics = watch('topicIds');
 
-  const userRole = useAppSelector(state => state.user) as UserRole | UserRole[];
+  const userRole = useAppSelector(state => state.user.role) as UserRole | UserRole[];
 
   const isMultipleRoles = Array.isArray(userRole);
 
