@@ -8,6 +8,7 @@ interface AdvertFiltersProps {
   typeFilter: UserRole | '';
   onSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onTypeChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
+  isMultipleRoles: boolean;
 }
 
 export const AdvertFilters: React.FC<AdvertFiltersProps> = ({
@@ -15,6 +16,7 @@ export const AdvertFilters: React.FC<AdvertFiltersProps> = ({
   typeFilter,
   onSearchChange,
   onTypeChange,
+  isMultipleRoles,
 }) => (
   <Box sx={{ mb: 3, display: 'flex', gap: 2, alignItems: 'center' }}>
     <TextField
@@ -33,10 +35,12 @@ export const AdvertFilters: React.FC<AdvertFiltersProps> = ({
         ),
       }}
     />
-    <Select value={typeFilter} onChange={onTypeChange} displayEmpty size="small">
-      <MenuItem value="">Все типы</MenuItem>
-      <MenuItem value={UserRole.STUDENT}>Студент</MenuItem>
-      <MenuItem value={UserRole.MENTOR}>Ментор</MenuItem>
-    </Select>
+    {isMultipleRoles && (
+      <Select value={typeFilter} onChange={onTypeChange} displayEmpty size="small">
+        <MenuItem value="">Все типы</MenuItem>
+        <MenuItem value={UserRole.STUDENT}>Студент</MenuItem>
+        <MenuItem value={UserRole.MENTOR}>Ментор</MenuItem>
+      </Select>
+    )}
   </Box>
 );

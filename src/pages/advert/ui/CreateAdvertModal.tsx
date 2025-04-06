@@ -15,6 +15,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { CreateAdvertRequest } from '../../../entities/advert/model';
 import { useGetSubjectsQuery } from '../../../entities/subjects/api/subjectsApi';
 import { UserRole } from '../../../entities/user/model';
+import { useAppSelector } from '../../../app/api';
 
 interface CreateAdvertModalProps {
   open: boolean;
@@ -42,6 +43,16 @@ export const CreateAdvertModal: React.FC<CreateAdvertModalProps> = ({
 
   const selectedSubjectId = watch('subjectId');
   const selectedTopics = watch('topicIds');
+
+  const userRole = useAppSelector(state => state.user) as UserRole | UserRole[];
+
+  const isMultipleRoles = Array.isArray(userRole);
+
+  if (!isMultipleRoles && userRole) {
+    setValue('type', userRole);
+  } else if (isMultipleRoles) {
+    setValue('type', userRole[0]);
+  }
 
   const handleFormSubmit = (data: CreateAdvertRequest) => {
     const formattedData: CreateAdvertRequest = {
@@ -155,24 +166,17 @@ export const CreateAdvertModal: React.FC<CreateAdvertModalProps> = ({
               </Select>
             </FormControl>
           )}
-          <Controller
-            name="type"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Тип"
-                fullWidth
-                margin="normal"
-                select
-                SelectProps={{ native: true }}
-                required
-              >
-                <option value={UserRole.STUDENT}>Студент</option>
-                <option value={UserRole.MENTOR}>Ментор</option>
-              </TextField>
-            )}
-          />
+          {isMultipleRoles ? (
+            <FormControl fullWidth margin="normal" required>
+              <InputLabel>Тип</InputLabel>
+              <Select {...control.register('type')} label="Тип" defaultValue={UserRole.STUDENT}>
+                <MenuItem value={UserRole.STUDENT}>Студент</MenuItem>
+                <MenuItem value={UserRole.MENTOR}>Ментор</MenuItem>
+              </Select>
+            </FormControl>
+          ) : (
+            <input type="hidden" value={userRole} {...control.register('type')} />
+          )}
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
             <Button onClick={onClose}>Отмена</Button>
             <Button type="submit" variant="contained" color="primary">

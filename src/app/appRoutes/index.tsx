@@ -6,6 +6,7 @@ import { Login, Register } from '../../pages/auth/ui';
 import { MyApplications } from '../../pages/myApplications/ui';
 import { NotFound } from '../../pages/notFound/ui';
 import { Profile } from '../../pages/profile/ui';
+import { Mentoring } from '../../pages/mentoring/ui/Mentoring';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -15,10 +16,11 @@ export const AppRoutes: React.FC = () => {
       <Route path="*" element={<NotFound />} />
 
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Profile />} />
+        <Route path="/" element={<Advert />} />
         <Route path="/advert" element={<Advert />} />
         <Route path="/my-adverts" element={<MyApplications />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/mentoring" element={<Mentoring />} />
       </Route>
     </Routes>
   );

@@ -11,6 +11,7 @@ import { AdvertCard } from './AdvertCard';
 import { AdvertFilters } from './AdvertFilters';
 import { AdvertPagination } from './AdvertPagination';
 import { CreateAdvertModal } from './CreateAdvertModal';
+import { useAppSelector } from '../../../app/api';
 
 export const Advert = () => {
   const [filters, setFilters] = useState({
@@ -35,10 +36,21 @@ export const Advert = () => {
     isError,
   } = useGetAdvertsQuery({
     query: debouncedSearchQuery,
-    type: typeFilter,
+    type: typeFilter || undefined,
     pageNumber,
     pageSize,
   });
+
+  const userRole = useAppSelector(state => state.user.role);
+  const isMultipleRoles = Array.isArray(userRole);
+
+  React.useEffect(() => {
+    if (isMultipleRoles) {
+      setTypeFilter(UserRole.STUDENT);
+    } else {
+      setTypeFilter(userRole);
+    }
+  }, [userRole, isMultipleRoles]);
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({
@@ -99,6 +111,7 @@ export const Advert = () => {
           typeFilter={typeFilter}
           onSearchChange={handleSearchChange}
           onTypeChange={handleTypeChange}
+          isMultipleRoles={isMultipleRoles}
         />
         <Box
           sx={{
@@ -107,9 +120,19 @@ export const Advert = () => {
             gap: 3,
           }}
         >
-          {filteredApplications.map(app => (
-            <AdvertCard key={app.id} advert={app} />
-          ))}
+          {filteredApplications
+            .filter(app => {
+              if (userRole === UserRole.STUDENT) {
+                return app.type === UserRole.MENTOR;
+              }
+              if (userRole === UserRole.MENTOR) {
+                return app.type === UserRole.STUDENT;
+              }
+              return true;
+            })
+            .map(app => (
+              <AdvertCard key={app.id} advert={app} />
+            ))}
         </Box>
         <AdvertPagination
           pageNumber={pageNumber}

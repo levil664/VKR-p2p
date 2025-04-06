@@ -17,10 +17,12 @@ import { FaBars, FaBook } from 'react-icons/fa';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { drawerWidth, menuItems } from '../lib/const';
+import { useAppSelector } from '../../../app/api';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
   const { data: user } = useMeQuery();
+  const userRole = useAppSelector(state => state.user);
   const navigate = useNavigate();
   const location = useLocation();
 
