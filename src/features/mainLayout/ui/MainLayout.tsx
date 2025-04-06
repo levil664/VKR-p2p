@@ -1,5 +1,6 @@
 import {
   AppBar,
+  Avatar,
   Box,
   CssBaseline,
   Drawer,
@@ -12,8 +13,9 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
-import { FaBars, FaClipboardList, FaUser } from 'react-icons/fa';
-import { Link, Outlet } from 'react-router';
+import { FaBars, FaBook, FaClipboardList, FaUser } from 'react-icons/fa';
+import { Link, Outlet, useNavigate } from 'react-router';
+import { useMeQuery } from '../../../entities/user/api/userApi';
 
 const drawerWidth = 240;
 
@@ -32,9 +34,25 @@ const menuItems = [
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
+  const { data: user, isLoading, error } = useMeQuery();
+  const navigate = useNavigate();
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+  };
+
+  const handleLogoClick = () => {
+    navigate('/');
+  };
+
+  const getInitials = (firstName, lastName) => {
+    const firstInitial = firstName ? firstName[0] : '';
+    const lastInitial = lastName ? lastName[0] : '';
+    return `${firstInitial}${lastInitial}`.toUpperCase();
   };
 
   return (
@@ -51,21 +69,42 @@ export const MainLayout: React.FC = () => {
           >
             <FaBars />
           </IconButton>
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Логотип
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography variant="body1" sx={{ mr: 2 }}>
-              Лев
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              flexGrow: 1,
+              cursor: 'pointer',
+              '&:hover': {
+                opacity: 0.8,
+              },
+            }}
+            onClick={handleLogoClick}
+          >
+            <FaBook style={{ marginRight: '10px' }} />
+            <Typography variant="h6" noWrap component="div" sx={{ userSelect: 'none' }}>
+              PEERFECT
             </Typography>
-            <Box
+          </Box>
+          <Box
+            sx={{ display: 'flex', alignItems: 'center' }}
+            onClick={handleProfileClick}
+            style={{ cursor: 'pointer' }}
+          >
+            <Typography variant="body1" sx={{ mr: 2 }}>
+              {user?.data?.firstName || 'Loading...'}
+            </Typography>
+            <Avatar
               sx={{
                 width: 40,
                 height: 40,
-                borderRadius: '50%',
-                backgroundColor: 'white',
+                bgcolor: 'white',
+                color: 'primary.main',
+                fontSize: '1rem',
               }}
-            />
+            >
+              {getInitials(user?.data?.firstName, user?.data?.lastName)}
+            </Avatar>
           </Box>
         </Toolbar>
       </AppBar>

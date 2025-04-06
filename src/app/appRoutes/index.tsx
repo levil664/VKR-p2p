@@ -5,6 +5,7 @@ import { Applications } from '../../pages/applications/ui';
 import { Login, Register } from '../../pages/auth/ui';
 import { MyApplications } from '../../pages/myApplications/ui';
 import { NotFound } from '../../pages/notFound/ui';
+import { Profile } from '../../pages/profile/ui';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -14,10 +15,10 @@ export const AppRoutes: React.FC = () => {
       <Route path="*" element={<NotFound />} />
 
       <Route element={<MainLayout />}>
-        <Route path="/" element={<></>} />
+        <Route path="/" element={<Applications />} />
         <Route path="/applications" element={<Applications />} />
         <Route path="/my-applications" element={<MyApplications />} />
-        {/*<Route path="/profile" element={<Profile />} /> */}
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
   );
