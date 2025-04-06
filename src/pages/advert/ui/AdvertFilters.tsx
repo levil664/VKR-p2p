@@ -1,5 +1,5 @@
-import { Box, IconButton, InputAdornment, MenuItem, Select, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { Box, IconButton, InputAdornment, MenuItem, Select, TextField } from '@mui/material';
 import React from 'react';
 import { UserRole } from '../../../entities/user/model';
 

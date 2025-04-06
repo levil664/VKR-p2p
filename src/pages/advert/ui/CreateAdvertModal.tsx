@@ -13,8 +13,8 @@ import {
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { CreateAdvertRequest } from '../../../entities/advert/model';
-import { UserRole } from '../../../entities/user/model';
 import { useGetSubjectsQuery } from '../../../entities/subjects/api/subjectsApi';
+import { UserRole } from '../../../entities/user/model';
 
 interface CreateAdvertModalProps {
   open: boolean;

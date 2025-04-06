@@ -1,16 +1,16 @@
 import { Box, Button, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { AdvertCard } from './AdvertCard';
-import { AdvertFilters } from './AdvertFilters';
-import { AdvertPagination } from './AdvertPagination';
-import { CreateAdvertModal } from './CreateAdvertModal';
 import {
   useCreateAdvertMutation,
   useGetAdvertsQuery,
 } from '../../../entities/advert/api/advertApi';
 import { AdvertStatus, CreateAdvertRequest } from '../../../entities/advert/model';
-import { useDebounce } from '../../../shared/lib';
 import { UserRole } from '../../../entities/user/model';
+import { useDebounce } from '../../../shared/lib';
+import { AdvertCard } from './AdvertCard';
+import { AdvertFilters } from './AdvertFilters';
+import { AdvertPagination } from './AdvertPagination';
+import { CreateAdvertModal } from './CreateAdvertModal';
 
 export const Advert = () => {
   const [filters, setFilters] = useState({

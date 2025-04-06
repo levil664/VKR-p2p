@@ -1,5 +1,5 @@
-import { AdvertStatus } from './enums';
 import { UserRole } from '../../user/model';
+import { AdvertStatus } from './enums';
 
 export interface CreateAdvertRequest {
   title: string;
