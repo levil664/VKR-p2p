@@ -12,10 +12,10 @@ import {
   Typography,
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
+import { useAppSelector } from '../../../app/api';
 import { CreateAdvertRequest } from '../../../entities/advert/model';
 import { useGetSubjectsQuery } from '../../../entities/subjects/api/subjectsApi';
 import { UserRole } from '../../../entities/user/model';
-import { useAppSelector } from '../../../app/api';
 
 interface CreateAdvertModalProps {
   open: boolean;

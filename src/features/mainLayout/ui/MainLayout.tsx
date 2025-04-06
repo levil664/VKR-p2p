@@ -15,9 +15,9 @@ import {
 import React, { useState } from 'react';
 import { FaBars, FaBook } from 'react-icons/fa';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
+import { useAppSelector } from '../../../app/api';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { drawerWidth, menuItems } from '../lib/const';
-import { useAppSelector } from '../../../app/api';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);

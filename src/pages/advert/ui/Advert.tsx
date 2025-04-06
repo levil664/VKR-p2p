@@ -1,5 +1,6 @@
 import { Box, Button, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useState } from 'react';
+import { useAppSelector } from '../../../app/api';
 import {
   useCreateAdvertMutation,
   useGetAdvertsQuery,
@@ -11,7 +12,6 @@ import { AdvertCard } from './AdvertCard';
 import { AdvertFilters } from './AdvertFilters';
 import { AdvertPagination } from './AdvertPagination';
 import { CreateAdvertModal } from './CreateAdvertModal';
-import { useAppSelector } from '../../../app/api';
 
 export const Advert = () => {
   const [filters, setFilters] = useState({
