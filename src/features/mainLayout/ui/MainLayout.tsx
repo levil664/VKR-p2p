@@ -13,29 +13,16 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
-import { FaBars, FaBook, FaClipboardList, FaUser } from 'react-icons/fa';
-import { Link, Outlet, useNavigate } from 'react-router';
+import { FaBars, FaBook } from 'react-icons/fa';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { useMeQuery } from '../../../entities/user/api/userApi';
-
-const drawerWidth = 240;
-
-const menuItems = [
-  {
-    icon: <FaClipboardList />,
-    text: 'Заявки',
-    link: '/applications',
-  },
-  {
-    icon: <FaUser />,
-    text: 'Мои заявки',
-    link: '/my-applications',
-  },
-];
+import { drawerWidth, menuItems } from '../lib/const';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
-  const { data: user, isLoading, error } = useMeQuery();
+  const { data: user } = useMeQuery();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -49,7 +36,7 @@ export const MainLayout: React.FC = () => {
     navigate('/');
   };
 
-  const getInitials = (firstName, lastName) => {
+  const getInitials = (firstName: string, lastName: string) => {
     const firstInitial = firstName ? firstName[0] : '';
     const lastInitial = lastName ? lastName[0] : '';
     return `${firstInitial}${lastInitial}`.toUpperCase();
@@ -59,39 +46,45 @@ export const MainLayout: React.FC = () => {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="toggle drawer"
-            onClick={toggleDrawer}
-            edge="start"
-            sx={{ mr: 2 }}
-          >
-            <FaBars />
-          </IconButton>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              flexGrow: 1,
-              cursor: 'pointer',
-              '&:hover': {
-                opacity: 0.8,
-              },
-            }}
-            onClick={handleLogoClick}
-          >
-            <FaBook style={{ marginRight: '10px' }} />
-            <Typography variant="h6" noWrap component="div" sx={{ userSelect: 'none' }}>
-              PEERFECT
-            </Typography>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              color="inherit"
+              aria-label="toggle drawer"
+              onClick={toggleDrawer}
+              edge="start"
+              sx={{ mr: 2 }}
+            >
+              <FaBars />
+            </IconButton>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                '&:hover': {
+                  opacity: 0.8,
+                },
+              }}
+              onClick={handleLogoClick}
+            >
+              <FaBook style={{ marginRight: '10px' }} />
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                sx={{ userSelect: 'none', color: 'white' }}
+              >
+                PEERFECT
+              </Typography>
+            </Box>
           </Box>
           <Box
             sx={{ display: 'flex', alignItems: 'center' }}
             onClick={handleProfileClick}
             style={{ cursor: 'pointer' }}
           >
-            <Typography variant="body1" sx={{ mr: 2 }}>
+            <Typography variant="body1" sx={{ mr: 2, color: 'white' }}>
               {user?.data?.firstName || 'Loading...'}
             </Typography>
             <Avatar
@@ -130,10 +123,27 @@ export const MainLayout: React.FC = () => {
               component={Link}
               to={item.link}
               key={index}
-              sx={{ userSelect: 'none' }}
+              sx={{
+                userSelect: 'none',
+                padding: '8px 16px',
+              }}
+              selected={location.pathname === item.link}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemIcon
+                sx={{
+                  minWidth: '32px',
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={item.text}
+                sx={{
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold',
+                  color: 'black',
+                }}
+              />
             </ListItem>
           ))}
         </List>

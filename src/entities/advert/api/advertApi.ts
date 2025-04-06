@@ -20,27 +20,27 @@ export const advertApi = commonApi.injectEndpoints?.({
       }
     >({
       query: params => ({
-        url: '/api/v1/adverts',
+        url: '/adverts',
         method: 'GET',
         params,
       }),
     }),
     createAdvert: builder.mutation<ItemResponseAdvertDto, CreateAdvertRequest>({
       query: body => ({
-        url: '/api/v1/adverts',
+        url: '/adverts',
         method: 'POST',
         body,
       }),
     }),
     getAdvert: builder.query<ItemResponseAdvertDto, string>({
       query: id => ({
-        url: `/api/v1/adverts/${id}`,
+        url: `/adverts/${id}`,
         method: 'GET',
       }),
     }),
     deleteAdvert: builder.mutation<EmptyResponse, string>({
       query: id => ({
-        url: `/api/v1/adverts/${id}`,
+        url: `/adverts/${id}`,
         method: 'DELETE',
       }),
     }),
@@ -49,14 +49,14 @@ export const advertApi = commonApi.injectEndpoints?.({
       { id: string; body: UpdateAdvertRequest }
     >({
       query: ({ id, body }) => ({
-        url: `/api/v1/adverts/${id}`,
+        url: `/adverts/${id}`,
         method: 'PATCH',
         body,
       }),
     }),
     getMyAdverts: builder.query<ListResponseAdvertDto, void>({
       query: () => ({
-        url: '/api/v1/me/adverts',
+        url: '/me/adverts',
         method: 'GET',
       }),
     }),

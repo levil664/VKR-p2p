@@ -18,7 +18,7 @@ export interface ErrorType {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.REACT_APP_BACKEND_URL || 'http://127.0.0.1:8080',
+  baseUrl: import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8080/api/v1',
   credentials: 'include',
   prepareHeaders: headers => {
     const csrfToken = cookies.get('csrftoken');
@@ -70,7 +70,7 @@ const baseQueryWithReauth: (
       }
 
       const refreshResponse = await axios.post(
-        `${import.meta.env.REACT_APP_BACKEND_URL || 'http://127.0.0.1:8080'}/api/v1/auth/refresh`,
+        `${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8080/api/v1'}/auth/refresh`,
         { refreshToken }
       );
 

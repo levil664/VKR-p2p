@@ -1,3 +1,5 @@
+import { UserRole } from './enums';
+
 export interface ItemResponseUserDto {
   data: UserDto;
   status: number;
@@ -8,7 +10,7 @@ export interface UserDto {
   id: string;
   username: string;
   email: string;
-  role: 'ROLE_STUDENT' | 'ROLE_TEACHER' | 'ROLE_ADMIN';
+  role: UserRole;
   firstName: string;
   lastName: string;
   middleName: string;

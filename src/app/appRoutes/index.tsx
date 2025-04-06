@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router';
 import { MainLayout } from '../../features/mainLayout/ui/MainLayout';
-import { Applications } from '../../pages/applications/ui';
+import { Advert } from '../../pages/advert/ui';
 import { Login, Register } from '../../pages/auth/ui';
 import { MyApplications } from '../../pages/myApplications/ui';
 import { NotFound } from '../../pages/notFound/ui';
@@ -15,9 +15,9 @@ export const AppRoutes: React.FC = () => {
       <Route path="*" element={<NotFound />} />
 
       <Route element={<MainLayout />}>
-        <Route path="/" element={<Applications />} />
-        <Route path="/applications" element={<Applications />} />
-        <Route path="/my-applications" element={<MyApplications />} />
+        <Route path="/" element={<Profile />} />
+        <Route path="/advert" element={<Advert />} />
+        <Route path="/my-adverts" element={<MyApplications />} />
         <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>

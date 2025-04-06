@@ -1,1 +1,2 @@
-export type * from './advertModel';
+export { AdvertStatus } from './enums';
+export type * from './types';
