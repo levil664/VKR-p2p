@@ -1,8 +1,8 @@
+import Cookies from 'universal-cookie';
 import { commonApi } from '../../../app/api';
 import { EmptyResponse } from '../../../shared/model';
 import { ItemResponseUserDto } from '../../user/model/userModel';
 import { ItemResponseAuthToken, LoginRequest, RefreshRequest, RegistrationRequest } from '../model';
-import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
 

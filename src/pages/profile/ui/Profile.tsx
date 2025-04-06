@@ -1,4 +1,3 @@
-import React from 'react';
 import { Avatar, Box, CircularProgress, Grid, Paper, Stack, Typography } from '@mui/material';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 

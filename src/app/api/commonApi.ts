@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryMeta } from '@reduxjs/toolkit/query/react';
+import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Slices } from '../model/types';
-import axios from 'axios';
 
 const cookies = new Cookies();
 

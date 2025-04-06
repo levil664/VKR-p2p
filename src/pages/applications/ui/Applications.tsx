@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import SearchIcon from '@mui/icons-material/Search';
 import {
   Box,
   Button,
@@ -13,13 +13,13 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { CreateAdvertRequest } from '../../../entities/advert/model';
 import {
   useCreateAdvertMutation,
   useGetAdvertsQuery,
 } from '../../../entities/advert/api/advertApi';
-import SearchIcon from '@mui/icons-material/Search';
+import { CreateAdvertRequest } from '../../../entities/advert/model';
 import { useDebounce } from '../../../shared/lib';
 
 export const Applications = () => {
