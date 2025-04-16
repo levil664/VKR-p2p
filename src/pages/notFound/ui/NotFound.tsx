@@ -8,7 +8,6 @@ import animationData from './404-animation.json';
 export const NotFound: React.FC = () => {
   const navigate = useNavigate();
   const { data, error, isLoading } = useMeQuery();
-  console.log(data);
 
   return (
     <Box

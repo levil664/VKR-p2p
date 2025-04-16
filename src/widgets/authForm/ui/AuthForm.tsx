@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import Cookies from 'universal-cookie';
 import { useLoginMutation } from '../../../entities/auth/api/authApi';
 import { LoginRequest } from '../../../entities/auth/model';
+import { useMeQuery } from '../../../entities/user/api/userApi';
 
 interface AuthFormProps {
   title: string;
@@ -14,6 +15,7 @@ interface AuthFormProps {
 
 export const AuthForm: React.FC<AuthFormProps> = ({ title, fields, buttonText, links }) => {
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
+  const { refetch } = useMeQuery();
   const [login, { isLoading, error }] = useLoginMutation();
   const navigate = useNavigate();
 
@@ -26,7 +28,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ title, fields, buttonText, l
     e.preventDefault();
     try {
       const response = await login(formData as LoginRequest).unwrap();
-      console.log('Login successful:', response);
+      await refetch();
       const cookies = new Cookies();
       cookies.set('jwtToken', response.data.accessToken, { path: '/' });
       navigate('/');

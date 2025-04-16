@@ -13,6 +13,7 @@ import {
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useRegisterMutation } from '../../../entities/auth/api/authApi';
+import { useMeQuery } from '../../../entities/user/api/userApi';
 
 interface RegisterFormProps {
   title: string;
@@ -41,6 +42,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   const [register, { isLoading }] = useRegisterMutation();
   const navigate = useNavigate();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const { refetch } = useMeQuery();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
@@ -53,6 +55,9 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     if (!formData.username) newErrors.username = 'Имя обязательно';
+    else if (!/^[a-zA-Z0-9]+$/.test(formData.username)) {
+      newErrors.username = 'Имя может содержать только английские буквы и цифры';
+    }
     if (!formData.email) newErrors.email = 'Email обязателен';
     if (!formData.firstName) newErrors.firstName = 'Имя обязательно';
     if (!formData.lastName) newErrors.lastName = 'Фамилия обязательна';
@@ -72,6 +77,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
     try {
       await register(formData).unwrap();
+      await refetch();
       onSuccess();
       navigate('/');
     } catch (err) {

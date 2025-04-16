@@ -14,6 +14,7 @@ export const authApi = commonApi.injectEndpoints?.({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['User'],
     }),
     login: builder.mutation<ItemResponseAuthToken, LoginRequest>({
       query: body => ({
@@ -21,6 +22,7 @@ export const authApi = commonApi.injectEndpoints?.({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['User'],
       transformResponse: (response: ItemResponseAuthToken) => {
         const { accessToken, refreshToken } = response.data;
         cookies.set('jwtToken', accessToken, { path: '/' });

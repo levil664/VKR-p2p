@@ -13,11 +13,12 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
-import { FaBars, FaBook } from 'react-icons/fa';
+import { FaBars, FaBook, FaSignOutAlt } from 'react-icons/fa';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { useAppSelector } from '../../../app/api';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { drawerWidth, menuItems } from '../lib/const';
+import { useLogoutMutation } from '../../../entities/auth/api/authApi';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -25,6 +26,7 @@ export const MainLayout: React.FC = () => {
   const userRole = useAppSelector(state => state.user);
   const navigate = useNavigate();
   const location = useLocation();
+  const [logout] = useLogoutMutation();
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -36,6 +38,11 @@ export const MainLayout: React.FC = () => {
 
   const handleLogoClick = () => {
     navigate('/');
+  };
+
+  const handleLogout = async () => {
+    await logout({});
+    navigate('/login');
   };
 
   const getInitials = (firstName: string, lastName: string) => {
@@ -111,6 +118,8 @@ export const MainLayout: React.FC = () => {
             width: isOpen ? drawerWidth : 0,
             boxSizing: 'border-box',
             transition: 'width 0.3s ease',
+            display: 'flex',
+            flexDirection: 'column',
           },
         }}
         variant="persistent"
@@ -131,24 +140,35 @@ export const MainLayout: React.FC = () => {
               }}
               selected={location.pathname === item.link}
             >
-              <ListItemIcon
-                sx={{
-                  minWidth: '32px',
-                }}
-              >
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                sx={{
-                  fontSize: '1.2rem',
-                  fontWeight: 'bold',
-                  color: 'black',
-                }}
-              />
+              <ListItemIcon sx={{ minWidth: '40px' }}>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
             </ListItem>
           ))}
         </List>
+        <Box
+          sx={{
+            mt: 'auto',
+            textAlign: 'center',
+            backgroundColor: 'background.paper',
+            borderTop: '1px solid',
+            borderColor: 'divider',
+          }}
+        >
+          <List>
+            <ListItem
+              button
+              onClick={handleLogout}
+              sx={{
+                userSelect: 'none',
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: '40px' }}>
+                <FaSignOutAlt style={{ fontSize: '20px' }} />
+              </ListItemIcon>
+              <ListItemText primary="Выйти" />
+            </ListItem>
+          </List>
+        </Box>
       </Drawer>
       <Box
         component="main"

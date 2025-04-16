@@ -8,6 +8,7 @@ export const userApi = commonApi.injectEndpoints?.({
         url: '/me',
         method: 'GET',
       }),
+      providesTags: ['User'],
     }),
   }),
 });
