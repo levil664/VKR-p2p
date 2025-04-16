@@ -16,9 +16,9 @@ import React, { useState } from 'react';
 import { FaBars, FaBook, FaSignOutAlt } from 'react-icons/fa';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { useAppSelector } from '../../../app/api';
+import { useLogoutMutation } from '../../../entities/auth/api/authApi';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { drawerWidth, menuItems } from '../lib/const';
-import { useLogoutMutation } from '../../../entities/auth/api/authApi';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
