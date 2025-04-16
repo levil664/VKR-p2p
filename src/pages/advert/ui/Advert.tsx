@@ -6,7 +6,7 @@ import {
   useCreateAdvertMutation,
   useGetAdvertsQuery,
 } from '../../../entities/advert/api/advertApi';
-import { AdvertStatusEnum, CreateAdvertRequest } from '../../../entities/advert/model';
+import { CreateAdvertRequest } from '../../../entities/advert/model';
 import { UserRole } from '../../../entities/user/model';
 import { NoData } from '../../../features/noData/ui/NoData';
 import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
@@ -20,12 +20,6 @@ import { CreateAdvertModal } from './CreateAdvertModal';
 
 export const Advert = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const [filters, setFilters] = useState({
-    status: {
-      [AdvertStatusEnum.ACTIVE]: true,
-    },
-  });
 
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<UserRole | ''>('');
