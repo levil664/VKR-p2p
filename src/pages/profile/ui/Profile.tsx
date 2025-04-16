@@ -9,11 +9,11 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import { useMeQuery } from '../../../entities/user/api/userApi';
+import MuiAlert from '@mui/material/Alert';
 import React, { useState } from 'react';
 import { useApplyForMentorMutation } from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
+import { useMeQuery } from '../../../entities/user/api/userApi';
 import { MentorApplyModal } from './MentorApplyModal';
-import MuiAlert from '@mui/material/Alert';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;

@@ -1,13 +1,13 @@
 import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useGetMyAdvertsQuery } from '../../../entities/advert/api/advertApi';
-import { Loader } from '../../../shared/components/loader/ui/Loader';
+import { UserRole } from '../../../entities/user/model';
 import { NoData } from '../../../features/noData/ui/NoData';
 import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
-import { AdvertTable } from '../../advert/ui/AdvertTable';
+import { Loader } from '../../../shared/components/loader/ui/Loader';
 import { AdvertCard } from '../../advert/ui/AdvertCard';
 import { AdvertPagination } from '../../advert/ui/AdvertPagination';
-import { UserRole } from '../../../entities/user/model';
+import { AdvertTable } from '../../advert/ui/AdvertTable';
 
 export const MyAdverts = () => {
   const [pageNumber, setPageNumber] = useState(1);
