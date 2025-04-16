@@ -1,5 +1,5 @@
 import { UserRole } from '../../user/model';
-import { AdvertStatus } from './enums';
+import { AdvertStatusEnum } from './enums';
 
 export interface CreateAdvertRequest {
   title: string;
@@ -47,9 +47,9 @@ export interface PageAdvertDto {
   totalPages: number;
   pageable: PageableObject;
   numberOfElements: number;
-  size: number;
   content: AdvertDto[];
-  number: number;
+  pageNumber: number;
+  pageSize: number;
   sort: SortObject;
   first: boolean;
   last: boolean;
@@ -101,5 +101,5 @@ export interface CreateAdvertRequest {
 }
 
 export interface Filters {
-  status: Record<AdvertStatus, boolean>;
+  status: Record<AdvertStatusEnum, boolean>;
 }

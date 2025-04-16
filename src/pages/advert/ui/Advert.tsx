@@ -1,24 +1,29 @@
-import { Box, Button, SelectChangeEvent, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import { Box, SelectChangeEvent, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '../../../app/api';
 import {
   useCreateAdvertMutation,
   useGetAdvertsQuery,
 } from '../../../entities/advert/api/advertApi';
-import { AdvertStatus, CreateAdvertRequest } from '../../../entities/advert/model';
+import { AdvertStatusEnum, CreateAdvertRequest } from '../../../entities/advert/model';
 import { UserRole } from '../../../entities/user/model';
 import { useDebounce } from '../../../shared/lib';
+import { AdvertTable } from './AdvertTable';
 import { AdvertCard } from './AdvertCard';
 import { AdvertFilters } from './AdvertFilters';
 import { AdvertPagination } from './AdvertPagination';
 import { CreateAdvertModal } from './CreateAdvertModal';
+import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
+import { NoData } from '../../../features/noData/ui/NoData';
+import { Loader } from '../../../shared/components/loader/ui/Loader';
+import { useSearchParams } from 'react-router';
 
 export const Advert = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [filters, setFilters] = useState({
     status: {
-      [AdvertStatus.IN_PROGRESS]: true,
-      [AdvertStatus.COMPLETED]: true,
-      [AdvertStatus.CANCELLED]: true,
+      [AdvertStatusEnum.ACTIVE]: true,
     },
   });
 
@@ -27,6 +32,9 @@ export const Advert = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [open, setOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'table' | 'card'>(
+    searchParams.get('viewMode') === 'card' ? 'card' : 'table'
+  );
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [createAdvert] = useCreateAdvertMutation();
@@ -35,16 +43,16 @@ export const Advert = () => {
     isLoading,
     isError,
   } = useGetAdvertsQuery({
-    query: debouncedSearchQuery,
+    query: debouncedSearchQuery || '',
     type: typeFilter || undefined,
-    pageNumber,
+    pageNumber: pageNumber - 1,
     pageSize,
   });
 
   const userRole = useAppSelector(state => state.user.role);
   const isMultipleRoles = Array.isArray(userRole);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isMultipleRoles) {
       setTypeFilter(UserRole.STUDENT);
     } else {
@@ -52,15 +60,11 @@ export const Advert = () => {
     }
   }, [userRole, isMultipleRoles]);
 
-  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters({
-      ...filters,
-      status: {
-        ...filters.status,
-        [event.target.name]: event.target.checked,
-      },
-    });
-  };
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('viewMode', viewMode);
+    setSearchParams(newSearchParams);
+  }, [viewMode, searchParams, setSearchParams]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -91,10 +95,14 @@ export const Advert = () => {
     }
   };
 
-  const filteredApplications =
-    adverts?.data?.content?.filter(app => filters.status[app.status.replace(' ', '_')]) || [];
+  const handleViewModeChange = (mode: 'table' | 'card') => {
+    setViewMode(mode);
+  };
 
-  if (isLoading) return <Typography>Загрузка...</Typography>;
+  const filteredApplications =
+    adverts?.data?.content?.filter(advert => advert.status === 'ACTIVE') || [];
+
+  if (isLoading) return <Loader />;
   if (isError) return <Typography>Ошибка при загрузке заявок</Typography>;
 
   return (
@@ -102,9 +110,7 @@ export const Advert = () => {
       <Box sx={{ flexGrow: 1 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography variant="h4">Заявки</Typography>
-          <Button variant="contained" color="primary" onClick={handleOpen}>
-            Создать заявку
-          </Button>
+          <ViewModeSwitcher viewMode={viewMode} onChange={handleViewModeChange} />
         </Box>
         <AdvertFilters
           searchQuery={searchQuery}
@@ -112,35 +118,29 @@ export const Advert = () => {
           onSearchChange={handleSearchChange}
           onTypeChange={handleTypeChange}
           isMultipleRoles={isMultipleRoles}
+          handleOpen={handleOpen}
         />
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
-            gap: 3,
-          }}
-        >
-          {filteredApplications
-            .filter(app => {
-              if (userRole === UserRole.STUDENT) {
-                return app.type === UserRole.MENTOR;
-              }
-              if (userRole === UserRole.MENTOR) {
-                return app.type === UserRole.STUDENT;
-              }
-              return true;
-            })
-            .map(app => (
-              <AdvertCard key={app.id} advert={app} />
-            ))}
-        </Box>
-        <AdvertPagination
-          pageNumber={pageNumber}
-          pageSize={pageSize}
-          totalPages={adverts?.data?.totalPages || 1}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
-        />
+        {filteredApplications.length === 0 ? (
+          <NoData />
+        ) : (
+          <Box sx={{ display: viewMode === 'table' ? 'block' : 'grid', gap: 3 }}>
+            {viewMode === 'table' ? (
+              <AdvertTable adverts={filteredApplications} />
+            ) : (
+              filteredApplications.map(app => <AdvertCard key={app.id} advert={app} />)
+            )}
+          </Box>
+        )}
+
+        {filteredApplications.length !== 0 && (
+          <AdvertPagination
+            pageNumber={pageNumber}
+            pageSize={pageSize}
+            totalPages={adverts?.data?.page?.totalPages || 1}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+          />
+        )}
       </Box>
 
       <CreateAdvertModal open={open} onClose={handleClose} onSubmit={onSubmit} />
