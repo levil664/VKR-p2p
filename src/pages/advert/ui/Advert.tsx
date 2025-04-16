@@ -1,5 +1,6 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { useAppSelector } from '../../../app/api';
 import {
   useCreateAdvertMutation,
@@ -7,16 +8,15 @@ import {
 } from '../../../entities/advert/api/advertApi';
 import { AdvertStatusEnum, CreateAdvertRequest } from '../../../entities/advert/model';
 import { UserRole } from '../../../entities/user/model';
+import { NoData } from '../../../features/noData/ui/NoData';
+import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
+import { Loader } from '../../../shared/components/loader/ui/Loader';
 import { useDebounce } from '../../../shared/lib';
-import { AdvertTable } from './AdvertTable';
 import { AdvertCard } from './AdvertCard';
 import { AdvertFilters } from './AdvertFilters';
 import { AdvertPagination } from './AdvertPagination';
+import { AdvertTable } from './AdvertTable';
 import { CreateAdvertModal } from './CreateAdvertModal';
-import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
-import { NoData } from '../../../features/noData/ui/NoData';
-import { Loader } from '../../../shared/components/loader/ui/Loader';
-import { useSearchParams } from 'react-router';
 
 export const Advert = () => {
   const [searchParams, setSearchParams] = useSearchParams();

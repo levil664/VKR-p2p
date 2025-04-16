@@ -9,8 +9,8 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material';
-import { AdvertStatus } from '../../../entities/advert/model/enums';
 import { useNavigate } from 'react-router';
+import { AdvertStatus } from '../../../entities/advert/model/enums';
 
 export const AdvertTable = ({ adverts }) => {
   const navigate = useNavigate();

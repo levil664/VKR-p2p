@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
-import React from 'react';
 import Lottie from 'lottie-react';
+import React from 'react';
 import noData from './noData.json';
 
 interface NoDataProps {
