@@ -135,9 +135,11 @@ export const Profile = () => {
                 <Typography variant="body1">
                   <strong>Факультет:</strong> {user?.faculty || 'Не указано'}
                 </Typography>
-                <Typography variant="body1">
-                  <strong>Курс:</strong> {user?.course || 'Не указано'}
-                </Typography>
+                {user?.course && (
+                  <Typography variant="body1">
+                    <strong>Курс:</strong> {user?.course || 'Не указано'}
+                  </Typography>
+                )}
               </Box>
             </Stack>
           </Grid>

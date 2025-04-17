@@ -62,7 +62,7 @@ export const MyAdverts = () => {
         >
           <MenuItem value="">Все роли</MenuItem>
           <MenuItem value={UserRole.STUDENT}>Студент</MenuItem>
-          <MenuItem value={UserRole.TEACHER}>Преподаватель</MenuItem>
+          <MenuItem value={UserRole.MENTOR}>Наставник</MenuItem>
         </Select>
       </Box>
       {filteredAdverts.length === 0 ? (

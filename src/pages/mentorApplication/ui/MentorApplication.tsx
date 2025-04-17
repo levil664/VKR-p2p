@@ -7,13 +7,16 @@ import { Loader } from '../../../shared/components/loader/ui/Loader';
 import { AdvertPagination } from '../../advert/ui/AdvertPagination';
 import { MentorApplicationCard } from './MentorApplicationCard';
 import { MentorApplicationTable } from './MentorApplicationTable';
+import { MentorApplicationStatusEnum } from '../lib/enums';
 
 export const MentorApplication = () => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
 
-  const { data, isLoading, isError } = useGetMentorApplicationsQuery({ state: 'PENDING' });
+  const { data, isLoading, isError } = useGetMentorApplicationsQuery({
+    state: MentorApplicationStatusEnum.PENDING,
+  });
 
   const applications = data?.data || [];
   const totalPages = Math.ceil(applications.length / pageSize);
@@ -41,7 +44,7 @@ export const MentorApplication = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">Заявки на наставничество</Typography>
+        <Typography variant="h4">Заявки</Typography>
         <ViewModeSwitcher viewMode={viewMode} onChange={handleViewModeChange} />
       </Box>
 

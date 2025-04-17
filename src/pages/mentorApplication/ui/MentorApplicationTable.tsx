@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Paper,
   Table,
   TableBody,
@@ -11,12 +12,19 @@ import {
 } from '@mui/material';
 import { MentorApplicationDto } from '../../../entities/mentorApplicationApi/model/types';
 import { MentorApplicationStatus } from '../lib/enums';
+import {
+  useApproveMentorApplicationMutation,
+  useRejectMentorApplicationMutation,
+} from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
 
 interface Props {
   applications: MentorApplicationDto[];
 }
 
 export const MentorApplicationTable = ({ applications }: Props) => {
+  const [approveApplication] = useApproveMentorApplicationMutation();
+  const [rejectApplication] = useRejectMentorApplicationMutation();
+
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -26,6 +34,7 @@ export const MentorApplicationTable = ({ applications }: Props) => {
             <TableCell sx={{ fontWeight: 'bold' }}>Описание</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Статус</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Создано</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -61,6 +70,33 @@ export const MentorApplicationTable = ({ applications }: Props) => {
                 </Box>
               </TableCell>
               <TableCell>{new Date(app.createdOn).toLocaleDateString()}</TableCell>
+              <TableCell>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    onClick={() => approveApplication(app.id)}
+                  >
+                    Принять
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => rejectApplication(app.id)}
+                    sx={{
+                      borderColor: theme => theme.palette.error.main,
+                      color: theme => theme.palette.error.main,
+                      '&:hover': {
+                        borderColor: theme => theme.palette.error.dark,
+                        backgroundColor: theme => theme.palette.error.light,
+                      },
+                    }}
+                  >
+                    Отклонить
+                  </Button>
+                </Box>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

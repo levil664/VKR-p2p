@@ -1,7 +1,13 @@
-export enum MentorApplicationStatusEnum {
+export enum MentorApplicationStatusRusEnum {
   PENDING = 'Ожидает',
   APPROVED = 'Одобрено',
   REJECTED = 'Отклонено',
+}
+
+export enum MentorApplicationStatusEnum {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
 }
 
 export const MentorApplicationStatus = {
