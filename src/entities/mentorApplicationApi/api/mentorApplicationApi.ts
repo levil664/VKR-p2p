@@ -7,7 +7,12 @@ import {
 
 export const mentorApplicationApi = commonApi.injectEndpoints?.({
   endpoints: builder => ({
-    getMentorApplications: builder.query<ListResponseMentorApplicationDto, { state: string }>({
+    getMentorApplications: builder.query<
+      ListResponseMentorApplicationDto,
+      {
+        state: 'PENDING' | 'APPROVED' | 'REJECTED';
+      }
+    >({
       query: params => ({
         url: '/mentor-applications',
         method: 'GET',

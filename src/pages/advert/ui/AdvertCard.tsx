@@ -26,22 +26,26 @@ export const AdvertCard = ({ advert }) => {
       onClick={handleCardClick}
     >
       <CardContent>
-        <Typography variant="h5" noWrap sx={{ fontWeight: 'bold', fontSize: '1.5rem', mb: 1 }}>
-          {advert.title}
-        </Typography>
-        <Typography variant="h6" sx={{ color: 'text.secondary', mb: 1 }}>
-          Автор: {advert.student.firstName} {advert.student.lastName}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', marginBottom: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+          <Typography variant="h5" noWrap sx={{ fontWeight: 'bold', fontSize: '1.5rem', flex: 1 }}>
+            {advert.title}
+          </Typography>
+          <Typography variant="h6" sx={{ color: 'text.secondary', ml: 2, flexShrink: 0 }}>
+            Автор: {advert.student.firstName} {advert.student.lastName}
+          </Typography>
+        </Box>
+        <Typography variant="body2" sx={{ color: 'text.secondary', marginBottom: 4 }}>
           {advert.description}
         </Typography>
-        <Typography variant="body1" sx={{ color: 'text.secondary', mb: 1 }}>
-          <strong>Статус:</strong> {AdvertStatus[advert.status]?.label || advert.status}
-        </Typography>
-        <Typography variant="body1" sx={{ color: 'text.secondary', mb: 1 }}>
-          <strong>Создано:</strong> {new Date(advert.createdOn).toLocaleDateString()}
-        </Typography>
-        <Box mt={2}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              <strong>Статус:</strong> {AdvertStatus[advert.status]?.label || advert.status}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              <strong>Создано:</strong> {new Date(advert.createdOn).toLocaleDateString()}
+            </Typography>
+          </Box>
           <Button variant="contained" color="primary" onClick={handleCardClick}>
             Подробнее
           </Button>
