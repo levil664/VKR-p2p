@@ -143,20 +143,23 @@ export const Profile = () => {
           </Grid>
         </Grid>
 
-        <Box sx={{ mt: 4, p: 2, border: '1px solid #e0e0e0', borderRadius: '8px' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-            Наставничество
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            Наставничество — это возможность делиться своими знаниями и опытом с другими. Стать
-            наставником — значит помочь другим развиваться и достигать своих целей. Заполнение всех
-            полей заявки важно, так как преподаватель, который будет рассматривать вашу заявку,
-            должен понять, почему вы хотите стать наставником и как вы можете помочь другим.
-          </Typography>
-          <Button variant="contained" color="primary" onClick={() => setOpenModal(true)}>
-            Подать заявку на наставничество
-          </Button>
-        </Box>
+        {user?.role !== 'ROLE_TEACHER' && user?.role !== 'ROLE_MENTOR' && (
+          <Box sx={{ mt: 4, p: 2, border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+              Наставничество
+            </Typography>
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              Наставничество — это возможность делиться своими знаниями и опытом с другими. Стать
+              наставником — значит помочь другим развиваться и достигать своих целей. Подробное
+              описание того, почему вы хотите стать наставником, важно, так как преподаватель,
+              который будет рассматривать вашу заявку, должен понять, почему вы хотите стать
+              наставником и как вы можете помочь другим.
+            </Typography>
+            <Button variant="contained" color="primary" onClick={() => setOpenModal(true)}>
+              Подать заявку на наставничество
+            </Button>
+          </Box>
+        )}
       </Paper>
 
       <MentorApplyModal

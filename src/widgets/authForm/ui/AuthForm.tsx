@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router';
 import Cookies from 'universal-cookie';
 import { useLoginMutation } from '../../../entities/auth/api/authApi';
 import { LoginRequest } from '../../../entities/auth/model';
-import { useMeQuery } from '../../../entities/user/api/userApi';
 
 interface AuthFormProps {
   title: string;
@@ -15,25 +14,29 @@ interface AuthFormProps {
 
 export const AuthForm: React.FC<AuthFormProps> = ({ title, fields, buttonText, links }) => {
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
-  const { refetch } = useMeQuery();
-  const [login, { isLoading, error }] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await login(formData as LoginRequest).unwrap();
-      await refetch();
       const cookies = new Cookies();
       cookies.set('jwtToken', response.data.accessToken, { path: '/' });
       navigate('/');
     } catch (err) {
-      console.error('Login failed:', err);
+      if (err.status === 400 && err.data?.status === 102) {
+        setError('Неправильный логин или пароль');
+      } else {
+        console.error('Login failed:', err);
+      }
     }
   };
 
@@ -85,6 +88,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ title, fields, buttonText, l
               fullWidth
               margin="normal"
               onChange={handleInputChange}
+              error={!!error}
+              helperText={
+                error && (field.name === 'username' || field.name === 'password') ? error : ''
+              }
             />
           ))}
           <Button
@@ -110,7 +117,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({ title, fields, buttonText, l
               >
                 {link.text}
               </Link>
-              {index < links.length - 1 && ' '}
             </React.Fragment>
           ))}
         </Typography>

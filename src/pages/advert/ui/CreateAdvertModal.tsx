@@ -16,6 +16,7 @@ import { useAppSelector } from '../../../app/api';
 import { CreateAdvertRequest } from '../../../entities/advert/model';
 import { useGetSubjectsQuery } from '../../../entities/subjects/api/subjectsApi';
 import { UserRole } from '../../../entities/user/model';
+import { mapRoleEnumToUserRole } from '../../../shared/lib/mapUserRoleToRoleEnum';
 
 interface CreateAdvertModalProps {
   open: boolean;
@@ -55,12 +56,18 @@ export const CreateAdvertModal: React.FC<CreateAdvertModalProps> = ({
   }
 
   const handleFormSubmit = (data: CreateAdvertRequest) => {
-    const formattedData: CreateAdvertRequest = {
+    const formattedData: {
+      description: string;
+      topicIds: string[];
+      title: string;
+      type: UserRole;
+      subjectId: string;
+    } = {
       title: data.title,
       description: data.description,
       subjectId: data.subjectId,
       topicIds: data.topicIds,
-      type: data.type,
+      type: mapRoleEnumToUserRole(data.type),
     };
 
     onSubmit(formattedData);

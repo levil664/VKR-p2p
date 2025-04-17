@@ -1,19 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { UserRole } from '../model';
+import { RoleEnum } from '../model/enums';
 
 interface UserState {
-  role: UserRole | UserRole[];
+  role: RoleEnum | null;
 }
 
-const initialState: UserState = {
-  role: UserRole.STUDENT,
+const initialState = {
+  role: null as RoleEnum | RoleEnum[] | null,
 };
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUserRole(state, action: PayloadAction<UserRole | UserRole[]>) {
+    setUserRole(state, action: PayloadAction<RoleEnum>) {
       state.role = action.payload;
     },
   },

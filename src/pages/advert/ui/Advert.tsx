@@ -17,6 +17,7 @@ import { AdvertFilters } from './AdvertFilters';
 import { AdvertPagination } from './AdvertPagination';
 import { AdvertTable } from './AdvertTable';
 import { CreateAdvertModal } from './CreateAdvertModal';
+import { RoleEnum } from '../../../entities/user/model/enums';
 
 export const Advert = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -49,8 +50,11 @@ export const Advert = () => {
   useEffect(() => {
     if (isMultipleRoles) {
       setTypeFilter(UserRole.STUDENT);
-    } else {
-      setTypeFilter(userRole);
+    } else if (typeof userRole === 'string') {
+      const roleFromEnum = Object.entries(RoleEnum).find(([_, val]) => val === userRole);
+      if (roleFromEnum) {
+        setTypeFilter(roleFromEnum[0] as UserRole);
+      }
     }
   }, [userRole, isMultipleRoles]);
 

@@ -12,21 +12,30 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaBars, FaBook, FaSignOutAlt } from 'react-icons/fa';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
-import { useAppSelector } from '../../../app/api';
+import { useAppDispatch, useAppSelector } from '../../../app/api';
 import { useLogoutMutation } from '../../../entities/auth/api/authApi';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { drawerWidth, menuItems } from '../lib/const';
+import { setUserRole } from '../../../entities/user/api/slice';
+import { RoleEnum } from '../../../entities/user/model/enums';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
   const { data: user } = useMeQuery();
-  const userRole = useAppSelector(state => state.user);
+  const dispatch = useAppDispatch();
+  const userRole = useAppSelector(state => state.user.role);
   const navigate = useNavigate();
   const location = useLocation();
   const [logout] = useLogoutMutation();
+
+  useEffect(() => {
+    if (user?.data?.role) {
+      dispatch(setUserRole(user.data.role as RoleEnum));
+    }
+  }, [user, dispatch]);
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -50,6 +59,10 @@ export const MainLayout: React.FC = () => {
     const lastInitial = lastName ? lastName[0] : '';
     return `${firstInitial}${lastInitial}`.toUpperCase();
   };
+
+  const filteredMenuItems = menuItems.filter(item =>
+    item.allowedRoles.includes(userRole as RoleEnum)
+  );
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -128,7 +141,7 @@ export const MainLayout: React.FC = () => {
       >
         <Toolbar />
         <List>
-          {menuItems.map((item, index) => (
+          {filteredMenuItems.map((item, index) => (
             <ListItem
               button
               component={Link}

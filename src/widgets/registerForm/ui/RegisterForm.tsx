@@ -13,7 +13,6 @@ import {
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useRegisterMutation } from '../../../entities/auth/api/authApi';
-import { useMeQuery } from '../../../entities/user/api/userApi';
 
 interface RegisterFormProps {
   title: string;
@@ -42,7 +41,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   const [register, { isLoading }] = useRegisterMutation();
   const navigate = useNavigate();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const { refetch } = useMeQuery();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
@@ -77,7 +75,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
     try {
       await register(formData).unwrap();
-      await refetch();
       onSuccess();
       navigate('/');
     } catch (err) {

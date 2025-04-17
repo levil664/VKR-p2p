@@ -43,18 +43,9 @@ const baseQueryWithReauth: (
       error:
         | { status: number; data: unknown }
         | { status: 'FETCH_ERROR'; data?: undefined; error: string }
-        | {
-            status: 'PARSING_ERROR';
-            originalStatus: number;
-            data: string;
-            error: string;
-          }
+        | { status: 'PARSING_ERROR'; originalStatus: number; data: string; error: string }
         | { status: 'TIMEOUT_ERROR'; data?: undefined; error: string }
-        | {
-            status: 'CUSTOM_ERROR';
-            data?: unknown;
-            error: string;
-          };
+        | { status: 'CUSTOM_ERROR'; data?: unknown; error: string };
       data?: undefined;
       meta?: FetchBaseQueryMeta;
     }
@@ -83,7 +74,11 @@ const baseQueryWithReauth: (
     } catch (error) {
       cookies.remove('jwtToken');
       cookies.remove('refreshToken');
-      window.location.href = '/login';
+
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login' && currentPath !== '/register') {
+        window.location.href = '/login';
+      }
     }
   }
 
