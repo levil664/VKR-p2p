@@ -1,12 +1,12 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
+import { useGetMentorApplicationsQuery } from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
 import { NoData } from '../../../features/noData/ui/NoData';
+import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
 import { Loader } from '../../../shared/components/loader/ui/Loader';
 import { AdvertPagination } from '../../advert/ui/AdvertPagination';
-import { useGetMentorApplicationsQuery } from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
-import { MentorApplicationTable } from './MentorApplicationTable';
 import { MentorApplicationCard } from './MentorApplicationCard';
+import { MentorApplicationTable } from './MentorApplicationTable';
 
 export const MentorApplication = () => {
   const [pageNumber, setPageNumber] = useState(1);
