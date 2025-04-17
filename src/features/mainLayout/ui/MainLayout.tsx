@@ -17,10 +17,10 @@ import { FaBars, FaBook, FaSignOutAlt } from 'react-icons/fa';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../app/api';
 import { useLogoutMutation } from '../../../entities/auth/api/authApi';
-import { useMeQuery } from '../../../entities/user/api/userApi';
-import { drawerWidth, menuItems } from '../lib/const';
 import { setUserRole } from '../../../entities/user/api/slice';
+import { useMeQuery } from '../../../entities/user/api/userApi';
 import { RoleEnum } from '../../../entities/user/model/enums';
+import { drawerWidth, menuItems } from '../lib/const';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);

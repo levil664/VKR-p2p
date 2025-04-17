@@ -8,6 +8,7 @@ import {
 } from '../../../entities/advert/api/advertApi';
 import { CreateAdvertRequest } from '../../../entities/advert/model';
 import { UserRole } from '../../../entities/user/model';
+import { RoleEnum } from '../../../entities/user/model/enums';
 import { NoData } from '../../../features/noData/ui/NoData';
 import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
 import { Loader } from '../../../shared/components/loader/ui/Loader';
@@ -17,7 +18,6 @@ import { AdvertFilters } from './AdvertFilters';
 import { AdvertPagination } from './AdvertPagination';
 import { AdvertTable } from './AdvertTable';
 import { CreateAdvertModal } from './CreateAdvertModal';
-import { RoleEnum } from '../../../entities/user/model/enums';
 
 export const Advert = () => {
   const [searchParams, setSearchParams] = useSearchParams();
