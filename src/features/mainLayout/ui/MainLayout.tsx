@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import {
   AppBar,
   Avatar,
@@ -16,8 +15,9 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material';
-import { MdClose, MdMenu } from 'react-icons/md';
+import React, { useEffect, useState } from 'react';
 import { FaBook, FaSignOutAlt } from 'react-icons/fa';
+import { MdClose, MdMenu } from 'react-icons/md';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../app/api';
 import { useLogoutMutation } from '../../../entities/auth/api/authApi';
