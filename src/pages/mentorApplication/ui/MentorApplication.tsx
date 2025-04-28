@@ -5,9 +5,9 @@ import { NoData } from '../../../features/noData/ui/NoData';
 import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
 import { Loader } from '../../../shared/components/loader/ui/Loader';
 import { AdvertPagination } from '../../advert/ui/AdvertPagination';
+import { MentorApplicationStatusEnum } from '../lib/enums';
 import { MentorApplicationCard } from './MentorApplicationCard';
 import { MentorApplicationTable } from './MentorApplicationTable';
-import { MentorApplicationStatusEnum } from '../lib/enums';
 
 export const MentorApplication = () => {
   const [pageNumber, setPageNumber] = useState(1);
