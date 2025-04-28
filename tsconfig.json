@@ -1,25 +1,24 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@app/*": [
-        "src/app/*"
-      ],
-      "@entities/*": [
-        "src/entities/*"
-      ],
-      "@features/*": [
-        "src/features/*"
-      ],
-      "@widgets/*": [
-        "src/widgets/*"
-      ],
-      "@pages/*": [
-        "src/pages/*"
-      ],
-      "@shared/*": [
-        "src/shared/*"
-      ]
-    }
-  }
+    "target": "es2015",
+    "module": "esnext",
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "noEmitOnError": false
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

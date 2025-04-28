@@ -1,3 +1,6 @@
+import { UserRole } from '../../user/model';
+import { AdvertStatusEnum } from './enums';
+
 export interface CreateAdvertRequest {
   title: string;
   description: string;
@@ -44,9 +47,9 @@ export interface PageAdvertDto {
   totalPages: number;
   pageable: PageableObject;
   numberOfElements: number;
-  size: number;
   content: AdvertDto[];
-  number: number;
+  pageNumber: number;
+  pageSize: number;
   sort: SortObject;
   first: boolean;
   last: boolean;
@@ -79,4 +82,24 @@ export interface UserPublicDto {
   firstName: string;
   lastName: string;
   middleName: string;
+}
+
+export interface Advert {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  createdOn: string;
+}
+
+export interface CreateAdvertRequest {
+  title: string;
+  description: string;
+  subjectId: string;
+  topicIds: string[];
+  type: UserRole;
+}
+
+export interface Filters {
+  status: Record<AdvertStatusEnum, boolean>;
 }

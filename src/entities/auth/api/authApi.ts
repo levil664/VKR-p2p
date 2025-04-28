@@ -1,7 +1,7 @@
 import Cookies from 'universal-cookie';
 import { commonApi } from '../../../app/api';
 import { EmptyResponse } from '../../../shared/model';
-import { ItemResponseUserDto } from '../../user/model/userModel';
+import { ItemResponseUserDto } from '../../user/model';
 import { ItemResponseAuthToken, LoginRequest, RefreshRequest, RegistrationRequest } from '../model';
 
 const cookies = new Cookies();
@@ -10,17 +10,19 @@ export const authApi = commonApi.injectEndpoints?.({
   endpoints: builder => ({
     register: builder.mutation<ItemResponseUserDto, RegistrationRequest>({
       query: body => ({
-        url: '/api/v1/auth/register',
+        url: '/auth/register',
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['User'],
     }),
     login: builder.mutation<ItemResponseAuthToken, LoginRequest>({
       query: body => ({
-        url: '/api/v1/auth/login',
+        url: '/auth/login',
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['User'],
       transformResponse: (response: ItemResponseAuthToken) => {
         const { accessToken, refreshToken } = response.data;
         cookies.set('jwtToken', accessToken, { path: '/' });
@@ -30,7 +32,7 @@ export const authApi = commonApi.injectEndpoints?.({
     }),
     refresh: builder.mutation<ItemResponseAuthToken, RefreshRequest>({
       query: body => ({
-        url: '/api/v1/auth/refresh',
+        url: '/auth/refresh',
         method: 'POST',
         body,
       }),
@@ -43,7 +45,7 @@ export const authApi = commonApi.injectEndpoints?.({
     }),
     logout: builder.mutation<EmptyResponse, RefreshRequest>({
       query: body => ({
-        url: '/api/v1/auth/logout',
+        url: '/auth/logout',
         method: 'POST',
         body,
       }),

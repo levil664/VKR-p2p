@@ -18,7 +18,7 @@ export interface ErrorType {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.REACT_APP_BACKEND_URL || 'http://127.0.0.1:8080',
+  baseUrl: import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8080/api/v1',
   credentials: 'include',
   prepareHeaders: headers => {
     const csrfToken = cookies.get('csrftoken');
@@ -43,18 +43,9 @@ const baseQueryWithReauth: (
       error:
         | { status: number; data: unknown }
         | { status: 'FETCH_ERROR'; data?: undefined; error: string }
-        | {
-            status: 'PARSING_ERROR';
-            originalStatus: number;
-            data: string;
-            error: string;
-          }
+        | { status: 'PARSING_ERROR'; originalStatus: number; data: string; error: string }
         | { status: 'TIMEOUT_ERROR'; data?: undefined; error: string }
-        | {
-            status: 'CUSTOM_ERROR';
-            data?: unknown;
-            error: string;
-          };
+        | { status: 'CUSTOM_ERROR'; data?: unknown; error: string };
       data?: undefined;
       meta?: FetchBaseQueryMeta;
     }
@@ -70,7 +61,7 @@ const baseQueryWithReauth: (
       }
 
       const refreshResponse = await axios.post(
-        `${import.meta.env.REACT_APP_BACKEND_URL || 'http://127.0.0.1:8080'}/api/v1/auth/refresh`,
+        `${import.meta.env.VITE_BACKEND_URL || 'http://127.0.0.1:8080/api/v1'}/auth/refresh`,
         { refreshToken }
       );
 
@@ -83,7 +74,11 @@ const baseQueryWithReauth: (
     } catch (error) {
       cookies.remove('jwtToken');
       cookies.remove('refreshToken');
-      window.location.href = '/login';
+
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login' && currentPath !== '/register') {
+        window.location.href = '/login';
+      }
     }
   }
 
@@ -93,6 +88,6 @@ const baseQueryWithReauth: (
 export const commonApi = createApi({
   reducerPath: Slices.Api,
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Deals', 'FavoriteDeals', 'User'],
+  tagTypes: ['Adverts'],
   endpoints: builder => ({}),
 });

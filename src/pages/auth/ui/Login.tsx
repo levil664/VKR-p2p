@@ -10,10 +10,7 @@ export const Login: React.FC = () => {
         { label: 'Пароль', type: 'password', name: 'password' },
       ]}
       buttonText="Войти"
-      links={[
-        { text: 'Вход с помощью ЛК', href: '#' },
-        { text: ' Регистрация', href: '/register' },
-      ]}
+      links={[{ text: ' Регистрация', href: '/register' }]}
     />
   );
 };
