@@ -1,6 +1,9 @@
+import React, { useEffect, useState } from 'react';
 import {
   AppBar,
   Avatar,
+  BottomNavigation,
+  BottomNavigationAction,
   Box,
   CssBaseline,
   Drawer,
@@ -11,9 +14,10 @@ import {
   ListItemText,
   Toolbar,
   Typography,
+  useMediaQuery,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { FaBars, FaBook, FaSignOutAlt } from 'react-icons/fa';
+import { MdClose, MdMenu } from 'react-icons/md';
+import { FaBook, FaSignOutAlt } from 'react-icons/fa';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../app/api';
 import { useLogoutMutation } from '../../../entities/auth/api/authApi';
@@ -23,13 +27,15 @@ import { RoleEnum } from '../../../entities/user/model/enums';
 import { drawerWidth, menuItems } from '../lib/const';
 
 export const MainLayout: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
   const { data: user } = useMeQuery();
   const dispatch = useAppDispatch();
   const userRole = useAppSelector(state => state.user.role);
   const navigate = useNavigate();
   const location = useLocation();
   const [logout] = useLogoutMutation();
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
     if (user?.data?.role) {
@@ -64,21 +70,28 @@ export const MainLayout: React.FC = () => {
     item.allowedRoles.includes(userRole as RoleEnum)
   );
 
+  const handleNavigationChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+    navigate(filteredMenuItems[newValue].link);
+  };
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              color="inherit"
-              aria-label="toggle drawer"
-              onClick={toggleDrawer}
-              edge="start"
-              sx={{ mr: 2 }}
-            >
-              <FaBars />
-            </IconButton>
+            {!isMobile && (
+              <IconButton
+                color="inherit"
+                aria-label="toggle drawer"
+                onClick={toggleDrawer}
+                edge="start"
+                sx={{ mr: 2 }}
+              >
+                {isOpen ? <MdClose /> : <MdMenu />}
+              </IconButton>
+            )}
             <Box
               sx={{
                 display: 'flex',
@@ -189,11 +202,32 @@ export const MainLayout: React.FC = () => {
           flexGrow: 1,
           bgcolor: 'background.default',
           p: 3,
-          transition: 'margin-left 0.3s ease',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          paddingBottom: isMobile ? '56px' : '0',
         }}
       >
         <Toolbar />
         <Outlet />
+        {isMobile && (
+          <BottomNavigation
+            value={activeTab}
+            onChange={handleNavigationChange}
+            sx={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              borderTop: '1px solid',
+              borderColor: 'divider',
+            }}
+          >
+            {filteredMenuItems.map((item, index) => (
+              <BottomNavigationAction key={index} label={item.text} icon={item.icon} />
+            ))}
+          </BottomNavigation>
+        )}
       </Box>
     </Box>
   );
