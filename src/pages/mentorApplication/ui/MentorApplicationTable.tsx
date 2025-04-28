@@ -10,12 +10,12 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material';
-import { MentorApplicationDto } from '../../../entities/mentorApplicationApi/model/types';
-import { MentorApplicationStatus } from '../lib/enums';
 import {
   useApproveMentorApplicationMutation,
   useRejectMentorApplicationMutation,
 } from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
+import { MentorApplicationDto } from '../../../entities/mentorApplicationApi/model/types';
+import { MentorApplicationStatus } from '../lib/enums';
 
 interface Props {
   applications: MentorApplicationDto[];
