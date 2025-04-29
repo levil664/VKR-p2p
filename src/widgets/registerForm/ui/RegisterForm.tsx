@@ -54,9 +54,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     if (!formData.username) newErrors.username = 'Имя обязательно';
-    else if (!/^[a-zA-Z0-9]+$/.test(formData.username)) {
-      newErrors.username = 'Имя может содержать только английские буквы и цифры';
-    }
     if (!formData.email) newErrors.email = 'Email обязателен';
     if (!formData.firstName) newErrors.firstName = 'Имя обязательно';
     if (!formData.lastName) newErrors.lastName = 'Фамилия обязательна';

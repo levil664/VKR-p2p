@@ -1,10 +1,10 @@
-import { Box, Button, Card, CardContent, Snackbar, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
 import {
   useApproveMentorApplicationMutation,
   useRejectMentorApplicationMutation,
-} from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
-import { MentorApplicationDto } from '../../../entities/mentorApplicationApi/model/types';
+} from '../../../entities/mentorApplication/api/mentorApplicationApi';
+import { MentorApplicationDto } from '../../../entities/mentorApplication/model/types';
 import { MentorApplicationStatus } from '../lib/enums';
 
 interface Props {
@@ -98,16 +98,6 @@ export const MentorApplicationCard = ({ application }: Props) => {
           </Box>
         </Box>
       </CardContent>
-
-      <Snackbar open={notification.open} autoHideDuration={6000} onClose={handleCloseNotification}>
-        <Alert
-          onClose={handleCloseNotification}
-          severity={notification.severity}
-          sx={{ width: '100%' }}
-        >
-          {notification.message}
-        </Alert>
-      </Snackbar>
     </Card>
   );
 };

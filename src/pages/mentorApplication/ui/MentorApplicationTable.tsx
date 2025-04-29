@@ -14,8 +14,8 @@ import { toast } from 'react-toastify';
 import {
   useApproveMentorApplicationMutation,
   useRejectMentorApplicationMutation,
-} from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
-import { MentorApplicationDto } from '../../../entities/mentorApplicationApi/model/types';
+} from '../../../entities/mentorApplication/api/mentorApplicationApi';
+import { MentorApplicationDto } from '../../../entities/mentorApplication/model/types';
 import { MentorApplicationStatus } from '../lib/enums';
 
 interface Props {
@@ -109,6 +109,7 @@ export const MentorApplicationTable = ({ applications }: Props) => {
                       '&:hover': {
                         borderColor: theme => theme.palette.error.dark,
                         backgroundColor: theme => theme.palette.error.light,
+                        color: '#fff',
                       },
                     }}
                   >

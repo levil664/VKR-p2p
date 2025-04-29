@@ -22,7 +22,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../../app/api';
 import { useLogoutMutation } from '../../../entities/auth/api/authApi';
-import { setUserRole } from '../../../entities/user/api/slice';
+import { setIsMentor, setUserRole } from '../../../entities/user/api/slice';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { RoleEnum } from '../../../entities/user/model/enums';
 import { drawerWidth, menuItems } from '../lib/const';
@@ -39,8 +39,9 @@ export const MainLayout: React.FC = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
-    if (user?.data?.role) {
+    if (user?.data) {
       dispatch(setUserRole(user.data.role as RoleEnum));
+      dispatch(setIsMentor(user.data.isMentor));
     }
   }, [user, dispatch]);
 
@@ -224,7 +225,11 @@ export const MainLayout: React.FC = () => {
           closeOnClick
           draggable
           pauseOnHover
-          style={{ top: 74, right: 10, zIndex: 1000 }}
+          style={{
+            top: 74,
+            right: '0.5%',
+            zIndex: 1000,
+          }}
         />
         {isMobile && (
           <BottomNavigation

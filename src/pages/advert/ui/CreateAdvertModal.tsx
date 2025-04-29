@@ -29,6 +29,12 @@ export const CreateAdvertModal: React.FC<CreateAdvertModalProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { data: response, isLoading } = useGetSubjectsQuery();
+  const subjects = response?.data;
+
+  const userRole = useAppSelector(state => state.user.role) as UserRole | UserRole[];
+  const isMentor = useAppSelector(state => state.user.isMentor);
+
   const { control, handleSubmit, reset, watch, setValue } = useForm<CreateAdvertRequest>({
     defaultValues: {
       title: '',
@@ -39,21 +45,8 @@ export const CreateAdvertModal: React.FC<CreateAdvertModalProps> = ({
     },
   });
 
-  const { data: response, isLoading } = useGetSubjectsQuery();
-  const subjects = response?.data;
-
   const selectedSubjectId = watch('subjectId');
   const selectedTopics = watch('topicIds');
-
-  const userRole = useAppSelector(state => state.user.role) as UserRole | UserRole[];
-
-  const isMultipleRoles = Array.isArray(userRole);
-
-  if (!isMultipleRoles && userRole) {
-    setValue('type', userRole);
-  } else if (isMultipleRoles) {
-    setValue('type', userRole[0]);
-  }
 
   const handleFormSubmit = (data: CreateAdvertRequest) => {
     const formattedData: {
@@ -141,7 +134,7 @@ export const CreateAdvertModal: React.FC<CreateAdvertModalProps> = ({
             <Select value={selectedSubjectId} onChange={handleSubjectChange} label="Предмет">
               {subjects.map(subject => (
                 <MenuItem key={subject.id} value={subject.id}>
-                  {subject.name}
+                  {subject.name}{' '}
                 </MenuItem>
               ))}
             </Select>
@@ -173,16 +166,18 @@ export const CreateAdvertModal: React.FC<CreateAdvertModalProps> = ({
               </Select>
             </FormControl>
           )}
-          {isMultipleRoles ? (
+          {isMentor && (
             <FormControl fullWidth margin="normal" required>
-              <InputLabel>Тип</InputLabel>
-              <Select {...control.register('type')} label="Тип" defaultValue={UserRole.STUDENT}>
+              <InputLabel>Роль в заявке</InputLabel>
+              <Select
+                {...control.register('type')}
+                label="Роль в заявке"
+                defaultValue={UserRole.STUDENT}
+              >
                 <MenuItem value={UserRole.STUDENT}>Студент</MenuItem>
                 <MenuItem value={UserRole.MENTOR}>Ментор</MenuItem>
               </Select>
             </FormControl>
-          ) : (
-            <input type="hidden" value={userRole} {...control.register('type')} />
           )}
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
             <Button onClick={onClose}>Отмена</Button>

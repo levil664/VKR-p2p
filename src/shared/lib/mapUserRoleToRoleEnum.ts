@@ -1,6 +1,6 @@
 import { RoleEnum, UserRole } from '../../entities/user/model/enums';
 
-export const mapRoleEnumToUserRole = (role: string): UserRole => {
+export const mapRoleEnumToUserRole = (role: RoleEnum | UserRole): UserRole => {
   switch (role) {
     case RoleEnum.STUDENT:
       return UserRole.STUDENT;
@@ -9,6 +9,6 @@ export const mapRoleEnumToUserRole = (role: string): UserRole => {
     case RoleEnum.TEACHER:
       return UserRole.TEACHER;
     default:
-      throw new Error(`Unknown role: ${role}`);
+      return role;
   }
 };

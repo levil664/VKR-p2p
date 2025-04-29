@@ -1,5 +1,5 @@
 import { commonApi } from '../../../app/api';
-import { ItemResponseUserDto } from '../model';
+import { ItemResponseUserDto, ItemResponseUserProfileDto, UpdateProfileRequest } from '../model';
 
 export const userApi = commonApi.injectEndpoints?.({
   endpoints: builder => ({
@@ -10,7 +10,22 @@ export const userApi = commonApi.injectEndpoints?.({
       }),
       providesTags: ['User'],
     }),
+    editProfile: builder.mutation<ItemResponseUserDto, UpdateProfileRequest>({
+      query: body => ({
+        url: '/me',
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: ['User'],
+    }),
+    getUser: builder.query<ItemResponseUserProfileDto, string>({
+      query: id => ({
+        url: `/users/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['User'],
+    }),
   }),
 });
 
-export const { useMeQuery } = userApi;
+export const { useMeQuery, useEditProfileMutation, useGetUserQuery } = userApi;

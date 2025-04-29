@@ -6,18 +6,28 @@ import {
   Grid,
   Paper,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useApplyForMentorMutation } from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
-import { useMeQuery } from '../../../entities/user/api/userApi';
+import { useApplyForMentorMutation } from '../../../entities/mentorApplication/api/mentorApplicationApi';
+import { useEditProfileMutation, useMeQuery } from '../../../entities/user/api/userApi';
 import { MentorApplyModal } from './MentorApplyModal';
 
 export const Profile = () => {
   const { data: userResponse, error, isLoading } = useMeQuery();
-  const [openModal, setOpenModal] = useState(false);
   const [applyForMentor] = useApplyForMentorMutation();
+  const [editProfile] = useEditProfileMutation();
+  const [isEditing, setIsEditing] = useState(false);
+  const [description, setDescription] = useState('');
+  const [openModal, setOpenModal] = useState(false);
+
+  useEffect(() => {
+    if (userResponse) {
+      setDescription(userResponse.data.description || '');
+    }
+  }, [userResponse]);
 
   if (isLoading) {
     return (
@@ -41,20 +51,27 @@ export const Profile = () => {
 
   const user = userResponse?.data;
 
-  const getRoleLabel = role => {
+  const getRoleLabel = (role, isMentor) => {
     const roleMap = {
       ROLE_STUDENT: 'Студент',
       ROLE_TEACHER: 'Преподаватель',
       ROLE_ADMIN: 'Администратор',
+      ROLE_MENTOR: 'Наставник', // Добавляем метку для роли ментора
     };
+
+    // Если пользователь является ментором, возвращаем метку для ментора
+    if (isMentor) {
+      return roleMap.ROLE_MENTOR;
+    }
+
     return roleMap[role] || role;
   };
 
   const handleApplyForMentor = async (data: { description: string }) => {
     try {
       await applyForMentor({ description: data.description }).unwrap();
-      setOpenModal(false);
       toast.success('Заявка успешно отправлена!');
+      setOpenModal(false);
     } catch (error) {
       if (error.status === 400) {
         toast.warning('Заявка уже отправлена');
@@ -64,12 +81,27 @@ export const Profile = () => {
     }
   };
 
+  const handleEditProfile = async () => {
+    try {
+      await editProfile({ description }).unwrap();
+      toast.success('Профиль успешно обновлен!');
+      setIsEditing(false);
+    } catch (error) {
+      toast.error('Ошибка при обновлении профиля');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setDescription(user?.description || '');
+  };
+
   const getInitials = (firstName, lastName) => {
     return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
   };
 
   return (
-    <Box sx={{ p: 3, maxWidth: 800, margin: '0 auto' }}>
+    <Box sx={{ p: 3, maxWidth: 800, width: '100%', margin: '0 auto' }}>
       <Paper
         elevation={4}
         sx={{ p: 3, borderRadius: '12px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)' }}
@@ -92,7 +124,7 @@ export const Profile = () => {
                 {user?.firstName} {user?.lastName}
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                {getRoleLabel(user?.role)}
+                {getRoleLabel(user?.role, user?.isMentor)}
               </Typography>
             </Box>
           </Grid>
@@ -127,11 +159,66 @@ export const Profile = () => {
                   </Typography>
                 )}
               </Box>
+
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Описание
+              </Typography>
+              {isEditing ? (
+                <TextField
+                  multiline
+                  rows={4}
+                  variant="outlined"
+                  fullWidth
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
+                  placeholder="Введите описание"
+                />
+              ) : (
+                <Typography variant="body1">{description || 'Не указано'}</Typography>
+              )}
+              {isEditing ? (
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    onClick={handleEditProfile}
+                    sx={{
+                      backgroundColor: theme => theme.palette.primary.main,
+                      color: theme => theme.palette.common.white,
+                      '&:hover': {
+                        backgroundColor: theme => theme.palette.primary.dark,
+                      },
+                    }}
+                  >
+                    Сохранить изменения
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={handleCancelEdit}
+                    sx={{
+                      borderColor: theme => theme.palette.error.main,
+                      color: theme => theme.palette.error.main,
+                      '&:hover': {
+                        borderColor: theme => theme.palette.error.dark,
+                        backgroundColor: theme => theme.palette.error.light,
+                        color: '#fff',
+                      },
+                    }}
+                  >
+                    Отменить
+                  </Button>
+                </Box>
+              ) : (
+                <Button variant="contained" color="primary" onClick={() => setIsEditing(true)}>
+                  Редактировать
+                </Button>
+              )}
             </Stack>
           </Grid>
         </Grid>
 
-        {user?.role !== 'ROLE_TEACHER' && user?.role !== 'ROLE_MENTOR' && (
+        {!user?.isMentor && (
           <Box sx={{ mt: 4, p: 2, border: '1px solid #e0e0e0', borderRadius: '8px' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
               Наставничество
