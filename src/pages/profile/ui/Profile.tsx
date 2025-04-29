@@ -8,11 +8,11 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useApplyForMentorMutation } from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { MentorApplyModal } from './MentorApplyModal';
-import { toast } from 'react-toastify';
 
 export const Profile = () => {
   const { data: userResponse, error, isLoading } = useMeQuery();

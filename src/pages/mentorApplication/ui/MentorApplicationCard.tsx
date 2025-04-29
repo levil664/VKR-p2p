@@ -1,12 +1,11 @@
 import { Box, Button, Card, CardContent, Snackbar, Typography } from '@mui/material';
-import React from 'react';
+import { toast } from 'react-toastify';
 import {
   useApproveMentorApplicationMutation,
   useRejectMentorApplicationMutation,
 } from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
 import { MentorApplicationDto } from '../../../entities/mentorApplicationApi/model/types';
 import { MentorApplicationStatus } from '../lib/enums';
-import { toast } from 'react-toastify';
 
 interface Props {
   application: MentorApplicationDto;

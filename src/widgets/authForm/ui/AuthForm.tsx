@@ -1,10 +1,10 @@
 import { Box, Button, Link, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import { useLoginMutation } from '../../../entities/auth/api/authApi';
 import { LoginRequest } from '../../../entities/auth/model';
-import { toast } from 'react-toastify';
 
 interface AuthFormProps {
   title: string;

@@ -10,13 +10,13 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material';
+import { toast } from 'react-toastify';
 import {
   useApproveMentorApplicationMutation,
   useRejectMentorApplicationMutation,
 } from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
 import { MentorApplicationDto } from '../../../entities/mentorApplicationApi/model/types';
 import { MentorApplicationStatus } from '../lib/enums';
-import { toast } from 'react-toastify';
 
 interface Props {
   applications: MentorApplicationDto[];

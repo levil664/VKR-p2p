@@ -19,13 +19,13 @@ import React, { useEffect, useState } from 'react';
 import { FaBook, FaSignOutAlt } from 'react-icons/fa';
 import { MdClose, MdMenu } from 'react-icons/md';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
+import { ToastContainer } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../../app/api';
 import { useLogoutMutation } from '../../../entities/auth/api/authApi';
 import { setUserRole } from '../../../entities/user/api/slice';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { RoleEnum } from '../../../entities/user/model/enums';
 import { drawerWidth, menuItems } from '../lib/const';
-import { ToastContainer } from 'react-toastify';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);

@@ -12,8 +12,8 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useRegisterMutation } from '../../../entities/auth/api/authApi';
 import { toast } from 'react-toastify';
+import { useRegisterMutation } from '../../../entities/auth/api/authApi';
 
 interface RegisterFormProps {
   title: string;

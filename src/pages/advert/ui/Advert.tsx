@@ -1,6 +1,7 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
+import { toast } from 'react-toastify';
 import { useAppSelector } from '../../../app/api';
 import {
   useCreateAdvertMutation,
@@ -18,7 +19,6 @@ import { AdvertFilters } from './AdvertFilters';
 import { AdvertPagination } from './AdvertPagination';
 import { AdvertTable } from './AdvertTable';
 import { CreateAdvertModal } from './CreateAdvertModal';
-import { toast } from 'react-toastify';
 
 export const Advert = () => {
   const [searchParams, setSearchParams] = useSearchParams();
