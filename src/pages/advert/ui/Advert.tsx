@@ -18,6 +18,7 @@ import { AdvertFilters } from './AdvertFilters';
 import { AdvertPagination } from './AdvertPagination';
 import { AdvertTable } from './AdvertTable';
 import { CreateAdvertModal } from './CreateAdvertModal';
+import { toast } from 'react-toastify';
 
 export const Advert = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -88,8 +89,9 @@ export const Advert = () => {
       const requestBody = formData;
       await createAdvert(requestBody).unwrap();
       handleClose();
+      toast.success('Заявка успешно создана!');
     } catch (error) {
-      console.error('Failed to create advert:', error);
+      toast.error('Ошибка при создании заявки');
     }
   };
 

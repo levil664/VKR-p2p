@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import Cookies from 'universal-cookie';
 import { useLoginMutation } from '../../../entities/auth/api/authApi';
 import { LoginRequest } from '../../../entities/auth/model';
+import { toast } from 'react-toastify';
 
 interface AuthFormProps {
   title: string;
@@ -30,12 +31,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({ title, fields, buttonText, l
       const response = await login(formData as LoginRequest).unwrap();
       const cookies = new Cookies();
       cookies.set('jwtToken', response.data.accessToken, { path: '/' });
+      toast.success('Успешный вход!');
       navigate('/');
     } catch (err) {
       if (err.status === 400 && err.data?.status === 102) {
         setError('Неправильный логин или пароль');
+        toast.error('Неправильный логин или пароль');
       } else {
-        console.error('Login failed:', err);
+        toast.error('Ошибка входа');
       }
     }
   };

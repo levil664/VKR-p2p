@@ -16,6 +16,7 @@ import {
 } from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
 import { MentorApplicationDto } from '../../../entities/mentorApplicationApi/model/types';
 import { MentorApplicationStatus } from '../lib/enums';
+import { toast } from 'react-toastify';
 
 interface Props {
   applications: MentorApplicationDto[];
@@ -24,6 +25,24 @@ interface Props {
 export const MentorApplicationTable = ({ applications }: Props) => {
   const [approveApplication] = useApproveMentorApplicationMutation();
   const [rejectApplication] = useRejectMentorApplicationMutation();
+
+  const handleApprove = async (id: string) => {
+    try {
+      await approveApplication(id).unwrap();
+      toast.success('Заявка успешно принята');
+    } catch (error) {
+      toast.error('Ошибка при принятии заявки');
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      await rejectApplication(id).unwrap();
+      toast.warning('Заявка успешно отклонена');
+    } catch (error) {
+      toast.error('Ошибка при отклонении заявки');
+    }
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -76,14 +95,14 @@ export const MentorApplicationTable = ({ applications }: Props) => {
                     size="small"
                     variant="contained"
                     color="primary"
-                    onClick={() => approveApplication(app.id)}
+                    onClick={() => handleApprove(app.id)}
                   >
                     Принять
                   </Button>
                   <Button
                     size="small"
                     variant="outlined"
-                    onClick={() => rejectApplication(app.id)}
+                    onClick={() => handleReject(app.id)}
                     sx={{
                       borderColor: theme => theme.palette.error.main,
                       color: theme => theme.palette.error.main,

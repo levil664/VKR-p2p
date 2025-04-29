@@ -13,6 +13,7 @@ import {
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useRegisterMutation } from '../../../entities/auth/api/authApi';
+import { toast } from 'react-toastify';
 
 interface RegisterFormProps {
   title: string;
@@ -75,10 +76,11 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
     try {
       await register(formData).unwrap();
+      toast.success('Регистрация прошла успешно!');
       onSuccess();
       navigate('/');
     } catch (err) {
-      console.error('Ошибка регистрации:', err);
+      toast.error('Ошибка регистрации');
     }
   };
 

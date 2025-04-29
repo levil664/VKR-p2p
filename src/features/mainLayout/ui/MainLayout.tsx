@@ -25,6 +25,7 @@ import { setUserRole } from '../../../entities/user/api/slice';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { RoleEnum } from '../../../entities/user/model/enums';
 import { drawerWidth, menuItems } from '../lib/const';
+import { ToastContainer } from 'react-toastify';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,6 +43,12 @@ export const MainLayout: React.FC = () => {
       dispatch(setUserRole(user.data.role as RoleEnum));
     }
   }, [user, dispatch]);
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsOpen(false);
+    }
+  }, [isMobile]);
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -117,7 +124,7 @@ export const MainLayout: React.FC = () => {
           <Box
             sx={{ display: 'flex', alignItems: 'center' }}
             onClick={handleProfileClick}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: ' pointer' }}
           >
             <Typography variant="body1" sx={{ mr: 2, color: 'white' }}>
               {user?.data?.firstName || 'Loading...'}
@@ -210,6 +217,15 @@ export const MainLayout: React.FC = () => {
       >
         <Toolbar />
         <Outlet />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          closeOnClick
+          draggable
+          pauseOnHover
+          style={{ top: 74, right: 10, zIndex: 1000 }}
+        />
         {isMobile && (
           <BottomNavigation
             value={activeTab}

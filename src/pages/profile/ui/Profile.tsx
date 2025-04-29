@@ -5,29 +5,19 @@ import {
   CircularProgress,
   Grid,
   Paper,
-  Snackbar,
   Stack,
   Typography,
 } from '@mui/material';
-import MuiAlert from '@mui/material/Alert';
 import React, { useState } from 'react';
 import { useApplyForMentorMutation } from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { MentorApplyModal } from './MentorApplyModal';
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import { toast } from 'react-toastify';
 
 export const Profile = () => {
   const { data: userResponse, error, isLoading } = useMeQuery();
   const [openModal, setOpenModal] = useState(false);
   const [applyForMentor] = useApplyForMentorMutation();
-  const [notification, setNotification] = useState({
-    open: false,
-    message: '',
-    severity: 'success',
-  });
 
   if (isLoading) {
     return (
@@ -64,18 +54,14 @@ export const Profile = () => {
     try {
       await applyForMentor({ description: data.description }).unwrap();
       setOpenModal(false);
-      setNotification({ open: true, message: 'Заявка успешно отправлена!', severity: 'success' });
+      toast.success('Заявка успешно отправлена!');
     } catch (error) {
       if (error.status === 400) {
-        setNotification({ open: true, message: 'Заявка уже отправлена', severity: 'warning' });
+        toast.warning('Заявка уже отправлена');
       } else {
-        console.error('Ошибка при подаче заявки на наставничество:', error);
+        toast.error('Ошибка при подаче заявки');
       }
     }
-  };
-
-  const handleCloseNotification = () => {
-    setNotification({ ...notification, open: false });
   };
 
   const getInitials = (firstName, lastName) => {
@@ -169,16 +155,6 @@ export const Profile = () => {
         onClose={() => setOpenModal(false)}
         onSubmit={handleApplyForMentor}
       />
-
-      <Snackbar open={notification.open} autoHideDuration={6000} onClose={handleCloseNotification}>
-        <Alert
-          onClose={handleCloseNotification}
-          severity={notification.severity}
-          sx={{ width: '100%' }}
-        >
-          {notification.message}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };
