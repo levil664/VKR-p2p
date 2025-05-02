@@ -1,4 +1,4 @@
-import { FaClipboardList, FaUser } from 'react-icons/fa';
+import { FaClipboardList, FaComments, FaUser } from 'react-icons/fa';
 import { RoleEnum } from '../../../entities/user/model/enums';
 
 export const drawerWidth = 200;
@@ -14,6 +14,12 @@ export const menuItems = [
     icon: <FaUser style={{ fontSize: '20px' }} />,
     text: 'Мои заявки',
     link: '/my-advert',
+    allowedRoles: [RoleEnum.STUDENT, RoleEnum.MENTOR],
+  },
+  {
+    icon: <FaComments style={{ fontSize: '20px' }} />,
+    text: 'Мои отклики',
+    link: '/my-response',
     allowedRoles: [RoleEnum.STUDENT, RoleEnum.MENTOR],
   },
 ];

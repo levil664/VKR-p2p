@@ -10,6 +10,7 @@ import { MyAdverts } from '../../pages/myAdvert/ui/MyAdvert';
 import { NotFound } from '../../pages/notFound/ui';
 import { Profile } from '../../pages/profile/ui';
 import { useAppSelector } from '../api';
+import { MyAdvertResponses } from '../../pages/myAdvertResponse/ui/MyAdvertResponse';
 
 export const AppRoutes: React.FC = () => {
   const userRole = useAppSelector(state => state.user.role);
@@ -25,9 +26,15 @@ export const AppRoutes: React.FC = () => {
           path="/"
           element={userRole === RoleEnum.TEACHER ? <MentorApplication /> : <Advert />}
         />
+
         <Route
           path="/advert"
           element={userRole === RoleEnum.TEACHER ? <MentorApplication /> : <Advert />}
+        />
+
+        <Route
+          path="/my-response"
+          element={userRole === RoleEnum.TEACHER ? <NotFound /> : <MyAdvertResponses />}
         />
 
         <Route

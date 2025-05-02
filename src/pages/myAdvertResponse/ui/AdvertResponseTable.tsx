@@ -1,0 +1,87 @@
+import {
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tooltip,
+} from '@mui/material';
+import { useNavigate } from 'react-router';
+import { AdvertStatus } from '../../../entities/advert/model/enums';
+
+export const AdvertResponseTable = ({ responses }) => {
+  const navigate = useNavigate();
+
+  const handleRowClick = advertId => {
+    navigate(`/my-response/${advertId}`);
+  };
+
+  return (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ fontWeight: 'bold' }}>Объявление</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}>Описание</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}>Статус</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}>Создано</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}>Автор</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}>Роль</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {responses.map(response => (
+            <TableRow
+              key={response.id}
+              hover
+              onClick={() => handleRowClick(response.advert.id)}
+              sx={{ cursor: 'pointer' }}
+            >
+              <TableCell>
+                <Tooltip
+                  title={response.advert.title}
+                  placement="top-start"
+                  arrow
+                  disableInteractive
+                >
+                  <span>{response.advert.title}</span>
+                </Tooltip>
+              </TableCell>
+              <TableCell>
+                <Tooltip
+                  title={response.description}
+                  placement="top-start"
+                  arrow
+                  disableInteractive
+                >
+                  <span>{response.description}</span>
+                </Tooltip>
+              </TableCell>
+              <TableCell>
+                <Box
+                  sx={{
+                    border: `1px solid ${AdvertStatus[response.advert.status].color}`,
+                    borderRadius: '4px',
+                    padding: '4px 8px',
+                    display: 'inline-block',
+                    color: AdvertStatus[response.advert.status].color,
+                  }}
+                >
+                  {AdvertStatus[response.advert.status].label}
+                </Box>
+              </TableCell>
+              <TableCell>{new Date(response.createdOn).toLocaleDateString()}</TableCell>
+              <TableCell>
+                {response.respondent.firstName} {response.respondent.lastName}
+              </TableCell>
+              <TableCell>{response.respondent.isMentor ? 'Наставник' : 'Студент'}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
