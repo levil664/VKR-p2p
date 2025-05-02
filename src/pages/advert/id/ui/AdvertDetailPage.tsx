@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -16,6 +15,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
@@ -25,16 +25,16 @@ import {
   useUpdateAdvertMutation,
 } from '../../../../entities/advert/api/advertApi';
 import {
+  useCreateAdvertResponseMutation,
+  useDeleteAdvertResponseMutation,
+  useGetAdvertResponsesQuery,
+} from '../../../../entities/advertResponse/api/advertResponseApi';
+import {
   useGetMyChatsQuery,
   useGetUnreadMessagesQuery,
   useSendMessageMutation,
 } from '../../../../entities/chat/api/chatApi';
 import { useGetSubjectsQuery } from '../../../../entities/subjects/api/subjectsApi';
-import {
-  useCreateAdvertResponseMutation,
-  useDeleteAdvertResponseMutation,
-  useGetAdvertResponsesQuery,
-} from '../../../../entities/advertResponse/api/advertResponseApi';
 
 export const AdvertDetailPage = () => {
   const { id } = useParams();

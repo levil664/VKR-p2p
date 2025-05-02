@@ -1,11 +1,11 @@
 import { commonApi } from '../../../app/api';
+import { EmptyResponse } from '../../chat/model';
 import {
   CreateAdvertResponseRequest,
   ItemResponseAdvertResponseDto,
   ListResponseAdvertResponseDto,
   ListResponseAdvertWithResponseDto,
 } from '../model';
-import { EmptyResponse } from '../../chat/model';
 
 export const advertResponseApi = commonApi.injectEndpoints?.({
   endpoints: builder => ({

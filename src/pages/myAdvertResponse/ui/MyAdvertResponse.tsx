@@ -5,9 +5,9 @@ import { useGetMyAdvertResponsesQuery } from '../../../entities/advertResponse/a
 import { NoData } from '../../../features/noData/ui/NoData';
 import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
 import { Loader } from '../../../shared/components/loader/ui/Loader';
+import { AdvertPagination } from '../../advert/ui/AdvertPagination';
 import { AdvertResponseCard } from './AdvertResponseCard';
 import { AdvertResponseTable } from './AdvertResponseTable';
-import { AdvertPagination } from '../../advert/ui/AdvertPagination';
 
 export const MyAdvertResponses = () => {
   const [searchParams, setSearchParams] = useSearchParams();

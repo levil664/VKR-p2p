@@ -7,10 +7,10 @@ import { Advert } from '../../pages/advert/ui';
 import { Login, Register } from '../../pages/auth/ui';
 import { MentorApplication } from '../../pages/mentorApplication/ui';
 import { MyAdverts } from '../../pages/myAdvert/ui/MyAdvert';
+import { MyAdvertResponses } from '../../pages/myAdvertResponse/ui/MyAdvertResponse';
 import { NotFound } from '../../pages/notFound/ui';
 import { Profile } from '../../pages/profile/ui';
 import { useAppSelector } from '../api';
-import { MyAdvertResponses } from '../../pages/myAdvertResponse/ui/MyAdvertResponse';
 
 export const AppRoutes: React.FC = () => {
   const userRole = useAppSelector(state => state.user.role);
