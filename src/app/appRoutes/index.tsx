@@ -1,6 +1,8 @@
 import React from 'react';
 import { Route, Routes } from 'react-router';
+import { RoleEnum } from '../../entities/user/model/enums';
 import { MainLayout } from '../../features/mainLayout/ui/MainLayout';
+import { AdvertDetailPage } from '../../pages/advert/id/ui/AdvertDetailPage';
 import { Advert } from '../../pages/advert/ui';
 import { Login, Register } from '../../pages/auth/ui';
 import { MentorApplication } from '../../pages/mentorApplication/ui';
@@ -8,8 +10,6 @@ import { MyAdverts } from '../../pages/myAdvert/ui/MyAdvert';
 import { NotFound } from '../../pages/notFound/ui';
 import { Profile } from '../../pages/profile/ui';
 import { useAppSelector } from '../api';
-import { RoleEnum } from '../../entities/user/model/enums';
-import { AdvertDetailPage } from '../../pages/advert/id/ui/AdvertDetailPage';
 
 export const AppRoutes: React.FC = () => {
   const userRole = useAppSelector(state => state.user.role);

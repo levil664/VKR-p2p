@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, CircularProgress, List, ListItem, ListItemText, Typography } from '@mui/material';
 
 export const ChatList = ({ onSelectChat }) => {
