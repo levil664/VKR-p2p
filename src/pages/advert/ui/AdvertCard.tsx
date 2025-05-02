@@ -6,7 +6,7 @@ export const AdvertCard = ({ advert }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/adverts/${advert.id}`);
+    navigate(`/advert/${advert.id}`);
   };
 
   return (

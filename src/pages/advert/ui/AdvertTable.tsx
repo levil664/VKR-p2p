@@ -16,7 +16,7 @@ export const AdvertTable = ({ adverts }) => {
   const navigate = useNavigate();
 
   const handleRowClick = id => {
-    navigate(`/adverts/${id}`);
+    navigate(`/advert/${id}`);
   };
 
   return (

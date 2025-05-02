@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, Route, Routes } from 'react-router';
+import { Route, Routes } from 'react-router';
 import { MainLayout } from '../../features/mainLayout/ui/MainLayout';
 import { Advert } from '../../pages/advert/ui';
 import { Login, Register } from '../../pages/auth/ui';
@@ -8,6 +8,8 @@ import { MyAdverts } from '../../pages/myAdvert/ui/MyAdvert';
 import { NotFound } from '../../pages/notFound/ui';
 import { Profile } from '../../pages/profile/ui';
 import { useAppSelector } from '../api';
+import { RoleEnum } from '../../entities/user/model/enums';
+import { AdvertDetailPage } from '../../pages/advert/id/ui/AdvertDetailPage';
 
 export const AppRoutes: React.FC = () => {
   const userRole = useAppSelector(state => state.user.role);
@@ -21,27 +23,24 @@ export const AppRoutes: React.FC = () => {
       <Route element={<MainLayout />}>
         <Route
           path="/"
-          element={userRole === 'ROLE_TEACHER' ? <MentorApplication /> : <Advert />}
+          element={userRole === RoleEnum.TEACHER ? <MentorApplication /> : <Advert />}
         />
         <Route
           path="/advert"
-          element={userRole === 'ROLE_TEACHER' ? <MentorApplication /> : <Advert />}
+          element={userRole === RoleEnum.TEACHER ? <MentorApplication /> : <Advert />}
         />
 
         <Route
-          path="/my-adverts"
-          element={
-            !userRole ? (
-              <Navigate to="/login" />
-            ) : userRole === 'ROLE_TEACHER' ? (
-              <NotFound />
-            ) : (
-              <MyAdverts />
-            )
-          }
+          path="/my-advert"
+          element={userRole === RoleEnum.TEACHER ? <NotFound /> : <MyAdverts />}
         />
 
-        <Route path="/profile" element={!userRole ? <Navigate to="/login" /> : <Profile />} />
+        <Route path="/profile" element={<Profile />} />
+
+        <Route
+          path="/advert/:id"
+          element={userRole === RoleEnum.TEACHER ? <NotFound /> : <AdvertDetailPage />}
+        />
       </Route>
     </Routes>
   );

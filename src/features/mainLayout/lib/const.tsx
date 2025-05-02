@@ -13,7 +13,7 @@ export const menuItems = [
   {
     icon: <FaUser style={{ fontSize: '20px' }} />,
     text: 'Мои заявки',
-    link: '/my-adverts',
+    link: '/my-advert',
     allowedRoles: [RoleEnum.STUDENT, RoleEnum.MENTOR],
   },
 ];
