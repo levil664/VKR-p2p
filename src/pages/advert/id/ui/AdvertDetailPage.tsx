@@ -22,8 +22,11 @@ import {
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { FiCheck, FiTrash2 } from 'react-icons/fi';
+import { MdSend } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
+import { useAppSelector } from '../../../../app/api';
 import {
   useDeleteAdvertMutation,
   useGetAdvertQuery,
@@ -42,9 +45,6 @@ import {
   useSendMessageMutation,
 } from '../../../../entities/chat/api/chatApi';
 import { useGetSubjectsQuery } from '../../../../entities/subjects/api/subjectsApi';
-import { useAppSelector } from '../../../../app/api';
-import { MdSend } from 'react-icons/md';
-import { FiCheck, FiTrash2 } from 'react-icons/fi';
 
 export const AdvertDetailPage = () => {
   const { id } = useParams();
