@@ -6,7 +6,7 @@ export const AdvertResponseCard = ({ response }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/my-response/${response.advert.id}`);
+    navigate(`/advert/${response.advert.id}`);
   };
 
   return (
@@ -30,7 +30,7 @@ export const AdvertResponseCard = ({ response }) => {
           {response.advert.title}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', marginBottom: 2 }}>
-          {response.description}
+          {response.advert.description}
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
@@ -39,7 +39,18 @@ export const AdvertResponseCard = ({ response }) => {
               {AdvertStatus[response.advert.status]?.label || response.advert.status}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              <strong>Создано:</strong> {new Date(response.createdOn).toLocaleDateString()}
+              <strong>Создано:</strong> {new Date(response.advert.createdOn).toLocaleDateString()}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              <strong>Автор:</strong>{' '}
+              {response.advert.student
+                ? `${response.advert.student.firstName} ${response.advert.student.lastName}`
+                : 'Не указан'}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              <strong>Роль:</strong> {response.advert.student?.isMentor ? 'Наставник' : 'Студент'}
             </Typography>
           </Box>
         </Box>

@@ -15,8 +15,8 @@ import { AdvertStatus } from '../../../entities/advert/model/enums';
 export const AdvertResponseTable = ({ responses }) => {
   const navigate = useNavigate();
 
-  const handleRowClick = advertId => {
-    navigate(`/my-response/${advertId}`);
+  const handleRowClick = responseId => {
+    navigate(`/advert/${responseId}`);
   };
 
   return (
@@ -35,7 +35,7 @@ export const AdvertResponseTable = ({ responses }) => {
         <TableBody>
           {responses.map(response => (
             <TableRow
-              key={response.id}
+              key={response.advert.id}
               hover
               onClick={() => handleRowClick(response.advert.id)}
               sx={{ cursor: 'pointer' }}
@@ -52,32 +52,34 @@ export const AdvertResponseTable = ({ responses }) => {
               </TableCell>
               <TableCell>
                 <Tooltip
-                  title={response.description}
+                  title={response.advert.description}
                   placement="top-start"
                   arrow
                   disableInteractive
                 >
-                  <span>{response.description}</span>
+                  <span>{response.advert.description}</span>
                 </Tooltip>
               </TableCell>
               <TableCell>
                 <Box
                   sx={{
-                    border: `1px solid ${AdvertStatus[response.advert.status].color}`,
+                    border: `1px solid ${AdvertStatus[response.advert.status]?.color}`,
                     borderRadius: '4px',
                     padding: '4px 8px',
                     display: 'inline-block',
-                    color: AdvertStatus[response.advert.status].color,
+                    color: AdvertStatus[response.advert.status]?.color,
                   }}
                 >
-                  {AdvertStatus[response.advert.status].label}
+                  {AdvertStatus[response.advert.status]?.label}
                 </Box>
               </TableCell>
-              <TableCell>{new Date(response.createdOn).toLocaleDateString()}</TableCell>
+              <TableCell>{new Date(response.advert.createdOn).toLocaleDateString()}</TableCell>
               <TableCell>
-                {response.respondent.firstName} {response.respondent.lastName}
+                {response.advert.student
+                  ? `${response.advert.student.firstName} ${response.advert.student.lastName}`
+                  : 'Не указан'}
               </TableCell>
-              <TableCell>{response.respondent.isMentor ? 'Наставник' : 'Студент'}</TableCell>
+              <TableCell>{response.advert.student?.isMentor ? 'Наставник' : 'Студент'}</TableCell>
             </TableRow>
           ))}
         </TableBody>

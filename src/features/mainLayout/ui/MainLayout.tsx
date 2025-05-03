@@ -22,7 +22,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../../app/api';
 import { useLogoutMutation } from '../../../entities/auth/api/authApi';
-import { setIsMentor, setUserRole } from '../../../entities/user/api/slice';
+import { setIsMentor, setUserId, setUserRole } from '../../../entities/user/api/slice';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { RoleEnum } from '../../../entities/user/model/enums';
 import { drawerWidth, menuItems } from '../lib/const';
@@ -42,6 +42,7 @@ export const MainLayout: React.FC = () => {
     if (user?.data) {
       dispatch(setUserRole(user.data.role as RoleEnum));
       dispatch(setIsMentor(user.data.isMentor));
+      dispatch(setUserId(user.data.id));
     }
   }, [user, dispatch]);
 
