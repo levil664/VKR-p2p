@@ -67,14 +67,14 @@ export const AdvertTable = ({ adverts }) => {
               <TableCell>
                 <Box
                   sx={{
-                    border: `1px solid ${AdvertStatus[advert.status].color}`,
+                    border: `1px solid ${AdvertStatus[advert.status]?.color || 'gray'}`,
                     borderRadius: '4px',
                     padding: '4px 8px',
                     display: 'inline-block',
-                    color: AdvertStatus[advert.status].color,
+                    color: AdvertStatus[advert.status]?.color || 'black',
                   }}
                 >
-                  {AdvertStatus[advert.status].label}
+                  {AdvertStatus[advert.status]?.label || 'Неизвестный статус'}
                 </Box>
               </TableCell>
               <TableCell>{new Date(advert.createdOn).toLocaleDateString()}</TableCell>

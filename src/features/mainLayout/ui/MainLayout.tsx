@@ -172,11 +172,26 @@ export const MainLayout: React.FC = () => {
               sx={{
                 userSelect: 'none',
                 padding: '8px 16px',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                },
               }}
               selected={location.pathname === item.link}
             >
               <ListItemIcon sx={{ minWidth: '40px' }}>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemText
+                primary={
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontWeight: 'bold',
+                      color: location.pathname === item.link ? 'primary.main' : 'text.primary',
+                    }}
+                  >
+                    {item.text}
+                  </Typography>
+                }
+              />
             </ListItem>
           ))}
         </List>
@@ -246,7 +261,7 @@ export const MainLayout: React.FC = () => {
             }}
           >
             {filteredMenuItems.map((item, index) => (
-              <BottomNavigationAction key={index} label={item.text} icon={item.icon} />
+              <BottomNavigationAction key={index} icon={item.icon} />
             ))}
           </BottomNavigation>
         )}
