@@ -1,18 +1,18 @@
 import { Box, Button, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
-import { NoData } from '../../../features/noData/ui/NoData';
-import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
-import { Loader } from '../../../shared/components/loader/ui/Loader';
-import { GroupMeetingCard } from './GroupMeetingCard';
-import { GroupMeetingTable } from './GroupMeetingTable';
-import { GroupMeetingPagination } from './GroupMeetingPagination';
-import { CreateGroupMeetingModal } from './CreateGroupMeetingModal';
+import { toast } from 'react-toastify';
 import {
   useCreateGroupMeetingMutation,
   useGetGroupMeetingsQuery,
 } from '../../../entities/groupMeetings/api';
-import { toast } from 'react-toastify';
+import { NoData } from '../../../features/noData/ui/NoData';
+import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
+import { Loader } from '../../../shared/components/loader/ui/Loader';
+import { CreateGroupMeetingModal } from './CreateGroupMeetingModal';
+import { GroupMeetingCard } from './GroupMeetingCard';
+import { GroupMeetingPagination } from './GroupMeetingPagination';
+import { GroupMeetingTable } from './GroupMeetingTable';
 
 export const GroupMeeting = () => {
   const [searchParams, setSearchParams] = useSearchParams();
