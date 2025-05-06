@@ -12,6 +12,8 @@ import { MyAdvertResponses } from '../../pages/myAdvertResponse/ui/MyAdvertRespo
 import { NotFound } from '../../pages/notFound/ui';
 import { Profile } from '../../pages/profile/ui';
 import { useAppSelector } from '../api';
+import { GroupMeetingDetailPage } from '../../pages/groupMeeting/id/ui/GroupMeetingDetailPage';
+import { Chat } from '../../pages/chat/ui/Chat';
 
 export const AppRoutes: React.FC = () => {
   const userRole = useAppSelector(state => state.user.role);
@@ -47,9 +49,16 @@ export const AppRoutes: React.FC = () => {
 
         <Route path="/profile" element={<Profile />} />
 
+        <Route path="/chat" element={userRole === RoleEnum.TEACHER ? <NotFound /> : <Chat />} />
+
         <Route
           path="/advert/:id"
           element={userRole === RoleEnum.TEACHER ? <NotFound /> : <AdvertDetailPage />}
+        />
+
+        <Route
+          path="/group-meeting/:id"
+          element={userRole === RoleEnum.TEACHER ? <NotFound /> : <GroupMeetingDetailPage />}
         />
       </Route>
     </Routes>

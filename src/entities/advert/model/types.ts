@@ -25,6 +25,7 @@ export interface ItemResponseAdvertDto {
 export interface AdvertDto {
   id: string;
   mentor?: UserPublicDto;
+  creator?: UserPublicDto;
   student?: UserPublicDto;
   title: string;
   description: string;

@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Paper,
   Table,
   TableBody,
@@ -11,6 +12,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { AdvertStatus } from '../../../entities/advert/model/enums';
+import { theme } from '../../../app/theme';
 
 export const AdvertResponseTable = ({ responses }) => {
   const navigate = useNavigate();
@@ -30,6 +32,7 @@ export const AdvertResponseTable = ({ responses }) => {
             <TableCell sx={{ fontWeight: 'bold' }}>Создано</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Автор</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Роль</TableCell>
+            <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -80,6 +83,23 @@ export const AdvertResponseTable = ({ responses }) => {
                   : 'Не указан'}
               </TableCell>
               <TableCell>{response.advert.student?.isMentor ? 'Наставник' : 'Студент'}</TableCell>
+              <TableCell>
+                <Button
+                  variant="outlined"
+                  onClick={() => navigate(`/chat/${response?.chatId}`)}
+                  sx={{
+                    borderColor: theme.palette.info.main,
+                    color: theme.palette.info.main,
+                    '&:hover': {
+                      backgroundColor: theme.palette.info.light,
+                      borderColor: theme.palette.info.dark,
+                      color: '#fff',
+                    },
+                  }}
+                >
+                  Чат
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
