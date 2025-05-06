@@ -12,6 +12,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FiCheck } from 'react-icons/fi';
@@ -36,7 +37,6 @@ import {
   useSendMessageMutation,
 } from '../../../../entities/chat/api/chatApi';
 import { useGetSubjectsQuery } from '../../../../entities/subjects/api/subjectsApi';
-import { useTheme } from '@mui/material/styles';
 import { NoData } from '../../../../features/noData/ui/NoData';
 import { DeleteAdvertDialog } from './DeleteAdvertDialog';
 

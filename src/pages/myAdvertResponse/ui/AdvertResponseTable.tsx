@@ -11,8 +11,8 @@ import {
   Tooltip,
 } from '@mui/material';
 import { useNavigate } from 'react-router';
-import { AdvertStatus } from '../../../entities/advert/model/enums';
 import { theme } from '../../../app/theme';
+import { AdvertStatus } from '../../../entities/advert/model/enums';
 
 export const AdvertResponseTable = ({ responses }) => {
   const navigate = useNavigate();

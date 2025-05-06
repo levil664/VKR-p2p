@@ -2,12 +2,12 @@ import { Box, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useGetMyChatsQuery } from '../../../entities/chat/api/chatApi';
-import { ChatCard } from './ChatCard';
-import { ChatTable } from './ChatTable';
-import { ChatPagination } from './ChatPagination';
-import { Loader } from '../../../shared/components/loader/ui/Loader';
 import { NoData } from '../../../features/noData/ui/NoData';
 import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
+import { Loader } from '../../../shared/components/loader/ui/Loader';
+import { ChatCard } from './ChatCard';
+import { ChatPagination } from './ChatPagination';
+import { ChatTable } from './ChatTable';
 
 export const Chat = () => {
   const [searchParams, setSearchParams] = useSearchParams();
