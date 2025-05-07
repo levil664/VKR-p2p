@@ -1,5 +1,3 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router';
 import {
   Box,
   Button,
@@ -21,6 +19,12 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { MdSend } from 'react-icons/md';
+import { useParams } from 'react-router';
+import { toast } from 'react-toastify';
+import { useAppSelector } from '../../../../app/api';
 import {
   useFinalizeAdvertMutation,
   useGetAdvertQuery,
@@ -32,11 +36,7 @@ import {
   useGetMessagesQuery,
   useSendMessageMutation,
 } from '../../../../entities/chat/api/chatApi';
-import { toast } from 'react-toastify';
-import { useAppSelector } from '../../../../app/api';
-import { Controller, useForm } from 'react-hook-form';
 import { useGetSubjectsQuery } from '../../../../entities/subjects/api/subjectsApi';
-import { MdSend } from 'react-icons/md';
 
 export const ChatDetailPage = () => {
   const { chatId } = useParams();
