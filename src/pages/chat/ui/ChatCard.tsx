@@ -1,11 +1,18 @@
-import { Card, CardContent, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
+import { useAppSelector } from '../../../app/api';
 
 export const ChatCard = ({ chat }) => {
   const navigate = useNavigate();
+  const currentUserId = useAppSelector(state => state.user.id);
 
   const handleCardClick = () => {
     navigate(`/chat/${chat.id}`);
+  };
+
+  const handleAdvertClick = e => {
+    e.stopPropagation();
+    navigate(`/advert/${chat.advertId}`);
   };
 
   return (
@@ -25,12 +32,19 @@ export const ChatCard = ({ chat }) => {
       onClick={handleCardClick}
     >
       <CardContent>
-        <Typography variant="h5" noWrap sx={{ fontWeight: 'bold', fontSize: '1.5rem' }}>
-          {chat.title}
+        <Typography variant="body2" sx={{ color: 'text.secondary', marginBottom: 2 }}>
+          Участники:{' '}
+          {chat.participants
+            .filter(p => p.id !== currentUserId)
+            .map(p => `${p.lastName} ${p.firstName}`)
+            .join(', ')}
         </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', marginBottom: 4 }}>
-          Участники: {chat.participants.map(p => p.firstName).join(', ')}
-        </Typography>
+
+        <Box>
+          <Button variant="outlined" size="small" onClick={handleAdvertClick}>
+            Заявка
+          </Button>
+        </Box>
       </CardContent>
     </Card>
   );

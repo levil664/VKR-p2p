@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FiCheck } from 'react-icons/fi';
 import { useNavigate, useParams } from 'react-router';
@@ -27,15 +27,9 @@ import {
 import {
   useAcceptAdvertResponseMutation,
   useCreateAdvertResponseMutation,
-  useDeleteAdvertResponseMutation,
   useGetAdvertResponsesQuery,
 } from '../../../../entities/advertResponse/api/advertResponseApi';
-import {
-  useGetMessagesQuery,
-  useGetMyChatsQuery,
-  useGetUnreadMessagesQuery,
-  useSendMessageMutation,
-} from '../../../../entities/chat/api/chatApi';
+import { useGetMyChatsQuery } from '../../../../entities/chat/api/chatApi';
 import { useGetSubjectsQuery } from '../../../../entities/subjects/api/subjectsApi';
 import { NoData } from '../../../../features/noData/ui/NoData';
 import { DeleteAdvertDialog } from './DeleteAdvertDialog';
@@ -50,25 +44,13 @@ export const AdvertDetailPage = () => {
   const { data: chatsData } = useGetMyChatsQuery();
   const { data: responsesData } = useGetAdvertResponsesQuery(id);
   const [createAdvertResponse] = useCreateAdvertResponseMutation();
-  const [deleteAdvertResponse] = useDeleteAdvertResponseMutation();
   const [acceptAdvertResponse] = useAcceptAdvertResponseMutation();
   const [updateAdvert] = useUpdateAdvertMutation();
   const [deleteAdvert] = useDeleteAdvertMutation();
-  const [sendMessage] = useSendMessageMutation();
 
   const [openDialog, setOpenDialog] = useState(false);
-  const [deleteConfirmed, setDeleteConfirmed] = useState(false);
-  const [selectedChatId, setSelectedChatId] = useState(null);
-  const [messageText, setMessageText] = useState('');
   const [responseText, setResponseText] = useState('');
   const [tabIndex, setTabIndex] = useState(0);
-  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
-  const [pageNumber, setPageNumber] = useState(0);
-  const [allMessages, setAllMessages] = useState([]);
-  const messagesContainerRef = useRef();
-  const topObserverRef = useRef();
-  const bottomRef = useRef(null);
-  const pageSize = 10;
 
   const { control, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
@@ -80,15 +62,6 @@ export const AdvertDetailPage = () => {
   });
 
   const selectedSubjectId = watch('subjectId');
-
-  const { data: messagesData, refetch } = useGetMessagesQuery(
-    {
-      chatId: selectedChatId,
-      pageNumber,
-      pageSize,
-    },
-    { skip: !selectedChatId }
-  );
 
   const currentUserId = useAppSelector(state => state.user.id);
   const isAuthor = advertData?.data.creator.id === currentUserId;
@@ -122,56 +95,6 @@ export const AdvertDetailPage = () => {
   };
 
   useEffect(() => {
-    setAllMessages([]);
-    setPageNumber(0);
-  }, [selectedChatId]);
-
-  useEffect(() => {
-    if (!topObserverRef.current) return;
-
-    let timeoutId = null;
-
-    const observer = new IntersectionObserver(
-      entries => {
-        const entry = entries[0];
-        if (
-          entry.isIntersecting &&
-          messagesData?.data?.page.number + 1 < messagesData?.data?.page.totalPages
-        ) {
-          timeoutId = setTimeout(() => {
-            setPageNumber(prev => prev + 1);
-          }, 1000);
-        } else {
-          if (timeoutId) clearTimeout(timeoutId);
-        }
-      },
-      { threshold: 1 }
-    );
-
-    observer.observe(topObserverRef.current);
-
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-      observer.disconnect();
-    };
-  }, [messagesData]);
-
-  useEffect(() => {
-    if (messagesData?.data?.content) {
-      setAllMessages(prevMessages => [
-        ...messagesData.data.content,
-        ...prevMessages.filter(m => !messagesData.data.content.some(newM => newM.id === m.id)),
-      ]);
-    }
-  }, [messagesData]);
-
-  useEffect(() => {
-    if (bottomRef.current) {
-      bottomRef.current.scrollIntoView();
-    }
-  }, [allMessages]);
-
-  useEffect(() => {
     if (advertData) {
       setValue('title', advertData.data.title);
       setValue('description', advertData.data.description);
@@ -179,29 +102,6 @@ export const AdvertDetailPage = () => {
       setValue('topicIds', advertData.data.topicIds);
     }
   }, [advertData, setValue]);
-
-  useEffect(() => {
-    if (selectedChatId) {
-      const interval = setInterval(() => {
-        const { data: unreadMessages } = useGetUnreadMessagesQuery(selectedChatId);
-        setUnreadMessagesCount(unreadMessages?.data.length || 0);
-      }, 5000);
-
-      return () => clearInterval(interval);
-    }
-  }, [selectedChatId]);
-
-  const handleChatSelect = chatId => {
-    setSelectedChatId(chatId);
-  };
-
-  const handleSendMessage = async () => {
-    if (messageText.trim()) {
-      await sendMessage({ chatId: selectedChatId, body: { text: messageText } });
-      setMessageText('');
-      toast.success('Сообщение отправлено!');
-    }
-  };
 
   const handleUpdateAdvert = async data => {
     try {
@@ -468,110 +368,6 @@ export const AdvertDetailPage = () => {
           )}
         </Box>
       )}
-
-      {/*{tabIndex === 1 && (*/}
-      {/*  <Box>*/}
-      {/*    <Typography variant="h6">Чаты</Typography>*/}
-      {/*    <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>*/}
-      {/*      {chatsData.data.map(chat => (*/}
-      {/*        <Paper*/}
-      {/*          key={chat.id}*/}
-      {/*          elevation={selectedChatId === chat.id ? 4 : 1}*/}
-      {/*          sx={{*/}
-      {/*            p: 2,*/}
-      {/*            borderRadius: 2,*/}
-      {/*            border: selectedChatId === chat.id ? '2px solid #1976d2' : '1px solid #e0e0e0',*/}
-      {/*            cursor: 'pointer',*/}
-      {/*            display: 'flex',*/}
-      {/*            alignItems: 'center',*/}
-      {/*            justifyContent: 'space-between',*/}
-      {/*            '&:hover': {*/}
-      {/*              border: '2px solid #1976d2',*/}
-      {/*            },*/}
-      {/*          }}*/}
-      {/*          onClick={() => handleChatSelect(chat.id)}*/}
-      {/*        >*/}
-      {/*          <Typography fontWeight={500}>*/}
-      {/*            {`Чат с ${chat.participants.map(p => p.firstName).join(', ')}`}*/}
-      {/*          </Typography>*/}
-      {/*          {unreadMessagesCount > 0 && (*/}
-      {/*            <Chip label={unreadMessagesCount} color="primary" size="small" />*/}
-      {/*          )}*/}
-      {/*        </Paper>*/}
-      {/*      ))}*/}
-      {/*    </List>*/}
-
-      {/*    {selectedChatId && (*/}
-      {/*      <Box sx={{ mb: 4 }}>*/}
-      {/*        <Typography variant="h6" sx={{ mt: 2 }}>*/}
-      {/*          Сообщения*/}
-      {/*        </Typography>*/}
-      {/*        <Paper*/}
-      {/*          ref={messagesContainerRef}*/}
-      {/*          sx={{*/}
-      {/*            maxHeight: '50vh',*/}
-      {/*            overflowY: 'auto',*/}
-      {/*            p: 2,*/}
-      {/*            borderRadius: 2,*/}
-      {/*            border: '1px solid #e0e0e0',*/}
-      {/*            backgroundColor: '#f0f2f5',*/}
-      {/*            display: 'flex',*/}
-      {/*            flexDirection: 'column',*/}
-      {/*            gap: 1,*/}
-      {/*          }}*/}
-      {/*        >*/}
-      {/*          <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>*/}
-      {/*            <Box ref={topObserverRef} />*/}
-      {/*            {allMessages.map(message => {*/}
-      {/*              const isMyMessage = message.senderId === currentUserId;*/}
-      {/*              return (*/}
-      {/*                <ListItem*/}
-      {/*                  key={message.id}*/}
-      {/*                  sx={{*/}
-      {/*                    backgroundColor: isMyMessage ? '#1976d2' : '#ffffff',*/}
-      {/*                    color: isMyMessage ? 'white' : 'black',*/}
-      {/*                    borderRadius: 2,*/}
-      {/*                    p: 1.5,*/}
-      {/*                    border: '1px solid #e0e0e0',*/}
-      {/*                    alignSelf: isMyMessage ? 'flex-end' : 'flex-start',*/}
-      {/*                    maxWidth: '70%',*/}
-      {/*                  }}*/}
-      {/*                >*/}
-      {/*                  <ListItemText primary={message.content.text} />*/}
-      {/*                </ListItem>*/}
-      {/*              );*/}
-      {/*            })}*/}
-      {/*            <div ref={bottomRef} />*/}
-      {/*          </List>*/}
-      {/*        </Paper>*/}
-
-      {/*        <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>*/}
-      {/*          <TextField*/}
-      {/*            placeholder="Напишите сообщение..."*/}
-      {/*            value={messageText}*/}
-      {/*            onChange={e => setMessageText(e.target.value)}*/}
-      {/*            fullWidth*/}
-      {/*            size="small"*/}
-      {/*            sx={{ backgroundColor: '#fff', borderRadius: 2 }}*/}
-      {/*          />*/}
-      {/*          <Button*/}
-      {/*            onClick={handleSendMessage}*/}
-      {/*            variant="contained"*/}
-      {/*            color="primary"*/}
-      {/*            sx={{*/}
-      {/*              minWidth: 48,*/}
-      {/*              minHeight: 48,*/}
-      {/*              borderRadius: '50%',*/}
-      {/*              p: 0,*/}
-      {/*            }}*/}
-      {/*          >*/}
-      {/*            <MdSend size={24} color="white" />*/}
-      {/*          </Button>*/}
-      {/*        </Box>*/}
-      {/*      </Box>*/}
-      {/*    )}*/}
-      {/*  </Box>*/}
-      {/*)}*/}
 
       {tabIndex === 1 && (
         <Box>

@@ -13,12 +13,24 @@ import {
 import { useNavigate } from 'react-router';
 import { theme } from '../../../app/theme';
 import { AdvertStatus } from '../../../entities/advert/model/enums';
+import { useDeleteAdvertResponseMutation } from '../../../entities/advertResponse/api/advertResponseApi';
+import { toast } from 'react-toastify';
 
 export const AdvertResponseTable = ({ responses }) => {
   const navigate = useNavigate();
+  const [deleteAdvertResponse] = useDeleteAdvertResponseMutation();
 
   const handleRowClick = responseId => {
     navigate(`/advert/${responseId}`);
+  };
+
+  const handleDelete = async (advertId, responseId) => {
+    try {
+      await deleteAdvertResponse({ advertId, responseId }).unwrap();
+      toast.success('Отклик удален!');
+    } catch (error) {
+      toast.error(error.data.message);
+    }
   };
 
   return (
@@ -30,9 +42,9 @@ export const AdvertResponseTable = ({ responses }) => {
             <TableCell sx={{ fontWeight: 'bold' }}>Описание</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Статус</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Создано</TableCell>
-            <TableCell sx={{ fontWeight: 'bold' }}>Автор</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Роль</TableCell>
-            <TableCell></TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}></TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -77,16 +89,14 @@ export const AdvertResponseTable = ({ responses }) => {
                 </Box>
               </TableCell>
               <TableCell>{new Date(response.advert.createdOn).toLocaleDateString()}</TableCell>
-              <TableCell>
-                {response.advert.student
-                  ? `${response.advert.student.firstName} ${response.advert.student.lastName}`
-                  : 'Не указан'}
-              </TableCell>
               <TableCell>{response.advert.student?.isMentor ? 'Наставник' : 'Студент'}</TableCell>
               <TableCell>
                 <Button
                   variant="outlined"
-                  onClick={() => navigate(`/chat/${response?.chatId}`)}
+                  onClick={e => {
+                    e.stopPropagation();
+                    navigate(`/chat/${response?.chatId}`);
+                  }}
                   sx={{
                     borderColor: theme.palette.info.main,
                     color: theme.palette.info.main,
@@ -98,6 +108,26 @@ export const AdvertResponseTable = ({ responses }) => {
                   }}
                 >
                   Чат
+                </Button>
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="outlined"
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleDelete(response.advert.id, response.response.id);
+                  }}
+                  sx={{
+                    borderColor: theme.palette.error.main,
+                    color: theme.palette.error.main,
+                    '&:hover': {
+                      backgroundColor: theme.palette.error.light,
+                      borderColor: theme.palette.error.dark,
+                      color: '#fff',
+                    },
+                  }}
+                >
+                  Удалить
                 </Button>
               </TableCell>
             </TableRow>

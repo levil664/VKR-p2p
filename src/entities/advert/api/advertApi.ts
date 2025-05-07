@@ -32,6 +32,13 @@ export const advertApi = commonApi.injectEndpoints?.({
             ]
           : [{ type: 'Advert', id: 'LIST' }],
     }),
+    finalizeAdvert: builder.mutation<ItemResponseAdvertDto, string>({
+      query: id => ({
+        url: `/adverts/${id}/finalize`,
+        method: 'POST',
+      }),
+      invalidatesTags: (result, error, id) => [{ type: 'Advert', id }],
+    }),
     createAdvert: builder.mutation<ItemResponseAdvertDto, CreateAdvertRequest>({
       query: body => ({
         url: '/adverts',
@@ -78,4 +85,5 @@ export const {
   useDeleteAdvertMutation,
   useUpdateAdvertMutation,
   useGetMyAdvertsQuery,
+  useFinalizeAdvertMutation,
 } = advertApi;
