@@ -3,10 +3,14 @@ import { RoleEnum } from '../model/enums';
 
 interface UserState {
   role: RoleEnum | null;
+  isMentor: boolean;
+  id: string | null;
 }
 
-const initialState = {
-  role: null as RoleEnum | RoleEnum[] | null,
+const initialState: UserState = {
+  role: null,
+  isMentor: false,
+  id: null,
 };
 
 const userSlice = createSlice({
@@ -16,8 +20,14 @@ const userSlice = createSlice({
     setUserRole(state, action: PayloadAction<RoleEnum>) {
       state.role = action.payload;
     },
+    setIsMentor(state, action: PayloadAction<boolean>) {
+      state.isMentor = action.payload;
+    },
+    setUserId(state, action: PayloadAction<string>) {
+      state.id = action.payload;
+    },
   },
 });
 
-export const { setUserRole } = userSlice.actions;
+export const { setUserRole, setIsMentor, setUserId } = userSlice.actions;
 export default userSlice.reducer;

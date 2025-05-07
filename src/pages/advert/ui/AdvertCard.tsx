@@ -6,7 +6,7 @@ export const AdvertCard = ({ advert }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/adverts/${advert.id}`);
+    navigate(`/advert/${advert.id}`);
   };
 
   return (
@@ -31,7 +31,10 @@ export const AdvertCard = ({ advert }) => {
             {advert.title}
           </Typography>
           <Typography variant="h6" sx={{ color: 'text.secondary', ml: 2, flexShrink: 0 }}>
-            Автор: {advert.student.firstName} {advert.student.lastName}
+            Автор:{' '}
+            {advert.student
+              ? `${advert.student.firstName} ${advert.student.lastName}`
+              : `${advert.mentor.firstName} ${advert.mentor.lastName}`}
           </Typography>
         </Box>
         <Typography variant="body2" sx={{ color: 'text.secondary', marginBottom: 4 }}>
@@ -44,6 +47,9 @@ export const AdvertCard = ({ advert }) => {
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               <strong>Создано:</strong> {new Date(advert.createdOn).toLocaleDateString()}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              <strong>Тип:</strong> {advert.student ? 'Студент' : 'Наставник'}
             </Typography>
           </Box>
           <Button variant="contained" color="primary" onClick={handleCardClick}>

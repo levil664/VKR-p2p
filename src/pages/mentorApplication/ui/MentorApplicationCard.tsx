@@ -1,16 +1,11 @@
-import { Box, Button, Card, CardContent, Snackbar, Typography } from '@mui/material';
-import MuiAlert from '@mui/material/Alert';
-import React, { useState } from 'react';
+import { Box, Button, Card, CardContent, Typography } from '@mui/material';
+import { toast } from 'react-toastify';
 import {
   useApproveMentorApplicationMutation,
   useRejectMentorApplicationMutation,
-} from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
-import { MentorApplicationDto } from '../../../entities/mentorApplicationApi/model/types';
+} from '../../../entities/mentorApplication/api/mentorApplicationApi';
+import { MentorApplicationDto } from '../../../entities/mentorApplication/model/types';
 import { MentorApplicationStatus } from '../lib/enums';
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
 
 interface Props {
   application: MentorApplicationDto;
@@ -19,32 +14,23 @@ interface Props {
 export const MentorApplicationCard = ({ application }: Props) => {
   const [approve] = useApproveMentorApplicationMutation();
   const [reject] = useRejectMentorApplicationMutation();
-  const [notification, setNotification] = useState({
-    open: false,
-    message: '',
-    severity: 'success',
-  });
 
   const handleApprove = async () => {
     try {
       await approve(application.id).unwrap();
-      setNotification({ open: true, message: 'Заявка успешно принята', severity: 'success' });
+      toast.success('Заявка успешно принята');
     } catch (error) {
-      console.error('Ошибка при принятии заявки:', error);
+      toast.error('Ошибка при принятии заявки');
     }
   };
 
   const handleReject = async () => {
     try {
       await reject(application.id).unwrap();
-      setNotification({ open: true, message: 'Заявка успешно отклонена', severity: 'warning' });
+      toast.warning('Заявка успешно отклонена');
     } catch (error) {
-      console.error('Ошибка при отклонении заявки:', error);
+      toast.error('Ошибка при отклонении заявки');
     }
-  };
-
-  const handleCloseNotification = () => {
-    setNotification({ ...notification, open: false });
   };
 
   return (
@@ -112,16 +98,6 @@ export const MentorApplicationCard = ({ application }: Props) => {
           </Box>
         </Box>
       </CardContent>
-
-      <Snackbar open={notification.open} autoHideDuration={6000} onClose={handleCloseNotification}>
-        <Alert
-          onClose={handleCloseNotification}
-          severity={notification.severity}
-          sx={{ width: '100%' }}
-        >
-          {notification.message}
-        </Alert>
-      </Snackbar>
     </Card>
   );
 };

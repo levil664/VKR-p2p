@@ -1,5 +1,6 @@
 import { Box, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { useGetMyAdvertsQuery } from '../../../entities/advert/api/advertApi';
 import { UserRole } from '../../../entities/user/model';
 import { NoData } from '../../../features/noData/ui/NoData';
@@ -10,9 +11,12 @@ import { AdvertPagination } from '../../advert/ui/AdvertPagination';
 import { AdvertTable } from '../../advert/ui/AdvertTable';
 
 export const MyAdverts = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
+  const [viewMode, setViewMode] = useState<'table' | 'card'>(
+    searchParams.get('viewMode') === 'card' ? 'card' : 'table'
+  );
   const [selectedRole, setSelectedRole] = useState<UserRole | ''>('');
 
   const { data: adverts, isLoading, isError } = useGetMyAdvertsQuery();
@@ -24,6 +28,12 @@ export const MyAdverts = () => {
   const totalPages = Math.ceil(filteredAdverts.length / pageSize);
   const paginatedAdverts =
     filteredAdverts.slice((pageNumber - 1) * pageSize, pageNumber * pageSize) || [];
+
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('viewMode', viewMode);
+    setSearchParams(newSearchParams);
+  }, [viewMode, searchParams, setSearchParams]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setPageNumber(page);

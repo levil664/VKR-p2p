@@ -1,6 +1,7 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
+import { toast } from 'react-toastify';
 import { useAppSelector } from '../../../app/api';
 import {
   useCreateAdvertMutation,
@@ -88,8 +89,9 @@ export const Advert = () => {
       const requestBody = formData;
       await createAdvert(requestBody).unwrap();
       handleClose();
+      toast.success('Заявка успешно создана!');
     } catch (error) {
-      console.error('Failed to create advert:', error);
+      toast.error('Ошибка при создании заявки');
     }
   };
 

@@ -1,6 +1,7 @@
 import { Box, Button, Link, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 import Cookies from 'universal-cookie';
 import { useLoginMutation } from '../../../entities/auth/api/authApi';
 import { LoginRequest } from '../../../entities/auth/model';
@@ -30,12 +31,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({ title, fields, buttonText, l
       const response = await login(formData as LoginRequest).unwrap();
       const cookies = new Cookies();
       cookies.set('jwtToken', response.data.accessToken, { path: '/' });
+      toast.success('Успешный вход!');
       navigate('/');
     } catch (err) {
       if (err.status === 400 && err.data?.status === 102) {
         setError('Неправильный логин или пароль');
+        toast.error('Неправильный логин или пароль');
       } else {
-        console.error('Login failed:', err);
+        toast.error('Ошибка входа');
       }
     }
   };

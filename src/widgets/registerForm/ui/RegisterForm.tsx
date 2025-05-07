@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 import { useRegisterMutation } from '../../../entities/auth/api/authApi';
 
 interface RegisterFormProps {
@@ -53,9 +54,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     if (!formData.username) newErrors.username = 'Имя обязательно';
-    else if (!/^[a-zA-Z0-9]+$/.test(formData.username)) {
-      newErrors.username = 'Имя может содержать только английские буквы и цифры';
-    }
     if (!formData.email) newErrors.email = 'Email обязателен';
     if (!formData.firstName) newErrors.firstName = 'Имя обязательно';
     if (!formData.lastName) newErrors.lastName = 'Фамилия обязательна';
@@ -75,10 +73,11 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
     try {
       await register(formData).unwrap();
+      toast.success('Регистрация прошла успешно!');
       onSuccess();
       navigate('/');
     } catch (err) {
-      console.error('Ошибка регистрации:', err);
+      toast.error('Ошибка регистрации');
     }
   };
 

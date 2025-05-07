@@ -16,7 +16,7 @@ export const AdvertTable = ({ adverts }) => {
   const navigate = useNavigate();
 
   const handleRowClick = id => {
-    navigate(`/adverts/${id}`);
+    navigate(`/advert/${id}`);
   };
 
   return (
@@ -29,6 +29,7 @@ export const AdvertTable = ({ adverts }) => {
             <TableCell sx={{ fontWeight: 'bold' }}>Статус</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Создано</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Автор</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}>Роль</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -66,20 +67,23 @@ export const AdvertTable = ({ adverts }) => {
               <TableCell>
                 <Box
                   sx={{
-                    border: `1px solid ${AdvertStatus[advert.status].color}`,
+                    border: `1px solid ${AdvertStatus[advert.status]?.color || 'gray'}`,
                     borderRadius: '4px',
                     padding: '4px 8px',
                     display: 'inline-block',
-                    color: AdvertStatus[advert.status].color,
+                    color: AdvertStatus[advert.status]?.color || 'black',
                   }}
                 >
-                  {AdvertStatus[advert.status].label}
+                  {AdvertStatus[advert.status]?.label || 'Неизвестный статус'}
                 </Box>
               </TableCell>
               <TableCell>{new Date(advert.createdOn).toLocaleDateString()}</TableCell>
               <TableCell>
-                {advert.student.firstName} {advert.student.lastName}
+                {advert.student
+                  ? `${advert.student.firstName} ${advert.student.lastName}`
+                  : `${advert.mentor.firstName} ${advert.mentor.lastName}`}
               </TableCell>
+              <TableCell>{advert.student ? 'Студент' : 'Наставник'}</TableCell>
             </TableRow>
           ))}
         </TableBody>

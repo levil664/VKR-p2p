@@ -1,6 +1,7 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material';
-import React, { useState } from 'react';
-import { useGetMentorApplicationsQuery } from '../../../entities/mentorApplicationApi/api/mentorApplicationApi';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router';
+import { useGetMentorApplicationsQuery } from '../../../entities/mentorApplication/api/mentorApplicationApi';
 import { NoData } from '../../../features/noData/ui/NoData';
 import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
 import { Loader } from '../../../shared/components/loader/ui/Loader';
@@ -10,9 +11,12 @@ import { MentorApplicationCard } from './MentorApplicationCard';
 import { MentorApplicationTable } from './MentorApplicationTable';
 
 export const MentorApplication = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
+  const [viewMode, setViewMode] = useState<'table' | 'card'>(
+    searchParams.get('viewMode') === 'card' ? 'card' : 'table'
+  );
 
   const { data, isLoading, isError } = useGetMentorApplicationsQuery({
     state: MentorApplicationStatusEnum.PENDING,
@@ -24,6 +28,12 @@ export const MentorApplication = () => {
     (pageNumber - 1) * pageSize,
     pageNumber * pageSize
   );
+
+  useEffect(() => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('viewMode', viewMode);
+    setSearchParams(newSearchParams);
+  }, [viewMode, searchParams, setSearchParams]);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setPageNumber(page);

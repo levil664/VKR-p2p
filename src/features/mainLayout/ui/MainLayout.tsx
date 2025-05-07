@@ -1,6 +1,8 @@
 import {
   AppBar,
   Avatar,
+  BottomNavigation,
+  BottomNavigationAction,
   Box,
   CssBaseline,
   Drawer,
@@ -11,31 +13,44 @@ import {
   ListItemText,
   Toolbar,
   Typography,
+  useMediaQuery,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { FaBars, FaBook, FaSignOutAlt } from 'react-icons/fa';
+import { FaBook, FaSignOutAlt } from 'react-icons/fa';
+import { MdClose, MdMenu } from 'react-icons/md';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
+import { ToastContainer } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../../app/api';
 import { useLogoutMutation } from '../../../entities/auth/api/authApi';
-import { setUserRole } from '../../../entities/user/api/slice';
+import { setIsMentor, setUserId, setUserRole } from '../../../entities/user/api/slice';
 import { useMeQuery } from '../../../entities/user/api/userApi';
 import { RoleEnum } from '../../../entities/user/model/enums';
 import { drawerWidth, menuItems } from '../lib/const';
 
 export const MainLayout: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
   const { data: user } = useMeQuery();
   const dispatch = useAppDispatch();
   const userRole = useAppSelector(state => state.user.role);
   const navigate = useNavigate();
   const location = useLocation();
   const [logout] = useLogoutMutation();
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   useEffect(() => {
-    if (user?.data?.role) {
+    if (user?.data) {
       dispatch(setUserRole(user.data.role as RoleEnum));
+      dispatch(setIsMentor(user.data.isMentor));
+      dispatch(setUserId(user.data.id));
     }
   }, [user, dispatch]);
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsOpen(false);
+    }
+  }, [isMobile]);
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -64,21 +79,28 @@ export const MainLayout: React.FC = () => {
     item.allowedRoles.includes(userRole as RoleEnum)
   );
 
+  const handleNavigationChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+    navigate(filteredMenuItems[newValue].link);
+  };
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              color="inherit"
-              aria-label="toggle drawer"
-              onClick={toggleDrawer}
-              edge="start"
-              sx={{ mr: 2 }}
-            >
-              <FaBars />
-            </IconButton>
+            {!isMobile && (
+              <IconButton
+                color="inherit"
+                aria-label="toggle drawer"
+                onClick={toggleDrawer}
+                edge="start"
+                sx={{ mr: 2 }}
+              >
+                {isOpen ? <MdClose /> : <MdMenu />}
+              </IconButton>
+            )}
             <Box
               sx={{
                 display: 'flex',
@@ -104,7 +126,7 @@ export const MainLayout: React.FC = () => {
           <Box
             sx={{ display: 'flex', alignItems: 'center' }}
             onClick={handleProfileClick}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: ' pointer' }}
           >
             <Typography variant="body1" sx={{ mr: 2, color: 'white' }}>
               {user?.data?.firstName || 'Loading...'}
@@ -150,11 +172,26 @@ export const MainLayout: React.FC = () => {
               sx={{
                 userSelect: 'none',
                 padding: '8px 16px',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                },
               }}
               selected={location.pathname === item.link}
             >
               <ListItemIcon sx={{ minWidth: '40px' }}>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemText
+                primary={
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontWeight: 'bold',
+                      color: location.pathname === item.link ? 'primary.main' : 'text.primary',
+                    }}
+                  >
+                    {item.text}
+                  </Typography>
+                }
+              />
             </ListItem>
           ))}
         </List>
@@ -189,11 +226,45 @@ export const MainLayout: React.FC = () => {
           flexGrow: 1,
           bgcolor: 'background.default',
           p: 3,
-          transition: 'margin-left 0.3s ease',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          paddingBottom: isMobile ? '56px' : '0',
         }}
       >
         <Toolbar />
         <Outlet />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          closeOnClick
+          draggable
+          pauseOnHover
+          style={{
+            top: 74,
+            right: '0.5%',
+            zIndex: 1000,
+          }}
+        />
+        {isMobile && (
+          <BottomNavigation
+            value={activeTab}
+            onChange={handleNavigationChange}
+            sx={{
+              position: 'fixed',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              borderTop: '1px solid',
+              borderColor: 'divider',
+            }}
+          >
+            {filteredMenuItems.map((item, index) => (
+              <BottomNavigationAction key={index} icon={item.icon} />
+            ))}
+          </BottomNavigation>
+        )}
       </Box>
     </Box>
   );
