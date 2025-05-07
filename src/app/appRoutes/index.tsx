@@ -5,6 +5,7 @@ import { MainLayout } from '../../features/mainLayout/ui/MainLayout';
 import { AdvertDetailPage } from '../../pages/advert/id/ui/AdvertDetailPage';
 import { Advert } from '../../pages/advert/ui';
 import { Login, Register } from '../../pages/auth/ui';
+import { ChatDetailPage } from '../../pages/chat/id/ui/ChatDetailPage';
 import { Chat } from '../../pages/chat/ui/Chat';
 import { GroupMeetingDetailPage } from '../../pages/groupMeeting/id/ui/GroupMeetingDetailPage';
 import { GroupMeeting } from '../../pages/groupMeeting/ui/GroupMeeting';
@@ -14,7 +15,6 @@ import { MyAdvertResponses } from '../../pages/myAdvertResponse/ui/MyAdvertRespo
 import { NotFound } from '../../pages/notFound/ui';
 import { Profile } from '../../pages/profile/ui';
 import { useAppSelector } from '../api';
-import { ChatDetailPage } from '../../pages/chat/id/ui/ChatDetailPage';
 
 export const AppRoutes: React.FC = () => {
   const userRole = useAppSelector(state => state.user.role);

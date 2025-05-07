@@ -1,9 +1,9 @@
 import { Box, Button, Card, CardContent, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
-import { AdvertStatus } from '../../../entities/advert/model/enums';
-import { theme } from '../../../app/theme';
-import { useDeleteAdvertResponseMutation } from '../../../entities/advertResponse/api/advertResponseApi';
 import { toast } from 'react-toastify';
+import { theme } from '../../../app/theme';
+import { AdvertStatus } from '../../../entities/advert/model/enums';
+import { useDeleteAdvertResponseMutation } from '../../../entities/advertResponse/api/advertResponseApi';
 
 export const AdvertResponseCard = ({ response }) => {
   const navigate = useNavigate();
