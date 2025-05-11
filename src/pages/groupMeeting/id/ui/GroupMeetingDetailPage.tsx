@@ -14,23 +14,19 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
-import { useAppSelector } from '../../../../app/api';
 import {
   useDeleteGroupMeetingMutation,
   useGetGroupMeetingQuery,
-  useGetGroupMeetingUrlQuery,
   useUpdateGroupMeetingMutation,
 } from '../../../../entities/groupMeetings/api';
 
-export const formatMeetingData = (data: any) => {
-  const startDateTime = new Date(`${data.startDt}T${data.startTime}`);
-  const endDateTime = new Date(`${data.endDt}T${data.endTime}`);
-
-  return {
-    ...data,
-    startDt: startDateTime.toISOString(),
-    endDt: endDateTime.toISOString(),
-  };
+const inputStyles = {
+  width: { xs: '100%', sm: '100%', lg: 600 },
+  maxWidth: '600px',
+  backgroundColor: 'white',
+  '& .MuiInputBase-input': {
+    color: 'black',
+  },
 };
 
 export const GroupMeetingDetailPage = () => {
@@ -39,14 +35,10 @@ export const GroupMeetingDetailPage = () => {
   const theme = useTheme();
 
   const { data: meetingData, isLoading } = useGetGroupMeetingQuery(id);
-  const { data: urlData, isLoading: isUrlLoading } = useGetGroupMeetingUrlQuery(id); // <--- добавил запрос на URL
   const [updateMeeting] = useUpdateGroupMeetingMutation();
   const [deleteMeeting] = useDeleteGroupMeetingMutation();
 
   const [openDialog, setOpenDialog] = useState(false);
-
-  const currentUserId = useAppSelector(state => state.user.id);
-  const isAuthor = meetingData?.data.creator.id === currentUserId;
 
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
@@ -61,37 +53,39 @@ export const GroupMeetingDetailPage = () => {
 
   useEffect(() => {
     if (meetingData) {
-      const { title, description, startDt, endDt } = meetingData.data;
-      setValue('title', title);
-      setValue('description', description);
-      setValue('startDt', startDt);
-      setValue('endDt', endDt);
+      const startDate = new Date(meetingData.data.startDt);
+      const endDate = new Date(meetingData.data.endDt);
+
+      const formatDate = (date: Date) => date.toISOString().split('T')[0];
+      const formatTime = (date: Date) => date.toISOString().split('T')[1].substring(0, 5);
+
+      setValue('title', meetingData.data.title);
+      setValue('description', meetingData.data.description);
+      setValue('startDt', formatDate(startDate));
+      setValue('startTime', formatTime(startDate));
+      setValue('endDt', formatDate(endDate));
+      setValue('endTime', formatTime(endDate));
     }
   }, [meetingData, setValue]);
 
-  const handleConfirmDelete = async () => {
+  const handleUpdate = async data => {
+    try {
+      await updateMeeting({ id, body: data }).unwrap();
+      toast.success('Групповая встреча обновлена!');
+    } catch (error) {
+      toast.error(error.data.message || 'Ошибка при обновлении.');
+    }
+  };
+
+  const handleDelete = async () => {
     try {
       await deleteMeeting(id).unwrap();
       toast.success('Встреча удалена!');
       navigate('/group-meetings');
-    } catch (error: any) {
-      toast.error(error.data?.message || 'Ошибка при удалении.');
+    } catch (error) {
+      toast.error(error.data.message || 'Ошибка при удалении.');
     } finally {
       setOpenDialog(false);
-    }
-  };
-
-  const handleCancelDelete = () => {
-    setOpenDialog(false);
-  };
-
-  const handleUpdateMeeting = async (data: any) => {
-    try {
-      const formattedData = formatMeetingData(data);
-      await updateMeeting({ id, body: formattedData }).unwrap();
-      toast.success('Встреча обновлена!');
-    } catch (error: any) {
-      toast.error(error.data?.message || 'Ошибка при обновлении.');
     }
   };
 
@@ -99,25 +93,10 @@ export const GroupMeetingDetailPage = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Typography variant="h4">Встреча: {meetingData?.data.title}</Typography>
+      <Typography variant="h4">Групповая встреча: {meetingData.data.title}</Typography>
 
-      <Dialog open={openDialog} onClose={handleCancelDelete}>
-        <DialogTitle>Удалить встречу?</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Вы уверены, что хотите удалить эту встречу? Это действие необратимо.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelDelete}>Отмена</Button>
-          <Button onClick={handleConfirmDelete} color="error">
-            Удалить
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Box>
-        <form onSubmit={handleSubmit(handleUpdateMeeting)}>
+      <form onSubmit={handleSubmit(handleUpdate)}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}>
           <Controller
             name="title"
             control={control}
@@ -128,12 +107,10 @@ export const GroupMeetingDetailPage = () => {
                 fullWidth
                 margin="normal"
                 required
-                InputProps={{ readOnly: !isAuthor }}
-                sx={{ backgroundColor: 'white' }}
+                sx={inputStyles}
               />
             )}
           />
-
           <Controller
             name="description"
             control={control}
@@ -142,91 +119,117 @@ export const GroupMeetingDetailPage = () => {
                 {...field}
                 label="Описание"
                 fullWidth
-                margin="normal"
                 multiline
                 rows={4}
+                margin="normal"
                 required
-                InputProps={{ readOnly: !isAuthor }}
-                sx={{ backgroundColor: 'white' }}
+                sx={inputStyles}
               />
             )}
           />
-
           <Controller
             name="startDt"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Дата начала"
                 type="date"
+                label="Дата начала"
                 fullWidth
                 margin="normal"
                 InputLabelProps={{ shrink: true }}
-                InputProps={{ readOnly: !isAuthor }}
-                sx={{ backgroundColor: 'white' }}
+                required
+                sx={inputStyles}
               />
             )}
           />
-
+          <Controller
+            name="startTime"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                type="time"
+                label="Время начала"
+                fullWidth
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+                required
+                sx={inputStyles}
+              />
+            )}
+          />
           <Controller
             name="endDt"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Дата окончания"
                 type="date"
+                label="Дата окончания"
                 fullWidth
                 margin="normal"
                 InputLabelProps={{ shrink: true }}
-                InputProps={{ readOnly: !isAuthor }}
-                sx={{ backgroundColor: 'white' }}
+                required
+                sx={inputStyles}
+              />
+            )}
+          />
+          <Controller
+            name="endTime"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                type="time"
+                label="Время окончания"
+                fullWidth
+                margin="normal"
+                InputLabelProps={{ shrink: true }}
+                required
+                sx={inputStyles}
               />
             )}
           />
 
-          <TextField
-            label="Ссылка на BigBlueButton"
-            value={
-              isUrlLoading
-                ? 'Загрузка...'
-                : urlData?.data ||
-                  'Пока что нет ссылки на встречу, она появится ближе к назначенному времени'
-            }
-            fullWidth
-            margin="normal"
-            InputProps={{
-              readOnly: true,
-            }}
-            sx={{ backgroundColor: 'white' }}
-          />
+          <Box sx={{ mt: 2 }}>
+            <Button type="submit" variant="contained" color="primary">
+              Сохранить
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => setOpenDialog(true)}
+              sx={{
+                borderColor: theme.palette.error.main,
+                color: theme.palette.error.main,
+                ml: 2,
+                '&:hover': {
+                  borderColor: theme.palette.error.dark,
+                  backgroundColor: theme.palette.error.light,
+                  color: '#fff',
+                },
+              }}
+            >
+              Удалить встречу
+            </Button>
+          </Box>
+        </Box>
+      </form>
 
-          {isAuthor && (
-            <Box sx={{ mt: 2 }}>
-              <Button type="submit" variant="contained" color="primary">
-                Сохранить
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() => setOpenDialog(true)}
-                sx={{
-                  borderColor: theme.palette.error.main,
-                  color: theme.palette.error.main,
-                  ml: 2,
-                  '&:hover': {
-                    borderColor: theme.palette.error.dark,
-                    backgroundColor: theme.palette.error.light,
-                    color: '#fff',
-                  },
-                }}
-              >
-                Удалить
-              </Button>
-            </Box>
-          )}
-        </form>
-      </Box>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Удаление встречи</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Вы уверены, что хотите удалить эту групповую встречу? Это действие необратимо.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Отмена</Button>
+          <Button onClick={handleDelete} color="error" variant="contained">
+            Удалить
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

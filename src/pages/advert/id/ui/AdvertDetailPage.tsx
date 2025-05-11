@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FiCheck } from 'react-icons/fi';
 import { useNavigate, useParams } from 'react-router';
@@ -33,6 +33,15 @@ import { useGetMyChatsQuery } from '../../../../entities/chat/api/chatApi';
 import { useGetSubjectsQuery } from '../../../../entities/subjects/api/subjectsApi';
 import { NoData } from '../../../../features/noData/ui/NoData';
 import { DeleteAdvertDialog } from './DeleteAdvertDialog';
+
+const inputStyles = {
+  width: { xs: '100%', sm: '100%', md: 400, lg: 600 },
+  maxWidth: '600px',
+  backgroundColor: 'white',
+  '& .MuiInputBase-input': {
+    color: 'black',
+  },
+};
 
 export const AdvertDetailPage = () => {
   const { id } = useParams();
@@ -63,6 +72,7 @@ export const AdvertDetailPage = () => {
 
   const selectedSubjectId = watch('subjectId');
 
+  const isMentor = useAppSelector(state => state.user.isMentor);
   const currentUserId = useAppSelector(state => state.user.id);
   const isAuthor = advertData?.data.creator.id === currentUserId;
   const selectedSubject = subjectsData?.data.find(subject => subject.id === selectedSubjectId);
@@ -156,159 +166,163 @@ export const AdvertDetailPage = () => {
       />
 
       {tabIndex === 0 && (
-        <Box>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
           <form onSubmit={handleSubmit(handleUpdateAdvert)}>
-            <Controller
-              name="title"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Заголовок"
-                  fullWidth
-                  margin="normal"
-                  required
-                  sx={{
-                    backgroundColor: 'white',
-                    '& .MuiInputBase-input': {
-                      color: 'black',
-                    },
-                  }}
-                  InputProps={{
-                    readOnly: !isAuthor,
-                  }}
-                />
-              )}
-            />
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Описание"
-                  fullWidth
-                  margin="normal"
-                  multiline
-                  rows={4}
-                  required
-                  sx={{
-                    backgroundColor: 'white',
-                    '& .MuiInputBase-input': {
-                      color: 'black',
-                    },
-                  }}
-                  InputProps={{
-                    readOnly: !isAuthor,
-                  }}
-                />
-              )}
-            />
-            <Controller
-              name="subjectId"
-              control={control}
-              render={({ field }) => (
-                <FormControl fullWidth margin="normal" required>
-                  <InputLabel>Предмет</InputLabel>
-                  <Select
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}>
+              <Controller
+                name="title"
+                control={control}
+                render={({ field }) => (
+                  <TextField
                     {...field}
-                    label="Предмет"
-                    sx={{
-                      backgroundColor: 'white',
-                      '& .MuiInputBase-input': {
-                        color: 'black',
-                      },
-                      '& .MuiMenuItem-root': {
-                        color: 'black',
-                      },
-                    }}
-                    inputProps={{
+                    label="Заголовок"
+                    fullWidth
+                    margin="normal"
+                    required
+                    sx={inputStyles}
+                    InputProps={{
                       readOnly: !isAuthor,
                     }}
-                  >
-                    {subjectsData?.data.map(subject => (
-                      <MenuItem key={subject.id} value={subject.id} sx={{ color: 'black' }}>
-                        {subject.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-            />
-            <Controller
-              name="topicIds"
-              control={control}
-              render={({ field }) => (
-                <FormControl fullWidth margin="normal" required>
-                  <InputLabel>Темы</InputLabel>
-                  <Select
-                    multiple
+                  />
+                )}
+              />
+              <Controller
+                name="description"
+                control={control}
+                render={({ field }) => (
+                  <TextField
                     {...field}
-                    label="Темы"
-                    sx={{
-                      backgroundColor: 'white',
-                      '& .MuiInputBase-input': {
-                        color: 'black',
-                      },
-                      '& .MuiMenuItem-root': {
-                        color: 'black',
-                      },
-                    }}
-                    inputProps={{
+                    label="Описание"
+                    fullWidth
+                    margin="normal"
+                    multiline
+                    rows={4}
+                    required
+                    sx={inputStyles}
+                    InputProps={{
                       readOnly: !isAuthor,
                     }}
-                    renderValue={selected => (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map(topicId => (
-                          <Chip
-                            key={topicId}
-                            label={
-                              selectedSubject?.topics.find(topic => topic.id === topicId)?.name ||
-                              'Неизвестно'
-                            }
-                          />
-                        ))}
-                      </Box>
-                    )}
+                  />
+                )}
+              />
+              <Controller
+                name="subjectId"
+                control={control}
+                render={({ field }) => (
+                  <FormControl fullWidth margin="normal" required sx={{ maxWidth: 600 }}>
+                    <InputLabel>Предмет</InputLabel>
+                    <Select
+                      {...field}
+                      label="Предмет"
+                      sx={{
+                        ...inputStyles,
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: '#cfd8dc',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: '#90caf9',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#1976d2',
+                          },
+                        },
+                      }}
+                      inputProps={{
+                        readOnly: !isAuthor,
+                      }}
+                    >
+                      {subjectsData?.data.map(subject => (
+                        <MenuItem key={subject.id} value={subject.id} sx={{ color: 'black' }}>
+                          {subject.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+              />
+              <Controller
+                name="topicIds"
+                control={control}
+                render={({ field }) => (
+                  <FormControl fullWidth margin="normal" required sx={{ maxWidth: 600 }}>
+                    <InputLabel>Темы</InputLabel>
+                    <Select
+                      multiple
+                      {...field}
+                      label="Темы"
+                      sx={{
+                        ...inputStyles,
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: '#cfd8dc',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: '#90caf9',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#1976d2',
+                          },
+                        },
+                      }}
+                      inputProps={{
+                        readOnly: !isAuthor,
+                      }}
+                      renderValue={selected => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selected.map(topicId => (
+                            <Chip
+                              key={topicId}
+                              label={
+                                selectedSubject?.topics.find(topic => topic.id === topicId)?.name ||
+                                'Неизвестно'
+                              }
+                            />
+                          ))}
+                        </Box>
+                      )}
+                    >
+                      {selectedSubject?.topics.map(topic => (
+                        <MenuItem key={topic.id} value={topic.id} sx={{ color: 'black' }}>
+                          {topic.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+              />
+              {isAuthor && (
+                <Box sx={{ mt: 2 }}>
+                  <Button type="submit" variant="contained" color="primary">
+                    Сохранить
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={handleDeleteAdvert}
+                    sx={{
+                      borderColor: theme.palette.error.main,
+                      color: theme.palette.error.main,
+                      ml: 2,
+                      '&:hover': {
+                        borderColor: theme.palette.error.dark,
+                        backgroundColor: theme.palette.error.light,
+                        color: '#fff',
+                      },
+                    }}
                   >
-                    {selectedSubject?.topics.map(topic => (
-                      <MenuItem key={topic.id} value={topic.id} sx={{ color: 'black' }}>
-                        {topic.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                    Удалить
+                  </Button>
+                </Box>
               )}
-            />
-            {isAuthor && (
-              <Box sx={{ mt: 2 }}>
-                <Button type="submit" variant="contained" color="primary">
-                  Сохранить
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={handleDeleteAdvert}
-                  sx={{
-                    borderColor: theme.palette.error.main,
-                    color: theme.palette.error.main,
-                    ml: 2,
-                    '&:hover': {
-                      borderColor: theme.palette.error.dark,
-                      backgroundColor: theme.palette.error.light,
-                      color: '#fff',
-                    },
-                  }}
-                >
-                  Удалить
-                </Button>
-              </Box>
-            )}
+            </Box>
           </form>
-          {!isAuthor && (
+          {!isAuthor && (isMentor || advertData?.data?.mentor) && (
             <Box
               sx={{
-                my: 4,
+                mb: 4,
+                mt: 1.5,
                 p: 3,
+                maxWidth: 600,
                 border: '1px solid #e0e0e0',
                 borderRadius: 3,
                 backgroundColor: '#f9f9fc',

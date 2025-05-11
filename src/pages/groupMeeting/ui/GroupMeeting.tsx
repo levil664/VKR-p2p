@@ -13,8 +13,19 @@ import { CreateGroupMeetingModal } from './CreateGroupMeetingModal';
 import { GroupMeetingCard } from './GroupMeetingCard';
 import { GroupMeetingPagination } from './GroupMeetingPagination';
 import { GroupMeetingTable } from './GroupMeetingTable';
+import { useAppSelector } from '../../../app/api';
+
+const inputStyles = {
+  width: { xs: '100%', sm: '100%', lg: 600 },
+  maxWidth: '600px',
+  backgroundColor: 'white',
+  '& .MuiInputBase-input': {
+    color: 'black',
+  },
+};
 
 export const GroupMeeting = () => {
+  const isMentor = useAppSelector(state => state.user.isMentor);
   const [searchParams, setSearchParams] = useSearchParams();
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -74,9 +85,11 @@ export const GroupMeeting = () => {
           <Typography variant="h4">Групповые занятия</Typography>
           <ViewModeSwitcher viewMode={viewMode} onChange={handleViewModeChange} />
         </Box>
-        <Button variant="contained" color="primary" onClick={handleOpen} sx={{ mb: 3 }}>
-          Создать групповое занятие
-        </Button>
+        {isMentor && (
+          <Button variant="contained" color="primary" onClick={handleOpen} sx={{ mb: 3 }}>
+            Создать групповое занятие
+          </Button>
+        )}
         {groupMeetings?.data?.content.length === 0 ? (
           <NoData />
         ) : (

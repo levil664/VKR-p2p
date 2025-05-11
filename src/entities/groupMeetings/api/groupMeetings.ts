@@ -19,6 +19,13 @@ export const groupMeetingApi = commonApi.injectEndpoints?.({
         method: 'GET',
         params: { pageNumber, pageSize },
       }),
+      providesTags: result =>
+        result && result.data && result.data.content
+          ? [
+              ...result.data.content.map(({ id }) => ({ type: 'GroupMeeting', id })),
+              { type: 'GroupMeeting', id: 'LIST' },
+            ]
+          : [{ type: 'GroupMeeting', id: 'LIST' }],
     }),
     createGroupMeeting: builder.mutation<ItemResponseGroupMeetingDto, CreateGroupMeetingRequest>({
       query: body => ({
@@ -26,12 +33,14 @@ export const groupMeetingApi = commonApi.injectEndpoints?.({
         method: 'POST',
         body,
       }),
+      invalidatesTags: [{ type: 'GroupMeeting', id: 'LIST' }],
     }),
     getGroupMeeting: builder.query<ItemResponseGroupMeetingDto, string>({
       query: id => ({
         url: `/group-meetings/${id}`,
         method: 'GET',
       }),
+      providesTags: (result, error, id) => [{ type: 'GroupMeeting', id }],
     }),
     updateGroupMeeting: builder.mutation<
       ItemResponseGroupMeetingDto,
@@ -42,12 +51,14 @@ export const groupMeetingApi = commonApi.injectEndpoints?.({
         method: 'PATCH',
         body,
       }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'GroupMeeting', id }],
     }),
     deleteGroupMeeting: builder.mutation<EmptyResponse, string>({
       query: id => ({
         url: `/group-meetings/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: (result, error, id) => [{ type: 'GroupMeeting', id }],
     }),
     getMyGroupMeetings: builder.query<ListResponseGroupMeetingDto, void>({
       query: () => ({

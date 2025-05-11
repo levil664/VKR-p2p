@@ -26,12 +26,12 @@ export const menuItems = [
     icon: <FaUsers style={{ fontSize: '20px' }} />,
     text: 'Групповые занятия',
     link: '/group-meeting',
-    allowedRoles: [RoleEnum.STUDENT, RoleEnum.TEACHER, RoleEnum.MENTOR],
+    allowedRoles: [RoleEnum.STUDENT, RoleEnum.MENTOR],
   },
   {
     icon: <FaComments style={{ fontSize: '20px' }} />,
     text: 'Чаты',
     link: '/chat',
-    allowedRoles: [RoleEnum.STUDENT, RoleEnum.TEACHER, RoleEnum.MENTOR],
+    allowedRoles: [RoleEnum.STUDENT, RoleEnum.MENTOR],
   },
 ];
