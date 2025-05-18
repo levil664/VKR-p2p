@@ -88,6 +88,15 @@ const baseQueryWithReauth: (
 export const commonApi = createApi({
   reducerPath: Slices.Api,
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Adverts'],
+  tagTypes: [
+    'Adverts',
+    'MentorApplication',
+    'ChatMessage',
+    'User',
+    'AdvertResponse',
+    'Advert',
+    'GroupMeeting',
+    'Mentor',
+  ],
   endpoints: builder => ({}),
 });

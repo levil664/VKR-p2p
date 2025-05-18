@@ -1,4 +1,5 @@
 import { UserPublicDto } from '../../advert/model';
+import { UserProfileDto } from '../../user/model';
 
 export interface MentorApplyRequest {
   description: string;
@@ -23,4 +24,10 @@ export interface ListResponseMentorApplicationDto {
   data: MentorApplicationDto[];
   status: number;
   message?: string;
+}
+
+export interface ListResponseUserProfileDto {
+  data: UserProfileDto[];
+  status: number;
+  message: string;
 }

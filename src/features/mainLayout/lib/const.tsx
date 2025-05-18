@@ -34,4 +34,10 @@ export const menuItems = [
     link: '/chat',
     allowedRoles: [RoleEnum.STUDENT, RoleEnum.MENTOR],
   },
+  {
+    icon: <FaUsers style={{ fontSize: '20px' }} />,
+    text: 'Наставники',
+    link: '/mentor',
+    allowedRoles: [RoleEnum.TEACHER],
+  },
 ];

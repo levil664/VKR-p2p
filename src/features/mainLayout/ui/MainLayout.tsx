@@ -1,6 +1,7 @@
 import {
   AppBar,
   Avatar,
+  Badge,
   BottomNavigation,
   BottomNavigationAction,
   Box,
@@ -11,32 +12,63 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Menu,
+  MenuItem,
   Toolbar,
   Typography,
   useMediaQuery,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { FaBook, FaSignOutAlt } from 'react-icons/fa';
-import { MdClose, MdMenu } from 'react-icons/md';
+import { MdClose, MdMenu, MdRateReview } from 'react-icons/md';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../../app/api';
-import { useLogoutMutation } from '../../../entities/auth/api/authApi';
-import { setIsMentor, setUserId, setUserRole } from '../../../entities/user/api/slice';
-import { useMeQuery } from '../../../entities/user/api/userApi';
+import { authApi, useLogoutMutation } from '../../../entities/auth/api/authApi';
+import {
+  resetUserState,
+  setIsMentor,
+  setUserId,
+  setUserRole,
+} from '../../../entities/user/api/slice';
+import { useMeQuery, userApi } from '../../../entities/user/api/userApi';
 import { RoleEnum } from '../../../entities/user/model/enums';
 import { drawerWidth, menuItems } from '../lib/const';
+import { useGetAdvertsWithoutReviewQuery } from '../../../entities/review/api/reviewApi';
+import { CreateReviewModal } from '../../createReviewModal/ui/CreateReviewModal';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedAdvertId, setSelectedAdvertId] = useState<string | null>(null);
   const { data: user } = useMeQuery();
+  const { data: advertsWithoutReview } = useGetAdvertsWithoutReviewQuery();
   const dispatch = useAppDispatch();
   const userRole = useAppSelector(state => state.user.role);
   const navigate = useNavigate();
   const location = useLocation();
   const [logout] = useLogoutMutation();
   const isMobile = useMediaQuery('(max-width:600px)');
+
+  const open = Boolean(anchorEl);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleOpenReviewModal = (advertId: string) => {
+    setSelectedAdvertId(advertId);
+    handleMenuClose();
+  };
+
+  const handleCloseReviewModal = () => {
+    setSelectedAdvertId(null);
+  };
 
   useEffect(() => {
     if (user?.data) {
@@ -66,6 +98,9 @@ export const MainLayout: React.FC = () => {
 
   const handleLogout = async () => {
     await logout({});
+    dispatch(authApi.util.resetApiState());
+    dispatch(userApi.util.resetApiState());
+    dispatch(resetUserState());
     navigate('/login');
   };
 
@@ -123,25 +158,92 @@ export const MainLayout: React.FC = () => {
               </Typography>
             </Box>
           </Box>
-          <Box
-            sx={{ display: 'flex', alignItems: 'center' }}
-            onClick={handleProfileClick}
-            style={{ cursor: ' pointer' }}
-          >
-            <Typography variant="body1" sx={{ mr: 2, color: 'white' }}>
-              {user?.data?.firstName || 'Loading...'}
-            </Typography>
-            <Avatar
-              sx={{
-                width: 40,
-                height: 40,
-                bgcolor: 'white',
-                color: 'primary.main',
-                fontSize: '1rem',
-              }}
+
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton color="inherit" onClick={handleMenuOpen}>
+              <Badge badgeContent={advertsWithoutReview?.data?.length || 0} color="error">
+                <MdRateReview size={24} />
+              </Badge>
+            </IconButton>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleMenuClose}
+              PaperProps={{ style: { maxHeight: 400, width: '340px', padding: '8px 0' } }}
             >
-              {getInitials(user?.data?.firstName, user?.data?.lastName)}
-            </Avatar>
+              <Box sx={{ px: 2, pb: 1 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  Неоценённые заявки
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Пожалуйста, оставьте отзыв пользователям, с которыми вы взаимодействовали. Это
+                  важно для их дальнейшего развития.
+                </Typography>
+              </Box>
+
+              {advertsWithoutReview?.data?.length ? (
+                advertsWithoutReview.data.map(advert => (
+                  <MenuItem
+                    key={advert.id}
+                    onClick={() => handleOpenReviewModal(advert.id)}
+                    sx={{
+                      whiteSpace: 'normal',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      borderTop: '1px solid #eee',
+                      py: 1.2,
+                    }}
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: '600', fontSize: '1.05rem', mb: 0.5 }}
+                    >
+                      {advert.title}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                      Пользователь:{' '}
+                      <Box component="span" sx={{ fontWeight: '600', color: 'text.primary' }}>
+                        {advert.creator.lastName} {advert.creator.firstName}{' '}
+                        {advert.creator.middleName}
+                      </Box>
+                    </Typography>
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>
+                  <Typography variant="body2">Нет объявлений без отзыва</Typography>
+                </MenuItem>
+              )}
+            </Menu>
+
+            <CreateReviewModal
+              open={!!selectedAdvertId}
+              advertId={selectedAdvertId}
+              onClose={handleCloseReviewModal}
+            />
+
+            <Box
+              sx={{ display: 'flex', alignItems: 'center' }}
+              onClick={handleProfileClick}
+              style={{ cursor: 'pointer' }}
+            >
+              <Typography variant="body1" sx={{ ml: 2, mr: 2, color: 'white' }}>
+                {user?.data?.firstName || 'Loading...'}
+              </Typography>
+              <Avatar
+                sx={{
+                  width: 40,
+                  height: 40,
+                  bgcolor: 'white',
+                  color: 'primary.main',
+                  fontSize: '1rem',
+                }}
+              >
+                {getInitials(user?.data?.lastName, user?.data?.firstName)}
+              </Avatar>
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>

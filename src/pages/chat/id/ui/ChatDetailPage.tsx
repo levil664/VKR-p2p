@@ -291,10 +291,10 @@ export const ChatDetailPage = () => {
       <Box sx={{ flex: 2 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
           Чат с{' '}
-          {chatData.data.participants
-            .filter(p => p.id !== currentUserId)
+          {chatData?.data?.participants
+            ?.filter(p => p.id !== currentUserId)
             .map(p => `${p.lastName} ${p.firstName}`)
-            .join(', ')}
+            .join(', ') || 'Участники не найдены'}
         </Typography>
         <Paper
           ref={messagesContainerRef}

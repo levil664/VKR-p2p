@@ -9,10 +9,12 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { FaStar } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useApplyForMentorMutation } from '../../../entities/mentorApplication/api/mentorApplicationApi';
 import { useEditProfileMutation, useMeQuery } from '../../../entities/user/api/userApi';
+import { useGetReviewsForUserQuery } from '../../../entities/review/api/reviewApi';
 import { MentorApplyModal } from './MentorApplyModal';
 
 export const Profile = () => {
@@ -22,6 +24,18 @@ export const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState('');
   const [openModal, setOpenModal] = useState(false);
+
+  const { data: mentorReviewsResponse, isLoading: isMentorReviewsLoading } =
+    useGetReviewsForUserQuery({
+      userId: userResponse?.data.id,
+      type: 'MENTOR',
+    });
+
+  const { data: studentReviewsResponse, isLoading: isStudentReviewsLoading } =
+    useGetReviewsForUserQuery({
+      userId: userResponse?.data.id,
+      type: 'STUDENT',
+    });
 
   useEffect(() => {
     if (userResponse) {
@@ -56,10 +70,9 @@ export const Profile = () => {
       ROLE_STUDENT: 'Студент',
       ROLE_TEACHER: 'Преподаватель',
       ROLE_ADMIN: 'Администратор',
-      ROLE_MENTOR: 'Наставник', // Добавляем метку для роли ментора
+      ROLE_MENTOR: 'Наставник',
     };
 
-    // Если пользователь является ментором, возвращаем метку для ментора
     if (isMentor) {
       return roleMap.ROLE_MENTOR;
     }
@@ -67,7 +80,7 @@ export const Profile = () => {
     return roleMap[role] || role;
   };
 
-  const handleApplyForMentor = async (data: { description: string }) => {
+  const handleApplyForMentor = async data => {
     try {
       await applyForMentor({ description: data.description }).unwrap();
       toast.success('Заявка успешно отправлена!');
@@ -118,14 +131,34 @@ export const Profile = () => {
           <Grid item xs={12} md={4}>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
               <Avatar sx={{ width: 100, height: 100, fontSize: 40, bgcolor: 'primary.main' }}>
-                {getInitials(user?.firstName, user?.lastName)}
+                {getInitials(user?.lastName, user?.firstName)}
               </Avatar>
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                {user?.firstName} {user?.lastName}
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 'bold',
+                  display: 'flex',
+                  alignContent: 'center',
+                  textAlign: 'center',
+                }}
+              >
+                {user?.lastName} {user?.firstName} {user?.middleName}
               </Typography>
               <Typography variant="body1" color="text.secondary">
                 {getRoleLabel(user?.role, user?.isMentor)}
               </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                <Typography variant="body1" sx={{ mr: 1 }}>
+                  Рейтинг:
+                </Typography>
+                {Array.from({ length: 5 }, (_, index) => (
+                  <FaStar
+                    key={index}
+                    color={index < user?.rating ? 'gold' : 'lightgray'}
+                    style={{ marginLeft: 2 }}
+                  />
+                ))}
+              </Box>
             </Box>
           </Grid>
 
@@ -218,23 +251,80 @@ export const Profile = () => {
           </Grid>
         </Grid>
 
-        {!user?.isMentor && (
-          <Box sx={{ mt: 4, p: 2, border: '1px solid #e0e0e0', borderRadius: '8px' }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
-              Наставничество
+        <Box sx={{ mt: 4 }}>
+          {!user?.isMentor && user?.role !== 'ROLE_TEACHER' && (
+            <Box sx={{ my: 4, p: 2, border: '1px solid #e0e0e0', borderRadius: '8px' }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                Наставничество
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                Наставничество — это возможность делиться своими знаниями и опытом с другими. Стать
+                наставником — значит помочь другим развиваться и достигать своих целей. Подробное
+                описание того, почему вы хотите стать наставником, важно, так как преподаватель,
+                который будет рассматривать вашу заявку, должен понять, почему вы хотите стать
+                наставником и как вы можете помочь другим.
+              </Typography>
+              <Button variant="contained" color="primary" onClick={() => setOpenModal(true)}>
+                Подать заявку на наставничество
+              </Button>
+            </Box>
+          )}
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+            Отзывы
+          </Typography>
+          {user?.isMentor && (
+            <>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                Роль наставника
+              </Typography>
+              {isMentorReviewsLoading ? (
+                <CircularProgress />
+              ) : mentorReviewsResponse?.data.length === 0 ? (
+                <Typography variant="body1" color="text.secondary">
+                  Пока нет отзывов на вас, как на наставника.
+                </Typography>
+              ) : (
+                mentorReviewsResponse.data.map(review => (
+                  <Paper key={review.id} elevation={3} sx={{ p: 2, mb: 2 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                      {review.reviewer.lastName} {review.reviewer.firstName}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      {Array.from({ length: 5 }, (_, index) => (
+                        <FaStar key={index} color={index < review.rating ? 'gold' : 'lightgray'} />
+                      ))}
+                    </Box>
+                    <Typography variant="body2">{review.text}</Typography>
+                  </Paper>
+                ))
+              )}
+            </>
+          )}
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+            Роль студента
+          </Typography>
+          {isStudentReviewsLoading ? (
+            <CircularProgress />
+          ) : studentReviewsResponse?.data.length === 0 ? (
+            <Typography variant="body1" color="text.secondary">
+              Пока нет отзывов на вас, как на студента.
             </Typography>
-            <Typography variant="body1" sx={{ mb: 2 }}>
-              Наставничество — это возможность делиться своими знаниями и опытом с другими. Стать
-              наставником — значит помочь другим развиваться и достигать своих целей. Подробное
-              описание того, почему вы хотите стать наставником, важно, так как преподаватель,
-              который будет рассматривать вашу заявку, должен понять, почему вы хотите стать
-              наставником и как вы можете помочь другим.
-            </Typography>
-            <Button variant="contained" color="primary" onClick={() => setOpenModal(true)}>
-              Подать заявку на наставничество
-            </Button>
-          </Box>
-        )}
+          ) : (
+            studentReviewsResponse.data.map(review => (
+              <Paper key={review.id} elevation={3} sx={{ p: 2, mb: 2 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                  {review.reviewer.lastName} {review.reviewer.firstName}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  {Array.from({ length: 5 }, (_, index) => (
+                    <FaStar key={index} color={index < review.rating ? 'gold' : 'lightgray'} />
+                  ))}
+                </Box>
+                <Typography variant="body2">{review.text}</Typography>
+              </Paper>
+            ))
+          )}
+        </Box>
       </Paper>
 
       <MentorApplyModal

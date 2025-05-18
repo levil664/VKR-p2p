@@ -1,5 +1,5 @@
 import { commonApi } from '../../../app/api';
-import { ItemResponseUserDto, ItemResponseUserProfileDto, UpdateProfileRequest } from '../model';
+import { ItemResponseUserDto, UpdateProfileRequest } from '../model';
 
 export const userApi = commonApi.injectEndpoints?.({
   endpoints: builder => ({
@@ -18,7 +18,7 @@ export const userApi = commonApi.injectEndpoints?.({
       }),
       invalidatesTags: ['User'],
     }),
-    getUser: builder.query<ItemResponseUserProfileDto, string>({
+    getUser: builder.query<ItemResponseUserDto, string>({
       query: id => ({
         url: `/users/${id}`,
         method: 'GET',

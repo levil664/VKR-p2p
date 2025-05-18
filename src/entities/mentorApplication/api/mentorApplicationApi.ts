@@ -2,6 +2,7 @@ import { commonApi } from '../../../app/api';
 import {
   ItemResponseMentorApplicationDto,
   ListResponseMentorApplicationDto,
+  ListResponseUserProfileDto,
   MentorApplyRequest,
 } from '../model/types';
 
@@ -48,6 +49,19 @@ export const mentorApplicationApi = commonApi.injectEndpoints?.({
       }),
       invalidatesTags: (result, error, id) => [{ type: 'MentorApplication', id }],
     }),
+    getMentors: builder.query<ListResponseUserProfileDto, void>({
+      query: () => ({
+        url: '/mentors',
+        method: 'GET',
+      }),
+      providesTags: result =>
+        result && result.data
+          ? [
+              ...result.data.map(({ id }) => ({ type: 'Mentor', id })),
+              { type: 'Mentor', id: 'LIST' },
+            ]
+          : [{ type: 'Mentor', id: 'LIST' }],
+    }),
   }),
 });
 
@@ -56,4 +70,5 @@ export const {
   useApplyForMentorMutation,
   useRejectMentorApplicationMutation,
   useApproveMentorApplicationMutation,
+  useGetMentorsQuery,
 } = mentorApplicationApi;

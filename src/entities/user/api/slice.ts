@@ -26,8 +26,9 @@ const userSlice = createSlice({
     setUserId(state, action: PayloadAction<string>) {
       state.id = action.payload;
     },
+    resetUserState: () => initialState,
   },
 });
 
-export const { setUserRole, setIsMentor, setUserId } = userSlice.actions;
+export const { setUserRole, setIsMentor, resetUserState, setUserId } = userSlice.actions;
 export default userSlice.reducer;

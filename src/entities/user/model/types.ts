@@ -18,6 +18,7 @@ export interface UserDto {
   isMentor: boolean;
   faculty: string;
   course: number;
+  rating: number;
 }
 
 export interface UpdateProfileRequest {
@@ -31,6 +32,7 @@ export interface UserProfileDto {
   middleName: string;
   isMentor: boolean;
   description: string;
+  rating: number;
 }
 
 export interface ItemResponseUserProfileDto {
