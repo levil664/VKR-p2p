@@ -1,8 +1,8 @@
 import { Avatar, Box, CircularProgress, Paper, Stack, Typography } from '@mui/material';
 import { FaStar } from 'react-icons/fa';
-import { useGetUserQuery } from '../../../entities/user/api/userApi';
-import { useGetReviewsForUserQuery } from '../../../entities/review/api/reviewApi';
 import { useParams } from 'react-router';
+import { useGetReviewsForUserQuery } from '../../../entities/review/api/reviewApi';
+import { useGetUserQuery } from '../../../entities/user/api/userApi';
 
 export const MentorDetailPage = () => {
   const { id } = useParams();

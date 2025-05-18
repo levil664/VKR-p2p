@@ -9,12 +9,12 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { FaStar } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
+import { FaStar } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useApplyForMentorMutation } from '../../../entities/mentorApplication/api/mentorApplicationApi';
-import { useEditProfileMutation, useMeQuery } from '../../../entities/user/api/userApi';
 import { useGetReviewsForUserQuery } from '../../../entities/review/api/reviewApi';
+import { useEditProfileMutation, useMeQuery } from '../../../entities/user/api/userApi';
 import { MentorApplyModal } from './MentorApplyModal';
 
 export const Profile = () => {

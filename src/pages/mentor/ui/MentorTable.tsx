@@ -7,8 +7,8 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { useNavigate } from 'react-router';
 import { FaStar } from 'react-icons/fa';
+import { useNavigate } from 'react-router';
 
 export const MentorTable = ({ mentors }) => {
   const navigate = useNavigate();

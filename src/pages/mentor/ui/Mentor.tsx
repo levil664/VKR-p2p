@@ -1,13 +1,13 @@
 import { Box, SelectChangeEvent, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
+import { useGetMentorsQuery } from '../../../entities/mentorApplication/api/mentorApplicationApi';
 import { NoData } from '../../../features/noData/ui/NoData';
 import { ViewModeSwitcher } from '../../../features/viewModeSwitcher/ui/ViewModeSwitcher';
 import { Loader } from '../../../shared/components/loader/ui/Loader';
 import { MentorCard } from './MentorCard';
 import { MentorPagination } from './MentorPagination';
 import { MentorTable } from './MentorTable';
-import { useGetMentorsQuery } from '../../../entities/mentorApplication/api/mentorApplicationApi';
 
 export const Mentor = () => {
   const [searchParams, setSearchParams] = useSearchParams();

@@ -7,14 +7,14 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { motion } from 'framer-motion';
 import { Controller, useForm } from 'react-hook-form';
+import { FaStar } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useGetAdvertQuery } from '../../../entities/advert/api/advertApi';
 import { useCreateReviewMutation } from '../../../entities/review/api/reviewApi';
 import { CreateReviewRequest } from '../../../entities/review/model';
-import { useGetAdvertQuery } from '../../../entities/advert/api/advertApi';
-import { FaStar } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 
 interface CreateReviewModalProps {
   open: boolean;

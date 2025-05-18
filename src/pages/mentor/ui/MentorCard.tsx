@@ -1,6 +1,6 @@
 import { Box, Card, CardContent, Typography } from '@mui/material';
-import { useNavigate } from 'react-router';
 import { FaStar } from 'react-icons/fa';
+import { useNavigate } from 'react-router';
 
 export const MentorCard = ({ mentor }) => {
   const navigate = useNavigate();

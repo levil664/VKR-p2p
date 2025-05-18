@@ -25,6 +25,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../../app/api';
 import { authApi, useLogoutMutation } from '../../../entities/auth/api/authApi';
+import { useGetAdvertsWithoutReviewQuery } from '../../../entities/review/api/reviewApi';
 import {
   resetUserState,
   setIsMentor,
@@ -33,9 +34,8 @@ import {
 } from '../../../entities/user/api/slice';
 import { useMeQuery, userApi } from '../../../entities/user/api/userApi';
 import { RoleEnum } from '../../../entities/user/model/enums';
-import { drawerWidth, menuItems } from '../lib/const';
-import { useGetAdvertsWithoutReviewQuery } from '../../../entities/review/api/reviewApi';
 import { CreateReviewModal } from '../../createReviewModal/ui/CreateReviewModal';
+import { drawerWidth, menuItems } from '../lib/const';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
