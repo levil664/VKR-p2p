@@ -33,8 +33,8 @@ export const AdvertCard = ({ advert }) => {
           <Typography variant="h6" sx={{ color: 'text.secondary', ml: 2, flexShrink: 0 }}>
             Автор:{' '}
             {advert.student
-              ? `${advert.student.firstName} ${advert.student.lastName}`
-              : `${advert.mentor.firstName} ${advert.mentor.lastName}`}
+              ? `${advert.student.lastName} ${advert.student.firstName} ${advert.student.middleName}`
+              : `${advert.mentor.lastName} ${advert.mentor.firstName} ${advert.mentor.middleName}`}
           </Typography>
         </Box>
         <Typography variant="body2" sx={{ color: 'text.secondary', marginBottom: 4 }}>

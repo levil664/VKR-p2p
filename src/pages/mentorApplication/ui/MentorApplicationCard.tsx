@@ -49,7 +49,8 @@ export const MentorApplicationCard = ({ application }: Props) => {
     >
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          {application.student.firstName} {application.student.lastName}
+          {application.student.lastName} {application.student.firstName}{' '}
+          {application.student.middleName}
         </Typography>
 
         <Typography variant="body2" sx={{ mb: 4 }}>

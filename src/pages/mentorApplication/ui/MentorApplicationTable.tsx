@@ -59,7 +59,7 @@ export const MentorApplicationTable = ({ applications }: Props) => {
         <TableBody>
           {applications.map(app => (
             <TableRow key={app.id} hover sx={{ cursor: 'default' }}>
-              <TableCell>{`${app.student.firstName} ${app.student.lastName}`}</TableCell>
+              <TableCell>{`${app.student.lastName} ${app.student.firstName} ${app.student.middleName}`}</TableCell>
               <TableCell sx={{ maxWidth: 300 }}>
                 <Tooltip title={app.description} arrow disableInteractive>
                   <span

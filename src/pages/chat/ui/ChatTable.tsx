@@ -43,7 +43,7 @@ export const ChatTable = ({ chats }) => {
               <TableCell>
                 {chat.participants
                   .filter(p => p.id !== currentUserId)
-                  .map(p => `${p.firstName} ${p.lastName}`)
+                  .map(p => ` ${p.lastName} ${p.firstName} ${p.middleName}`)
                   .join(', ')}
               </TableCell>
               <TableCell>

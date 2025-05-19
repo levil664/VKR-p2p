@@ -36,7 +36,7 @@ export const ChatCard = ({ chat }) => {
           Участники:{' '}
           {chat.participants
             .filter(p => p.id !== currentUserId)
-            .map(p => `${p.lastName} ${p.firstName}`)
+            .map(p => `${p.lastName} ${p.firstName} ${p.middleName}`)
             .join(', ')}
         </Typography>
 

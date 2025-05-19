@@ -80,8 +80,8 @@ export const AdvertTable = ({ adverts }) => {
               <TableCell>{new Date(advert.createdOn).toLocaleDateString()}</TableCell>
               <TableCell>
                 {advert.student
-                  ? `${advert.student.firstName} ${advert.student.lastName}`
-                  : `${advert.mentor.firstName} ${advert.mentor.lastName}`}
+                  ? `${advert.student.lastName} ${advert.student.firstName} ${advert.student.middleName}`
+                  : `${advert.mentor.lastName} ${advert.mentor.firstName} ${advert.mentor.middleName}`}
               </TableCell>
               <TableCell>{advert.student ? 'Студент' : 'Наставник'}</TableCell>
             </TableRow>
