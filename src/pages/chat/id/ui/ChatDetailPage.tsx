@@ -22,7 +22,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { MdSend } from 'react-icons/md';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { useAppSelector } from '../../../../app/api';
 import {
@@ -337,7 +337,27 @@ export const ChatDetailPage = () => {
                     maxWidth: '70%',
                   }}
                 >
-                  <ListItemText primary={message.content.text} />
+                  {message.type === 'VIDEO_CHAT_CREATED' ? (
+                    <ListItemText
+                      primary={
+                        <>
+                          Создана комната для проведения занятия. Вы можете подключиться по{' '}
+                          <Link
+                            href={message.content.meetingId}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: 'blue', textDecoration: 'underline' }}
+                            to={message.content.meetingId}
+                          >
+                            ссылке
+                          </Link>
+                          .
+                        </>
+                      }
+                    />
+                  ) : (
+                    <ListItemText primary={message.content.text} />
+                  )}
                 </ListItem>
               );
             })}

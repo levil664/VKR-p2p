@@ -75,6 +75,12 @@ export const chatApi = commonApi.injectEndpoints?.({
         method: 'GET',
       }),
     }),
+    getMeetingUrl: builder.query<string, string>({
+      query: id => ({
+        url: `/meetings/${id}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -86,4 +92,5 @@ export const {
   useGetUnreadMessagesQuery,
   useGetChatQuery,
   useGetMyChatsQuery,
+  useGetMeetingUrlQuery,
 } = chatApi;
