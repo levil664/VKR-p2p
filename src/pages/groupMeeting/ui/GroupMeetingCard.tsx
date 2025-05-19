@@ -32,8 +32,8 @@ export const GroupMeetingCard = ({ meeting }) => {
           {meeting.description}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Дата: {new Date(meeting.startDt).toLocaleString()} -{' '}
-          {new Date(meeting.endDt).toLocaleString()}
+          Дата: {new Date(meeting.startDt).toLocaleString('ru-RU', { timeZone: 'UTC' })} -{' '}
+          {new Date(meeting.endDt).toLocaleString('ru-RU', { timeZone: 'UTC' })}
         </Typography>
       </CardContent>
     </Card>
