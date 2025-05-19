@@ -24,8 +24,14 @@ import { MdClose, MdMenu, MdRateReview } from 'react-icons/md';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../../app/api';
+import { advertApi } from '../../../entities/advert/api/advertApi';
+import { advertResponseApi } from '../../../entities/advertResponse/api/advertResponseApi';
 import { authApi, useLogoutMutation } from '../../../entities/auth/api/authApi';
+import { chatApi } from '../../../entities/chat/api/chatApi';
+import { groupMeetingApi } from '../../../entities/groupMeetings/api/groupMeetings';
+import { mentorApplicationApi } from '../../../entities/mentorApplication/api/mentorApplicationApi';
 import { reviewApi, useGetAdvertsWithoutReviewQuery } from '../../../entities/review/api/reviewApi';
+import { subjectsApi } from '../../../entities/subjects/api/subjectsApi';
 import {
   resetUserState,
   setIsMentor,
@@ -36,12 +42,6 @@ import { useMeQuery, userApi } from '../../../entities/user/api/userApi';
 import { RoleEnum } from '../../../entities/user/model/enums';
 import { CreateReviewModal } from '../../createReviewModal/ui/CreateReviewModal';
 import { drawerWidth, menuItems } from '../lib/const';
-import { advertResponseApi } from '../../../entities/advertResponse/api/advertResponseApi';
-import { mentorApplicationApi } from '../../../entities/mentorApplication/api/mentorApplicationApi';
-import { chatApi } from '../../../entities/chat/api/chatApi';
-import { groupMeetingApi } from '../../../entities/groupMeetings/api/groupMeetings';
-import { subjectsApi } from '../../../entities/subjects/api/subjectsApi';
-import { advertApi } from '../../../entities/advert/api/advertApi';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
