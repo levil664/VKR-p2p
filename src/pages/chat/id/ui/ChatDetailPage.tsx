@@ -33,6 +33,7 @@ import {
 import {
   useCreateVideoCallMutation,
   useGetChatQuery,
+  useGetMeetingUrlQuery,
   useGetMessagesQuery,
   useSendMessageMutation,
 } from '../../../../entities/chat/api/chatApi';
@@ -338,23 +339,7 @@ export const ChatDetailPage = () => {
                   }}
                 >
                   {message.type === 'VIDEO_CHAT_CREATED' ? (
-                    <ListItemText
-                      primary={
-                        <>
-                          Создана комната для проведения занятия. Вы можете подключиться по{' '}
-                          <Link
-                            href={message.content.meetingId}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ color: 'blue', textDecoration: 'underline' }}
-                            to={message.content.meetingId}
-                          >
-                            ссылке
-                          </Link>
-                          .
-                        </>
-                      }
-                    />
+                    <MeetingLink meetingId={message.content.meetingId} />
                   ) : (
                     <ListItemText primary={message.content.text} />
                   )}
@@ -427,5 +412,30 @@ export const ChatDetailPage = () => {
         </DialogActions>
       </Dialog>
     </Box>
+  );
+};
+
+const MeetingLink = ({ meetingId }) => {
+  const { data: meetingUrlData, isLoading: isLoadingMeetingUrl } = useGetMeetingUrlQuery(meetingId);
+
+  if (isLoadingMeetingUrl) return <Typography>Загрузка ссылки...</Typography>;
+
+  return (
+    <ListItemText
+      primary={
+        <>
+          Создана комната для проведения занятия. Вы можете подключиться по{' '}
+          <Link
+            to={meetingUrlData?.data}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'blue', textDecoration: 'underline' }}
+          >
+            ссылке
+          </Link>
+          .
+        </>
+      }
+    />
   );
 };
