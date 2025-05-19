@@ -25,7 +25,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from '../../../app/api';
 import { authApi, useLogoutMutation } from '../../../entities/auth/api/authApi';
-import { useGetAdvertsWithoutReviewQuery } from '../../../entities/review/api/reviewApi';
+import { reviewApi, useGetAdvertsWithoutReviewQuery } from '../../../entities/review/api/reviewApi';
 import {
   resetUserState,
   setIsMentor,
@@ -36,6 +36,12 @@ import { useMeQuery, userApi } from '../../../entities/user/api/userApi';
 import { RoleEnum } from '../../../entities/user/model/enums';
 import { CreateReviewModal } from '../../createReviewModal/ui/CreateReviewModal';
 import { drawerWidth, menuItems } from '../lib/const';
+import { advertResponseApi } from '../../../entities/advertResponse/api/advertResponseApi';
+import { mentorApplicationApi } from '../../../entities/mentorApplication/api/mentorApplicationApi';
+import { chatApi } from '../../../entities/chat/api/chatApi';
+import { groupMeetingApi } from '../../../entities/groupMeetings/api/groupMeetings';
+import { subjectsApi } from '../../../entities/subjects/api/subjectsApi';
+import { advertApi } from '../../../entities/advert/api/advertApi';
 
 export const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -100,6 +106,13 @@ export const MainLayout: React.FC = () => {
     await logout({});
     dispatch(authApi.util.resetApiState());
     dispatch(userApi.util.resetApiState());
+    dispatch(advertResponseApi.util.resetApiState());
+    dispatch(mentorApplicationApi.util.resetApiState());
+    dispatch(chatApi.util.resetApiState());
+    dispatch(groupMeetingApi.util.resetApiState());
+    dispatch(reviewApi.util.resetApiState());
+    dispatch(subjectsApi.util.resetApiState());
+    dispatch(advertApi.util.resetApiState());
     dispatch(resetUserState());
     navigate('/login');
   };

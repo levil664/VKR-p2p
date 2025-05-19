@@ -42,7 +42,6 @@ const inputStyles = {
     color: 'black',
   },
 };
-
 export const AdvertDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -74,8 +73,8 @@ export const AdvertDetailPage = () => {
 
   const isMentor = useAppSelector(state => state.user.isMentor);
   const currentUserId = useAppSelector(state => state.user.id);
-  const isAuthor = advertData?.data.creator.id === currentUserId;
-  const selectedSubject = subjectsData?.data.find(subject => subject.id === selectedSubjectId);
+  const isAuthor = advertData?.data?.creator?.id === currentUserId;
+  const selectedSubject = subjectsData?.data?.find(subject => subject.id === selectedSubjectId);
 
   const handleAcceptResponse = async (responseId: string) => {
     try {
@@ -146,313 +145,319 @@ export const AdvertDetailPage = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Typography variant="h4">Заявка: {advertData.data.title}</Typography>
-      <Tabs value={tabIndex} onChange={handleChangeTab}>
-        <Tab label="Информация" />
-        <Tab
-          label="Отклики"
-          disabled={!isAuthor}
-          sx={{
-            cursor: !isAuthor ? 'default' : 'pointer',
-            color: !isAuthor ? theme.palette.text.disabled : 'inherit',
-          }}
-        />
-      </Tabs>
+      {advertData ? (
+        <>
+          <Typography variant="h4">Заявка: {advertData.data.title}</Typography>
+          <Tabs value={tabIndex} onChange={handleChangeTab}>
+            <Tab label="Информация" />
+            <Tab
+              label="Отклики"
+              disabled={!isAuthor}
+              sx={{
+                cursor: !isAuthor ? 'default' : 'pointer',
+                color: !isAuthor ? theme.palette.text.disabled : 'inherit',
+              }}
+            />
+          </Tabs>
 
-      <DeleteAdvertDialog
-        open={openDialog}
-        onClose={handleCancelDelete}
-        onConfirm={handleConfirmDelete}
-      />
+          <DeleteAdvertDialog
+            open={openDialog}
+            onClose={handleCancelDelete}
+            onConfirm={handleConfirmDelete}
+          />
 
-      {tabIndex === 0 && (
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
-          <form onSubmit={handleSubmit(handleUpdateAdvert)}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}>
-              <Controller
-                name="title"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Заголовок"
-                    fullWidth
-                    margin="normal"
-                    required
-                    sx={inputStyles}
-                    InputProps={{
-                      readOnly: !isAuthor,
-                    }}
+          {tabIndex === 0 && (
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
+              <form onSubmit={handleSubmit(handleUpdateAdvert)}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}>
+                  <Controller
+                    name="title"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Заголовок"
+                        fullWidth
+                        margin="normal"
+                        required
+                        sx={inputStyles}
+                        InputProps={{
+                          readOnly: !isAuthor,
+                        }}
+                      />
+                    )}
                   />
-                )}
-              />
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
+                  <Controller
+                    name="description"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Описание"
+                        fullWidth
+                        margin="normal"
+                        multiline
+                        rows={4}
+                        required
+                        sx={inputStyles}
+                        InputProps={{
+                          readOnly: !isAuthor,
+                        }}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="subjectId"
+                    control={control}
+                    render={({ field }) => (
+                      <FormControl fullWidth margin="normal" required sx={{ maxWidth: 600 }}>
+                        <InputLabel>Предмет</InputLabel>
+                        <Select
+                          {...field}
+                          label="Предмет"
+                          sx={{
+                            ...inputStyles,
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                borderColor: '#cfd8dc',
+                              },
+                              '&:hover fieldset': {
+                                borderColor: '#90caf9',
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: '#1976d2',
+                              },
+                            },
+                          }}
+                          inputProps={{
+                            readOnly: !isAuthor,
+                          }}
+                        >
+                          {subjectsData?.data.map(subject => (
+                            <MenuItem key={subject.id} value={subject.id} sx={{ color: 'black' }}>
+                              {subject.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    )}
+                  />
+                  <Controller
+                    name="topicIds"
+                    control={control}
+                    render={({ field }) => (
+                      <FormControl fullWidth margin="normal" required sx={{ maxWidth: 600 }}>
+                        <InputLabel>Темы</InputLabel>
+                        <Select
+                          multiple
+                          {...field}
+                          label="Темы"
+                          sx={{
+                            ...inputStyles,
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                borderColor: '#cfd8dc',
+                              },
+                              '&:hover fieldset': {
+                                borderColor: '#90caf9',
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: '#1976d2',
+                              },
+                            },
+                          }}
+                          inputProps={{
+                            readOnly: !isAuthor,
+                          }}
+                          renderValue={selected => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                              {selected.map(topicId => (
+                                <Chip
+                                  key={topicId}
+                                  label={
+                                    selectedSubject?.topics.find(topic => topic.id === topicId)
+                                      ?.name || 'Неизвестно'
+                                  }
+                                />
+                              ))}
+                            </Box>
+                          )}
+                        >
+                          {selectedSubject?.topics.map(topic => (
+                            <MenuItem key={topic.id} value={topic.id} sx={{ color: 'black' }}>
+                              {topic.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    )}
+                  />
+                  {isAuthor && (
+                    <Box sx={{ mt: 2 }}>
+                      <Button type="submit" variant="contained" color="primary">
+                        Сохранить
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        onClick={handleDeleteAdvert}
+                        sx={{
+                          borderColor: theme.palette.error.main,
+                          color: theme.palette.error.main,
+                          ml: 2,
+                          '&:hover': {
+                            borderColor: theme.palette.error.dark,
+                            backgroundColor: theme.palette.error.light,
+                            color: '#fff',
+                          },
+                        }}
+                      >
+                        Удалить
+                      </Button>
+                    </Box>
+                  )}
+                </Box>
+              </form>
+              {!isAuthor && (isMentor || advertData?.data?.mentor) && (
+                <Box
+                  sx={{
+                    mb: 4,
+                    mt: 1.5,
+                    p: 3,
+                    maxWidth: 600,
+                    border: '1px solid #e0e0e0',
+                    borderRadius: 3,
+                    backgroundColor: '#f9f9fc',
+                  }}
+                >
+                  <Typography variant="h6" gutterBottom>
+                    Заинтересовала заявка?
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 2, color: 'text.secondary' }}>
+                    Если вас заинтересовала эта заявка — оставьте свой отклик. Напишите, чем можете
+                    помочь или какие вопросы хотите обсудить.
+                  </Typography>
+
                   <TextField
-                    {...field}
-                    label="Описание"
+                    label="Ваш отклик"
+                    value={responseText}
+                    onChange={e => setResponseText(e.target.value)}
                     fullWidth
-                    margin="normal"
                     multiline
                     rows={4}
-                    required
-                    sx={inputStyles}
-                    InputProps={{
-                      readOnly: !isAuthor,
-                    }}
-                  />
-                )}
-              />
-              <Controller
-                name="subjectId"
-                control={control}
-                render={({ field }) => (
-                  <FormControl fullWidth margin="normal" required sx={{ maxWidth: 600 }}>
-                    <InputLabel>Предмет</InputLabel>
-                    <Select
-                      {...field}
-                      label="Предмет"
-                      sx={{
-                        ...inputStyles,
-                        '& .MuiOutlinedInput-root': {
-                          '& fieldset': {
-                            borderColor: '#cfd8dc',
-                          },
-                          '&:hover fieldset': {
-                            borderColor: '#90caf9',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#1976d2',
-                          },
-                        },
-                      }}
-                      inputProps={{
-                        readOnly: !isAuthor,
-                      }}
-                    >
-                      {subjectsData?.data.map(subject => (
-                        <MenuItem key={subject.id} value={subject.id} sx={{ color: 'black' }}>
-                          {subject.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              />
-              <Controller
-                name="topicIds"
-                control={control}
-                render={({ field }) => (
-                  <FormControl fullWidth margin="normal" required sx={{ maxWidth: 600 }}>
-                    <InputLabel>Темы</InputLabel>
-                    <Select
-                      multiple
-                      {...field}
-                      label="Темы"
-                      sx={{
-                        ...inputStyles,
-                        '& .MuiOutlinedInput-root': {
-                          '& fieldset': {
-                            borderColor: '#cfd8dc',
-                          },
-                          '&:hover fieldset': {
-                            borderColor: '#90caf9',
-                          },
-                          '&.Mui-focused fieldset': {
-                            borderColor: '#1976d2',
-                          },
-                        },
-                      }}
-                      inputProps={{
-                        readOnly: !isAuthor,
-                      }}
-                      renderValue={selected => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {selected.map(topicId => (
-                            <Chip
-                              key={topicId}
-                              label={
-                                selectedSubject?.topics.find(topic => topic.id === topicId)?.name ||
-                                'Неизвестно'
-                              }
-                            />
-                          ))}
-                        </Box>
-                      )}
-                    >
-                      {selectedSubject?.topics.map(topic => (
-                        <MenuItem key={topic.id} value={topic.id} sx={{ color: 'black' }}>
-                          {topic.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              />
-              {isAuthor && (
-                <Box sx={{ mt: 2 }}>
-                  <Button type="submit" variant="contained" color="primary">
-                    Сохранить
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    onClick={handleDeleteAdvert}
+                    margin="normal"
+                    placeholder="Например: «Готов помочь с темой. Есть опыт преподавания и материалы»"
                     sx={{
-                      borderColor: theme.palette.error.main,
-                      color: theme.palette.error.main,
-                      ml: 2,
-                      '&:hover': {
-                        borderColor: theme.palette.error.dark,
-                        backgroundColor: theme.palette.error.light,
-                        color: '#fff',
+                      backgroundColor: 'white',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: '#cfd8dc',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#90caf9',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#1976d2',
+                        },
                       },
                     }}
+                  />
+
+                  <Button
+                    onClick={handleCreateResponse}
+                    variant="contained"
+                    color="primary"
+                    disabled={!responseText.trim()}
+                    sx={{
+                      mt: 2,
+                      px: 4,
+                      py: 1.5,
+                      fontWeight: 600,
+                      fontSize: '1rem',
+                      borderRadius: 2,
+                      textTransform: 'none',
+                    }}
                   >
-                    Удалить
+                    Оставить отклик
                   </Button>
                 </Box>
               )}
             </Box>
-          </form>
-          {!isAuthor && (isMentor || advertData?.data?.mentor) && (
-            <Box
-              sx={{
-                mb: 4,
-                mt: 1.5,
-                p: 3,
-                maxWidth: 600,
-                border: '1px solid #e0e0e0',
-                borderRadius: 3,
-                backgroundColor: '#f9f9fc',
-              }}
-            >
-              <Typography variant="h6" gutterBottom>
-                Заинтересовала заявка?
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 2, color: 'text.secondary' }}>
-                Если вас заинтересовала эта заявка — оставьте свой отклик. Напишите, чем можете
-                помочь или какие вопросы хотите обсудить.
-              </Typography>
-
-              <TextField
-                label="Ваш отклик"
-                value={responseText}
-                onChange={e => setResponseText(e.target.value)}
-                fullWidth
-                multiline
-                rows={4}
-                margin="normal"
-                placeholder="Например: «Готов помочь с темой. Есть опыт преподавания и материалы»"
-                sx={{
-                  backgroundColor: 'white',
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderColor: '#cfd8dc',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: '#90caf9',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#1976d2',
-                    },
-                  },
-                }}
-              />
-
-              <Button
-                onClick={handleCreateResponse}
-                variant="contained"
-                color="primary"
-                disabled={!responseText.trim()}
-                sx={{
-                  mt: 2,
-                  px: 4,
-                  py: 1.5,
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                  borderRadius: 2,
-                  textTransform: 'none',
-                }}
-              >
-                Оставить отклик
-              </Button>
-            </Box>
           )}
-        </Box>
-      )}
 
-      {tabIndex === 1 && (
-        <Box>
-          <Typography variant="h5" gutterBottom>
-            Отклики
-          </Typography>
+          {tabIndex === 1 && (
+            <Box>
+              <Typography variant="h5" gutterBottom>
+                Отклики
+              </Typography>
 
-          {responsesData?.data?.length === 0 ? (
-            <NoData text="Пока нет откликов на эту заявку" />
-          ) : (
-            <Stack spacing={2}>
-              {responsesData?.data?.map(response => (
-                <Box
-                  key={response.id}
-                  sx={{
-                    p: 3,
-                    borderRadius: 3,
-                    border: '1px solid #e0e0e0',
-                    backgroundColor: '#ffffff',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 2,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-                  }}
-                >
-                  <Box>
-                    <Typography variant="subtitle1" fontWeight={600}>
-                      {response?.respondent?.firstName} {response?.respondent?.lastName}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {new Date(response?.createdOn).toLocaleString('ru-RU')}
-                    </Typography>
-                  </Box>
-
-                  <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                    {response?.description}
-                  </Typography>
-
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-                    {!response.accepted && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleAcceptResponse(response?.id)}
-                        startIcon={<FiCheck />}
-                      >
-                        Принять отклик
-                      </Button>
-                    )}
-
-                    <Button
-                      variant="outlined"
-                      onClick={() => navigate(`/chat/${response?.chatId}`)}
+              {responsesData?.data?.length === 0 ? (
+                <NoData text="Пока нет откликов на эту заявку" />
+              ) : (
+                <Stack spacing={2}>
+                  {responsesData?.data?.map(response => (
+                    <Box
+                      key={response.id}
                       sx={{
-                        borderColor: theme.palette.info.main,
-                        color: theme.palette.info.main,
-                        '&:hover': {
-                          backgroundColor: theme.palette.info.light,
-                          borderColor: theme.palette.info.dark,
-                          color: '#fff',
-                        },
+                        p: 3,
+                        borderRadius: 3,
+                        border: '1px solid #e0e0e0',
+                        backgroundColor: '#ffffff',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                       }}
                     >
-                      Перейти в чат
-                    </Button>
-                  </Stack>
-                </Box>
-              ))}
-            </Stack>
+                      <Box>
+                        <Typography variant="subtitle1" fontWeight={600}>
+                          {response?.respondent?.firstName} {response?.respondent?.lastName}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {new Date(response?.createdOn).toLocaleString('ru-RU')}
+                        </Typography>
+                      </Box>
+
+                      <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                        {response?.description}
+                      </Typography>
+
+                      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                        {!response.accepted && (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleAcceptResponse(response?.id)}
+                            startIcon={<FiCheck />}
+                          >
+                            Принять отклик
+                          </Button>
+                        )}
+
+                        <Button
+                          variant="outlined"
+                          onClick={() => navigate(`/chat/${response?.chatId}`)}
+                          sx={{
+                            borderColor: theme.palette.info.main,
+                            color: theme.palette.info.main,
+                            '&:hover': {
+                              backgroundColor: theme.palette.info.light,
+                              borderColor: theme.palette.info.dark,
+                              color: '#fff',
+                            },
+                          }}
+                        >
+                          Перейти в чат
+                        </Button>
+                      </Stack>
+                    </Box>
+                  ))}
+                </Stack>
+              )}
+            </Box>
           )}
-        </Box>
+        </>
+      ) : (
+        <Typography>Заявка не найдена.</Typography>
       )}
     </Box>
   );
