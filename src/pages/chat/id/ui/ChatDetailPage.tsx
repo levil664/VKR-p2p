@@ -178,6 +178,13 @@ export const ChatDetailPage = () => {
     }
   };
 
+  const handleKeyDown = event => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   if (isChatLoading || isAdvertLoading) return <CircularProgress />;
 
   return (
@@ -343,6 +350,7 @@ export const ChatDetailPage = () => {
             placeholder="Напишите сообщение..."
             value={messageText}
             onChange={e => setMessageText(e.target.value)}
+            onKeyDown={handleKeyDown}
             fullWidth
             size="small"
             sx={{ backgroundColor: '#fff', borderRadius: 2 }}
