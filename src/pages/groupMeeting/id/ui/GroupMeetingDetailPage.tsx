@@ -57,7 +57,11 @@ export const GroupMeetingDetailPage = () => {
       const endDate = new Date(meetingData.data.endDt);
 
       const formatDate = (date: Date) => date.toISOString().split('T')[0];
-      const formatTime = (date: Date) => date.toISOString().split('T')[1].substring(0, 5);
+      const formatTime = (date: Date) => {
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+      };
 
       setValue('title', meetingData.data.title);
       setValue('description', meetingData.data.description);
@@ -70,8 +74,8 @@ export const GroupMeetingDetailPage = () => {
 
   const handleUpdate = async data => {
     try {
-      const startDateTime = new Date(`${data.startDt}T${data.startTime}:00.000Z`).toISOString();
-      const endDateTime = new Date(`${data.endDt}T${data.endTime}:00.000Z`).toISOString();
+      const startDateTime = new Date(`${data.startDt}T${data.startTime}:00`).toISOString();
+      const endDateTime = new Date(`${data.endDt}T${data.endTime}:00`).toISOString();
 
       await updateMeeting({
         id,
