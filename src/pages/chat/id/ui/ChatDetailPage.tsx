@@ -37,12 +37,14 @@ import {
   useSendMessageMutation,
 } from '../../../../entities/chat/api/chatApi';
 import { useGetSubjectsQuery } from '../../../../entities/subjects/api/subjectsApi';
+import { CreateReviewModal } from '../../../../features/createReviewModal/ui/CreateReviewModal';
 
 export const ChatDetailPage = () => {
   const { chatId } = useParams();
   const [messageText, setMessageText] = useState('');
   const [allMessages, setAllMessages] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
+  const [openReviewModal, setOpenReviewModal] = useState(false);
 
   const bottomRef = useRef(null);
   const topObserverRef = useRef(null);
@@ -160,6 +162,7 @@ export const ChatDetailPage = () => {
       await finalizeAdvert(advertId).unwrap();
       toast.success('Заявка завершена!');
       setOpenFinalizeDialog(false);
+      setOpenReviewModal(true);
     } catch (error) {
       toast.error(error.data.message || 'Не удалось завершить заявку.');
     }
@@ -374,6 +377,12 @@ export const ChatDetailPage = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <CreateReviewModal
+        open={openReviewModal}
+        advertId={advertId}
+        onClose={() => setOpenReviewModal(false)}
+      />
 
       <Dialog open={openVideoCallDialog} onClose={() => setOpenVideoCallDialog(false)}>
         <DialogTitle>Создать видеозвонок?</DialogTitle>
