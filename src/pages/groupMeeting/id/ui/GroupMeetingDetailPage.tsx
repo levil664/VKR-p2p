@@ -70,7 +70,18 @@ export const GroupMeetingDetailPage = () => {
 
   const handleUpdate = async data => {
     try {
-      await updateMeeting({ id, body: data }).unwrap();
+      const startDateTime = new Date(`${data.startDt}T${data.startTime}:00.000Z`).toISOString();
+      const endDateTime = new Date(`${data.endDt}T${data.endTime}:00.000Z`).toISOString();
+
+      await updateMeeting({
+        id,
+        body: {
+          title: data.title,
+          description: data.description,
+          startDt: startDateTime,
+          endDt: endDateTime,
+        },
+      }).unwrap();
       toast.success('Групповая встреча обновлена!');
     } catch (error) {
       toast.error(error.data.message || 'Ошибка при обновлении.');
@@ -81,7 +92,7 @@ export const GroupMeetingDetailPage = () => {
     try {
       await deleteMeeting(id).unwrap();
       toast.success('Встреча удалена!');
-      navigate('/group-meetings');
+      navigate('../');
     } catch (error) {
       toast.error(error.data.message || 'Ошибка при удалении.');
     } finally {
