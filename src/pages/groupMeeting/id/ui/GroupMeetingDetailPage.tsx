@@ -17,11 +17,13 @@ import { toast } from 'react-toastify';
 import {
   useDeleteGroupMeetingMutation,
   useGetGroupMeetingQuery,
+  useGetGroupMeetingUrlQuery,
   useUpdateGroupMeetingMutation,
 } from '../../../../entities/groupMeetings/api';
+import { useAppSelector } from '../../../../app/api';
 
 const inputStyles = {
-  width: { xs: '100%', sm: '100%', lg: 600 },
+  width: { xs: '100%', sm: '100%', md: 400, lg: 600 },
   maxWidth: '600px',
   backgroundColor: 'white',
   '& .MuiInputBase-input': {
@@ -35,6 +37,11 @@ export const GroupMeetingDetailPage = () => {
   const theme = useTheme();
 
   const { data: meetingData, isLoading } = useGetGroupMeetingQuery(id);
+  const { data: meetingUrlData, isLoading: isUrlLoading } = useGetGroupMeetingUrlQuery(id);
+
+  const currentUserId = useAppSelector(state => state.user.id);
+  const isAuthor = meetingData?.data?.creator?.id === currentUserId;
+
   const [updateMeeting] = useUpdateGroupMeetingMutation();
   const [deleteMeeting] = useDeleteGroupMeetingMutation();
 
@@ -123,6 +130,9 @@ export const GroupMeetingDetailPage = () => {
                 margin="normal"
                 required
                 sx={inputStyles}
+                InputProps={{
+                  readOnly: !isAuthor,
+                }}
               />
             )}
           />
@@ -139,6 +149,9 @@ export const GroupMeetingDetailPage = () => {
                 margin="normal"
                 required
                 sx={inputStyles}
+                InputProps={{
+                  readOnly: !isAuthor,
+                }}
               />
             )}
           />
@@ -155,6 +168,9 @@ export const GroupMeetingDetailPage = () => {
                 InputLabelProps={{ shrink: true }}
                 required
                 sx={inputStyles}
+                InputProps={{
+                  readOnly: !isAuthor,
+                }}
               />
             )}
           />
@@ -171,6 +187,9 @@ export const GroupMeetingDetailPage = () => {
                 InputLabelProps={{ shrink: true }}
                 required
                 sx={inputStyles}
+                InputProps={{
+                  readOnly: !isAuthor,
+                }}
               />
             )}
           />
@@ -187,6 +206,9 @@ export const GroupMeetingDetailPage = () => {
                 InputLabelProps={{ shrink: true }}
                 required
                 sx={inputStyles}
+                InputProps={{
+                  readOnly: !isAuthor,
+                }}
               />
             )}
           />
@@ -203,31 +225,67 @@ export const GroupMeetingDetailPage = () => {
                 InputLabelProps={{ shrink: true }}
                 required
                 sx={inputStyles}
+                InputProps={{
+                  readOnly: !isAuthor,
+                }}
               />
             )}
           />
 
-          <Box sx={{ mt: 2 }}>
-            <Button type="submit" variant="contained" color="primary">
-              Сохранить
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={() => setOpenDialog(true)}
-              sx={{
-                borderColor: theme.palette.error.main,
-                color: theme.palette.error.main,
-                ml: 2,
-                '&:hover': {
-                  borderColor: theme.palette.error.dark,
-                  backgroundColor: theme.palette.error.light,
-                  color: '#fff',
+          <TextField
+            label="Ссылка на BBB"
+            fullWidth
+            margin="normal"
+            value={isUrlLoading ? 'Загрузка...' : meetingUrlData?.data || 'Ссылка недоступна'}
+            InputProps={{
+              readOnly: true,
+              sx: {
+                backgroundColor: '#f5f5f5',
+                color: '#424242',
+                '& .Mui-disabled': {
+                  color: '#424242',
                 },
-              }}
-            >
-              Удалить встречу
-            </Button>
-          </Box>
+              },
+            }}
+            sx={{
+              ...inputStyles,
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: '#cfd8dc',
+                },
+                '&:hover fieldset': {
+                  borderColor: '#90caf9',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#1976d2',
+                },
+              },
+            }}
+          />
+
+          {isAuthor && (
+            <Box sx={{ mt: 2 }}>
+              <Button type="submit" variant="contained" color="primary">
+                Сохранить
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => setOpenDialog(true)}
+                sx={{
+                  borderColor: theme.palette.error.main,
+                  color: theme.palette.error.main,
+                  ml: 2,
+                  '&:hover': {
+                    borderColor: theme.palette.error.dark,
+                    backgroundColor: theme.palette.error.light,
+                    color: '#fff',
+                  },
+                }}
+              >
+                Удалить встречу
+              </Button>
+            </Box>
+          )}
         </Box>
       </form>
 

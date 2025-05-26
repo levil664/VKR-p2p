@@ -42,6 +42,7 @@ const inputStyles = {
     color: 'black',
   },
 };
+
 export const AdvertDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
