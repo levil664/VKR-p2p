@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { useRegisterMutation } from '../../../entities/auth/api/authApi';
 
 interface RegisterFormProps {
@@ -51,6 +51,18 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
     setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
+  const fieldLabels: Record<string, string> = {
+    username: 'Логин',
+    email: 'Email',
+    firstName: 'Имя',
+    lastName: 'Фамилия',
+    middleName: 'Отчество',
+    university: 'Университет',
+    faculty: 'Факультет',
+    course: 'Курс',
+    password: 'Пароль',
+  };
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     if (!formData.username) newErrors.username = 'Имя обязательно';
@@ -76,20 +88,31 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       toast.success('Регистрация прошла успешно!');
       onSuccess();
       navigate('/');
-    } catch (err) {
-      toast.error('Ошибка регистрации');
+    } catch (err: any) {
+      if (err?.data?.status === 1 && Array.isArray(err.data.invalidFields)) {
+        err.data.invalidFields.forEach((field: string) => {
+          const fieldName = fieldLabels[field] || field;
+          toast.error(`Поле "${fieldName}" заполнено некорректно.`);
+        });
+      } else {
+        const errorMessage =
+          err?.data?.message || err?.message || 'Произошла ошибка регистрации. Попробуйте позже.';
+        toast.error(errorMessage);
+      }
     }
   };
 
   return (
     <Box
       sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '100%',
-        maxWidth: { xs: '90%', sm: '80%', md: '600px' },
+        minHeight: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        px: 2,
+        py: 4,
+        overflowY: 'auto',
+        bgcolor: '#f5f5f5',
       }}
     >
       <Box
@@ -97,18 +120,32 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          padding: 3,
+          width: '100%',
+          maxWidth: 600,
           backgroundColor: 'white',
           borderRadius: 2,
-          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+          p: { xs: 2, sm: 3 },
+          boxShadow: 3,
           border: '1px solid #90caf9',
         }}
       >
+        <ToastContainer
+          position="top-center"
+          autoClose={4000}
+          hideProgressBar
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          style={{
+            fontSize: '0.85rem',
+            width: '100%',
+            maxWidth: 320,
+          }}
+        />
         <Typography variant="h4" sx={{ marginBottom: 2, color: '#1976d2' }}>
           {title}
         </Typography>
-
         <Box
           component="form"
           sx={{
@@ -239,7 +276,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             {buttonText}
           </Button>
         </Box>
-
         <Typography variant="body2" sx={{ marginTop: 2, color: '#757575' }}>
           {links.map((link, index) => (
             <React.Fragment key={index}>

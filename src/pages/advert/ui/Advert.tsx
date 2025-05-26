@@ -32,6 +32,8 @@ export const Advert = () => {
     searchParams.get('viewMode') === 'card' ? 'card' : 'table'
   );
 
+  const isMentor = useAppSelector(state => state.user.isMentor);
+
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [createAdvert] = useCreateAdvertMutation();
   const {
@@ -40,7 +42,7 @@ export const Advert = () => {
     isError,
   } = useGetAdvertsQuery({
     query: debouncedSearchQuery || '',
-    type: typeFilter || undefined,
+    type: isMentor ? typeFilter || undefined : UserRole.MENTOR,
     pageNumber: pageNumber - 1,
     pageSize,
   });
@@ -99,6 +101,12 @@ export const Advert = () => {
     setViewMode(mode);
   };
 
+  useEffect(() => {
+    if (!isMentor) {
+      setTypeFilter(UserRole.MENTOR);
+    }
+  }, [isMentor]);
+
   const filteredApplications =
     adverts?.data?.content?.filter(advert => advert.status === 'ACTIVE') || [];
 
@@ -119,6 +127,7 @@ export const Advert = () => {
           onTypeChange={handleTypeChange}
           isMultipleRoles={isMultipleRoles}
           handleOpen={handleOpen}
+          isMentor={isMentor}
         />
         {filteredApplications.length === 0 ? (
           <NoData />

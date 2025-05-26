@@ -18,6 +18,7 @@ interface AdvertFiltersProps {
   onTypeChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   handleOpen: () => void;
   isMultipleRoles: boolean;
+  isMentor: boolean;
 }
 
 export const AdvertFilters: React.FC<AdvertFiltersProps> = ({
@@ -26,6 +27,7 @@ export const AdvertFilters: React.FC<AdvertFiltersProps> = ({
   onSearchChange,
   onTypeChange,
   handleOpen,
+  isMentor,
 }) => (
   <Box
     sx={{
@@ -55,11 +57,13 @@ export const AdvertFilters: React.FC<AdvertFiltersProps> = ({
           ),
         }}
       />
-      <Select value={typeFilter} onChange={onTypeChange} displayEmpty size="small">
-        <MenuItem value="">Все заявки</MenuItem>
-        <MenuItem value={UserRole.STUDENT}>Студенты</MenuItem>
-        <MenuItem value={UserRole.MENTOR}>Наставники</MenuItem>
-      </Select>
+      {isMentor && (
+        <Select value={typeFilter} onChange={onTypeChange} displayEmpty size="small">
+          <MenuItem value="">Все заявки</MenuItem>
+          <MenuItem value={UserRole.STUDENT}>Студенты</MenuItem>
+          <MenuItem value={UserRole.MENTOR}>Наставники</MenuItem>
+        </Select>
+      )}
     </Box>
     <Button variant="contained" color="primary" onClick={handleOpen}>
       Создать заявку
