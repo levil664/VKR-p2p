@@ -14,13 +14,13 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
+import { useAppSelector } from '../../../../app/api';
 import {
   useDeleteGroupMeetingMutation,
   useGetGroupMeetingQuery,
   useGetGroupMeetingUrlQuery,
   useUpdateGroupMeetingMutation,
 } from '../../../../entities/groupMeetings/api';
-import { useAppSelector } from '../../../../app/api';
 
 const inputStyles = {
   width: { xs: '100%', sm: '100%', md: 400, lg: 600 },
