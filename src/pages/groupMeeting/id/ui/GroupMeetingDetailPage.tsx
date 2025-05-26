@@ -53,8 +53,8 @@ export const GroupMeetingDetailPage = () => {
 
   useEffect(() => {
     if (meetingData) {
-      const startDate = new Date(meetingData.data.startDt);
-      const endDate = new Date(meetingData.data.endDt);
+      const startDate = new Date(meetingData?.data?.startDt);
+      const endDate = new Date(meetingData?.data?.endDt);
 
       const formatDate = (date: Date) => date.toISOString().split('T')[0];
       const formatTime = (date: Date) => {
@@ -63,8 +63,8 @@ export const GroupMeetingDetailPage = () => {
         return `${hours}:${minutes}`;
       };
 
-      setValue('title', meetingData.data.title);
-      setValue('description', meetingData.data.description);
+      setValue('title', meetingData?.data?.title);
+      setValue('description', meetingData?.data?.description);
       setValue('startDt', formatDate(startDate));
       setValue('startTime', formatTime(startDate));
       setValue('endDt', formatDate(endDate));
@@ -74,14 +74,14 @@ export const GroupMeetingDetailPage = () => {
 
   const handleUpdate = async data => {
     try {
-      const startDateTime = new Date(`${data.startDt}T${data.startTime}:00`).toISOString();
-      const endDateTime = new Date(`${data.endDt}T${data.endTime}:00`).toISOString();
+      const startDateTime = new Date(`${data?.startDt}T${data?.startTime}:00`).toISOString();
+      const endDateTime = new Date(`${data?.endDt}T${data?.endTime}:00`).toISOString();
 
       await updateMeeting({
         id,
         body: {
-          title: data.title,
-          description: data.description,
+          title: data?.title,
+          description: data?.description,
           startDt: startDateTime,
           endDt: endDateTime,
         },
@@ -108,7 +108,7 @@ export const GroupMeetingDetailPage = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Typography variant="h4">Групповая встреча: {meetingData.data.title}</Typography>
+      <Typography variant="h4">Групповая встреча: {meetingData?.data?.title || '—'}</Typography>
 
       <form onSubmit={handleSubmit(handleUpdate)}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}>
