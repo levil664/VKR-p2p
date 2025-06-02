@@ -19,9 +19,9 @@ import { motion } from 'framer-motion';
 import { Controller, useForm } from 'react-hook-form';
 import { FaStar } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { useAppSelector } from '../../../app/api';
 import { useGetAdvertQuery } from '../../../entities/advert/api/advertApi';
 import { useCreateReviewMutation } from '../../../entities/review/api/reviewApi';
-import { useAppSelector } from '../../../app/api';
 
 interface CreateReviewModalProps {
   open: boolean;
