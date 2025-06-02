@@ -1,9 +1,19 @@
 import { UserRole } from './enums';
 
-export interface ItemResponseUserDto {
-  data: UserDto;
-  status: number;
-  message?: string;
+export interface MentorStats {
+  comprehensibility: number;
+  involvedness: number;
+  compliance: number;
+  usefulness: number;
+  wouldAskAgainRate: number;
+}
+
+export interface StudentStats {
+  preparedness: number;
+  activity: number;
+  politeness: number;
+  proactivity: number;
+  wouldHelpAgainRate: number;
 }
 
 export interface UserDto {
@@ -18,11 +28,15 @@ export interface UserDto {
   isMentor: boolean;
   faculty: string;
   course: number;
-  rating: number;
+  description: string;
+  mentorStats?: MentorStats;
+  studentStats?: StudentStats;
 }
 
-export interface UpdateProfileRequest {
-  description: string;
+export interface ItemResponseUserDto {
+  data: UserDto;
+  status: number;
+  message?: string;
 }
 
 export interface UserProfileDto {
@@ -32,11 +46,16 @@ export interface UserProfileDto {
   middleName: string;
   isMentor: boolean;
   description: string;
-  rating: number;
+  mentorStats?: MentorStats;
+  studentStats?: StudentStats;
 }
 
 export interface ItemResponseUserProfileDto {
   data: UserProfileDto;
   status: number;
   message?: string;
+}
+
+export interface UpdateProfileRequest {
+  description: string;
 }

@@ -1,8 +1,8 @@
 import { Avatar, Box, CircularProgress, Paper, Stack, Typography } from '@mui/material';
-import { FaStar } from 'react-icons/fa';
 import { useParams } from 'react-router';
 import { useGetReviewsForUserQuery } from '../../../entities/review/api/reviewApi';
 import { useGetUserQuery } from '../../../entities/user/api/userApi';
+import { ReviewCard } from '../../../widgets/reviewCard/ui';
 
 export const MentorDetailPage = () => {
   const { id } = useParams();
@@ -17,13 +17,6 @@ export const MentorDetailPage = () => {
 
   const getInitials = (firstName, lastName) =>
     `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
-
-  const renderRatingStars = rating => {
-    const fullStars = Math.round(rating);
-    return Array.from({ length: 5 }, (_, i) => (
-      <FaStar key={i} color={i < fullStars ? 'gold' : '#e0e0e0'} style={{ marginRight: 4 }} />
-    ));
-  };
 
   if (isLoading) {
     return (
@@ -45,18 +38,32 @@ export const MentorDetailPage = () => {
     );
   }
 
+  const SummaryItem = ({ label, value, isPercent = false }) => (
+    <Paper sx={{ p: 2, borderRadius: 2, textAlign: 'center' }}>
+      <Box sx={{ minHeight: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Typography variant="body2" color="text.secondary" textAlign="center">
+          {label}
+        </Typography>
+      </Box>
+      <Typography variant="h6" fontWeight={700}>
+        {value != null
+          ? isPercent
+            ? `${Math.round(value * 100)}%`
+            : `${value.toFixed(1)} ★`
+          : '-'}
+      </Typography>
+    </Paper>
+  );
+
   return (
-    <Box sx={{ p: 3, maxWidth: 800, width: '100%', margin: '0 auto' }}>
-      <Paper
-        elevation={4}
-        sx={{ p: 4, borderRadius: '16px', boxShadow: '0 6px 24px rgba(0, 0, 0, 0.12)', mb: 4 }}
-      >
+    <Box sx={{ p: 2, maxWidth: 1200, width: '100%', mx: 'auto' }}>
+      <Paper elevation={4} sx={{ p: { xs: 2, md: 4 }, borderRadius: 3, mb: 4 }}>
         <Stack spacing={3} alignItems="center">
           <Avatar sx={{ width: 120, height: 120, fontSize: 42, bgcolor: 'primary.main' }}>
             {getInitials(user?.firstName, user?.lastName)}
           </Avatar>
 
-          <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+          <Typography variant="h5" fontWeight="bold" textAlign="center">
             {user?.lastName} {user?.firstName} {user?.middleName}
           </Typography>
 
@@ -64,22 +71,38 @@ export const MentorDetailPage = () => {
             {user?.isMentor ? 'Наставник' : 'Пользователь'}
           </Typography>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {renderRatingStars(user?.rating || 0)}
-          </Box>
-
           <Box sx={{ width: '100%' }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1 }}>
+            <Typography variant="subtitle1" fontWeight={600} mb={1}>
               Описание
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body2" color="text.secondary">
               {user?.description || 'Нет описания'}
             </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(5, 1fr)' },
+              gap: 2,
+              width: '100%',
+              mt: 4,
+            }}
+          >
+            <SummaryItem label="Понятность" value={user.mentorStats?.comprehensibility} />
+            <SummaryItem label="Вовлеченность" value={user.mentorStats?.involvedness} />
+            <SummaryItem label="Соблюдение договоренностей" value={user.mentorStats?.compliance} />
+            <SummaryItem label="Польза" value={user.mentorStats?.usefulness} />
+            <SummaryItem
+              label="Обратятся снова"
+              value={user.mentorStats?.wouldAskAgainRate}
+              isPercent
+            />
           </Box>
         </Stack>
       </Paper>
 
-      <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+      <Typography variant="h6" fontWeight={600} mb={2}>
         Отзывы о наставнике
       </Typography>
 
@@ -94,35 +117,7 @@ export const MentorDetailPage = () => {
       ) : (
         <Stack spacing={2}>
           {reviews.map(review => (
-            <Paper
-              key={review.id}
-              elevation={3}
-              sx={{
-                p: 2,
-                borderRadius: '12px',
-                backgroundColor: '#f9f9f9',
-              }}
-            >
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Avatar sx={{ bgcolor: 'secondary.main' }}>
-                  {getInitials(review.reviewer.firstName, review.reviewer.lastName)}
-                </Avatar>
-                <Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                    {review.reviewer.lastName} {review.reviewer.firstName}
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    {renderRatingStars(review.rating)}
-                  </Box>
-                  <Typography variant="caption" color="text.secondary">
-                    {new Date(review.createdOn).toLocaleDateString()}
-                  </Typography>
-                </Box>
-              </Stack>
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                {review.text}
-              </Typography>
-            </Paper>
+            <ReviewCard key={review.id} review={review} />
           ))}
         </Stack>
       )}
