@@ -283,7 +283,7 @@ export const ChatDetailPage = () => {
             )}
           />
         </form>
-        {isAuthor && (
+        {isAuthor && advertData?.data?.status === 'IN_PROGRESS' && (
           <Box sx={{ mt: 2, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 1 }}>
             <Button
               variant="contained"

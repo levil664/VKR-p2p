@@ -10,6 +10,20 @@ import {
 
 export const groupMeetingApi = commonApi.injectEndpoints?.({
   endpoints: builder => ({
+    attendGroupMeeting: builder.mutation<EmptyResponse, string>({
+      query: id => ({
+        url: `/group-meetings/${id}/attend`,
+        method: 'PUT',
+      }),
+      invalidatesTags: (result, error, id) => [{ type: 'GroupMeeting', id }],
+    }),
+    unattendGroupMeeting: builder.mutation<EmptyResponse, string>({
+      query: id => ({
+        url: `/group-meetings/${id}/attend`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, id) => [{ type: 'GroupMeeting', id }],
+    }),
     getGroupMeetings: builder.query<
       PageResponseGroupMeetingDto,
       { pageNumber?: number; pageSize?: number }
@@ -83,4 +97,6 @@ export const {
   useDeleteGroupMeetingMutation,
   useGetMyGroupMeetingsQuery,
   useGetGroupMeetingUrlQuery,
+  useAttendGroupMeetingMutation,
+  useUnattendGroupMeetingMutation,
 } = groupMeetingApi;

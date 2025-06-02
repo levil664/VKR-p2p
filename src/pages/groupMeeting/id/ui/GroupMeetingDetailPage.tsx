@@ -16,9 +16,11 @@ import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { useAppSelector } from '../../../../app/api';
 import {
+  useAttendGroupMeetingMutation,
   useDeleteGroupMeetingMutation,
   useGetGroupMeetingQuery,
   useGetGroupMeetingUrlQuery,
+  useUnattendGroupMeetingMutation,
   useUpdateGroupMeetingMutation,
 } from '../../../../entities/groupMeetings/api';
 
@@ -36,7 +38,7 @@ export const GroupMeetingDetailPage = () => {
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const { data: meetingData, isLoading } = useGetGroupMeetingQuery(id);
+  const { data: meetingData, isLoading, refetch } = useGetGroupMeetingQuery(id);
   const { data: meetingUrlData, isLoading: isUrlLoading } = useGetGroupMeetingUrlQuery(id);
 
   const currentUserId = useAppSelector(state => state.user.id);
@@ -44,6 +46,8 @@ export const GroupMeetingDetailPage = () => {
 
   const [updateMeeting] = useUpdateGroupMeetingMutation();
   const [deleteMeeting] = useDeleteGroupMeetingMutation();
+  const [attendMeeting] = useAttendGroupMeetingMutation();
+  const [unattendMeeting] = useUnattendGroupMeetingMutation();
 
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -95,7 +99,7 @@ export const GroupMeetingDetailPage = () => {
       }).unwrap();
       toast.success('Групповая встреча обновлена!');
     } catch (error) {
-      toast.error(error.data.message || 'Ошибка при обновлении.');
+      toast.error(error.data?.message || 'Ошибка при обновлении.');
     }
   };
 
@@ -105,9 +109,24 @@ export const GroupMeetingDetailPage = () => {
       toast.success('Встреча удалена!');
       navigate('../');
     } catch (error) {
-      toast.error(error.data.message || 'Ошибка при удалении.');
+      toast.error(error.data?.message || 'Ошибка при удалении.');
     } finally {
       setOpenDialog(false);
+    }
+  };
+
+  const handleAttendToggle = async () => {
+    try {
+      if (meetingData?.data?.isAttending) {
+        await unattendMeeting(id).unwrap();
+        toast.success('Вы отменили участие.');
+      } else {
+        await attendMeeting(id).unwrap();
+        toast.success('Вы отметили участие.');
+      }
+      refetch();
+    } catch (error) {
+      toast.error(error?.data?.message || 'Ошибка изменения участия.');
     }
   };
 
@@ -232,60 +251,57 @@ export const GroupMeetingDetailPage = () => {
             )}
           />
 
-          <TextField
-            label="Ссылка на BBB"
-            fullWidth
-            margin="normal"
-            value={isUrlLoading ? 'Загрузка...' : meetingUrlData?.data || 'Ссылка недоступна'}
-            InputProps={{
-              readOnly: true,
-              sx: {
-                backgroundColor: '#f5f5f5',
-                color: '#424242',
-                '& .Mui-disabled': {
-                  color: '#424242',
-                },
-              },
-            }}
-            sx={{
-              ...inputStyles,
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: '#cfd8dc',
-                },
-                '&:hover fieldset': {
-                  borderColor: '#90caf9',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#1976d2',
-                },
-              },
-            }}
-          />
+          <Typography sx={{ mt: 2 }}>
+            Количество участников: <strong>{meetingData?.data?.attendeeCount || 0}</strong>
+          </Typography>
 
-          {isAuthor && (
-            <Box sx={{ mt: 2 }}>
-              <Button type="submit" variant="contained" color="primary">
-                Сохранить
-              </Button>
+          <Button
+            variant={meetingData?.data?.isAttending ? 'outlined' : 'contained'}
+            color={meetingData?.data?.isAttending ? 'error' : 'success'}
+            onClick={handleAttendToggle}
+            sx={{ mt: 1 }}
+          >
+            {meetingData?.data?.isAttending ? 'Отменить участие' : 'Участвую'}
+          </Button>
+
+          <Box sx={{ mt: 4 }}>
+            {isAuthor && (
+              <>
+                <Button type="submit" variant="contained" color="primary">
+                  Сохранить
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={() => setOpenDialog(true)}
+                  sx={{
+                    borderColor: theme.palette.error.main,
+                    color: theme.palette.error.main,
+                    ml: 2,
+                    '&:hover': {
+                      borderColor: theme.palette.error.dark,
+                      backgroundColor: theme.palette.error.light,
+                      color: '#fff',
+                    },
+                  }}
+                >
+                  Удалить встречу
+                </Button>
+              </>
+            )}
+
+            {meetingUrlData?.data && (
               <Button
-                variant="outlined"
-                onClick={() => setOpenDialog(true)}
-                sx={{
-                  borderColor: theme.palette.error.main,
-                  color: theme.palette.error.main,
-                  ml: 2,
-                  '&:hover': {
-                    borderColor: theme.palette.error.dark,
-                    backgroundColor: theme.palette.error.light,
-                    color: '#fff',
-                  },
-                }}
+                variant="contained"
+                color="primary"
+                href={meetingUrlData?.data}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{ mt: 2 }}
               >
-                Удалить встречу
+                Подключиться к встрече
               </Button>
-            </Box>
-          )}
+            )}
+          </Box>
         </Box>
       </form>
 

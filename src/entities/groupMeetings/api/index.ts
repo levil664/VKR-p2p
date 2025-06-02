@@ -8,4 +8,6 @@ export const {
   useDeleteGroupMeetingMutation,
   useGetMyGroupMeetingsQuery,
   useGetGroupMeetingUrlQuery,
+  useAttendGroupMeetingMutation,
+  useUnattendGroupMeetingMutation,
 } = groupMeetingApi;
