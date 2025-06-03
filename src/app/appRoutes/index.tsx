@@ -30,7 +30,9 @@ export const AppRoutes: React.FC = () => {
       <Route element={<MainLayout />}>
         <Route
           path="/"
-          element={userRole === RoleEnum.TEACHER ? <MentorApplication /> : <Advert />}
+          element={
+            userRole === RoleEnum.TEACHER ? <MentorApplication /> : <GroupMeetingDetailPage />
+          }
         />
 
         <Route

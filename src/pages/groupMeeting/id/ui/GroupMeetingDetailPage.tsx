@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Stack,
   TextField,
   Typography,
   useTheme,
@@ -251,56 +252,72 @@ export const GroupMeetingDetailPage = () => {
             )}
           />
 
-          <Typography sx={{ mt: 2 }}>
-            Количество участников: <strong>{meetingData?.data?.attendeeCount || 0}</strong>
-          </Typography>
-
-          <Button
-            variant={meetingData?.data?.isAttending ? 'outlined' : 'contained'}
-            color={meetingData?.data?.isAttending ? 'error' : 'success'}
-            onClick={handleAttendToggle}
-            sx={{ mt: 1 }}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 2,
+              mt: 2,
+              width: { xs: '100%', sm: '100%', md: 400, lg: 600 },
+              maxWidth: '600px',
+            }}
           >
-            {meetingData?.data?.isAttending ? 'Отменить участие' : 'Участвую'}
-          </Button>
+            <Typography>
+              Количество участников: <strong>{meetingData?.data?.attendeeCount || 0}</strong>
+            </Typography>
+
+            <Button
+              variant={meetingData?.data?.isAttending ? 'outlined' : 'contained'}
+              color={meetingData?.data?.isAttending ? 'error' : 'success'}
+              onClick={handleAttendToggle}
+              sx={{
+                width: '100%',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}
+            >
+              {meetingData?.data?.isAttending ? 'Отменить участие' : 'Участвую'}
+            </Button>
+          </Box>
 
           <Box sx={{ mt: 4 }}>
-            {isAuthor && (
-              <>
-                <Button type="submit" variant="contained" color="primary">
-                  Сохранить
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={() => setOpenDialog(true)}
-                  sx={{
-                    borderColor: theme.palette.error.main,
-                    color: theme.palette.error.main,
-                    ml: 2,
-                    '&:hover': {
-                      borderColor: theme.palette.error.dark,
-                      backgroundColor: theme.palette.error.light,
-                      color: '#fff',
-                    },
-                  }}
-                >
-                  Удалить встречу
-                </Button>
-              </>
-            )}
+            <Stack direction="row" spacing={2} flexWrap="wrap">
+              {isAuthor && (
+                <>
+                  <Button type="submit" variant="contained" color="primary">
+                    Сохранить
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() => setOpenDialog(true)}
+                    sx={{
+                      borderColor: theme.palette.error.main,
+                      color: theme.palette.error.main,
+                      '&:hover': {
+                        borderColor: theme.palette.error.dark,
+                        backgroundColor: theme.palette.error.light,
+                        color: '#fff',
+                      },
+                    }}
+                  >
+                    Удалить встречу
+                  </Button>
+                </>
+              )}
 
-            {meetingUrlData?.data && (
-              <Button
-                variant="contained"
-                color="primary"
-                href={meetingUrlData?.data}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{ mt: 2 }}
-              >
-                Подключиться к встрече
-              </Button>
-            )}
+              {meetingUrlData?.data && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  href={meetingUrlData?.data}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Подключиться к встрече
+                </Button>
+              )}
+            </Stack>
           </Box>
         </Box>
       </form>

@@ -78,13 +78,21 @@ export const CreateReviewModal: React.FC<CreateReviewModalProps> = ({
 }) => {
   const currentUserId = useAppSelector(state => state.user.id);
   const [createReview, { isLoading }] = useCreateReviewMutation();
-  const { control, handleSubmit, reset, setValue, watch } = useForm({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       text: '',
       ratings: {},
       checkboxes: [],
       wouldInteractAgain: '',
     },
+    mode: 'onSubmit',
   });
 
   const { data: advertData, isLoading: isAdvertLoading } = useGetAdvertQuery(advertId!, {
@@ -116,7 +124,12 @@ export const CreateReviewModal: React.FC<CreateReviewModalProps> = ({
         whatCanBeImproved: data.checkboxes.filter(c =>
           whatCanBeImprovedOptions.find(o => o.value === c)
         ),
-        wouldAskAgain: data.wouldInteractAgain === 'yes',
+        wouldAskAgain:
+          data.wouldInteractAgain === 'yes'
+            ? true
+            : data.wouldInteractAgain === 'no'
+              ? false
+              : null,
       };
     } else {
       payload.content = {
@@ -126,7 +139,12 @@ export const CreateReviewModal: React.FC<CreateReviewModalProps> = ({
         proactivity: data.ratings.proactivity,
         whatDidYouLike: data.checkboxes.filter(c => whatPleasedOptions.find(o => o.value === c)),
         difficulties: data.checkboxes.filter(c => whatWasHardOptions.find(o => o.value === c)),
-        wouldHelpAgain: data.wouldInteractAgain === 'yes',
+        wouldHelpAgain:
+          data.wouldInteractAgain === 'yes'
+            ? true
+            : data.wouldInteractAgain === 'no'
+              ? false
+              : null,
       };
     }
 
@@ -208,9 +226,20 @@ export const CreateReviewModal: React.FC<CreateReviewModalProps> = ({
                 <Controller
                   name={`ratings.${field.name}`}
                   control={control}
-                  defaultValue={0}
+                  defaultValue={null}
+                  rules={{
+                    validate: value => value > 0 || 'Пожалуйста, поставьте оценку',
+                  }}
                   render={({ field: { onChange, value } }) => (
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        border: errors.ratings?.[field.name] ? '1px solid red' : 'none',
+                        borderRadius: '4px',
+                        p: 1,
+                      }}
+                    >
                       {Array.from({ length: 5 }, (_, index) => (
                         <motion.div key={index} whileTap={{ scale: 0.85 }}>
                           <IconButton
@@ -222,7 +251,7 @@ export const CreateReviewModal: React.FC<CreateReviewModalProps> = ({
                             }}
                           >
                             <FaStar
-                              color={index < value ? 'gold' : 'lightgray'}
+                              color={index < (value || 0) ? 'gold' : 'lightgray'}
                               size={24}
                               style={{ transition: 'color 0.2s' }}
                             />
@@ -232,6 +261,11 @@ export const CreateReviewModal: React.FC<CreateReviewModalProps> = ({
                     </Box>
                   )}
                 />
+                {errors.ratings?.[field.name] && (
+                  <Typography variant="caption" color="error">
+                    {errors.ratings[field.name]?.message}
+                  </Typography>
+                )}
               </Box>
             ))}
 
@@ -372,7 +406,6 @@ export const CreateReviewModal: React.FC<CreateReviewModalProps> = ({
                   margin="normal"
                   multiline
                   rows={4}
-                  required
                   placeholder="Что понравилось? Что можно улучшить?"
                 />
               )}
@@ -387,12 +420,24 @@ export const CreateReviewModal: React.FC<CreateReviewModalProps> = ({
               <Controller
                 name="wouldInteractAgain"
                 control={control}
+                rules={{ required: 'Выберите один из вариантов' }}
                 render={({ field }) => (
-                  <RadioGroup {...field} row>
-                    <FormControlLabel value="yes" control={<Radio />} label="Да" />
-                    <FormControlLabel value="no" control={<Radio />} label="Нет" />
-                    <FormControlLabel value="not_sure" control={<Radio />} label="Не уверен" />
-                  </RadioGroup>
+                  <>
+                    <RadioGroup {...field} row>
+                      <FormControlLabel value="yes" control={<Radio />} label="Да" />
+                      <FormControlLabel value="no" control={<Radio />} label="Нет" />
+                      <FormControlLabel
+                        value="not_sure"
+                        control={<Radio />}
+                        label="Затрудняюсь ответить"
+                      />
+                    </RadioGroup>
+                    {errors.wouldInteractAgain && (
+                      <Typography variant="caption" color="error">
+                        {errors.wouldInteractAgain.message}
+                      </Typography>
+                    )}
+                  </>
                 )}
               />
             </FormControl>
