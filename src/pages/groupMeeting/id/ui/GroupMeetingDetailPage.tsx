@@ -26,7 +26,7 @@ import {
 } from '../../../../entities/groupMeetings/api';
 
 const inputStyles = {
-  width: { xs: '100%', sm: '100%', md: 400, lg: 600 },
+  width: { xs: '100%', md: 400, lg: 600 },
   maxWidth: '600px',
   backgroundColor: 'white',
   '& .MuiInputBase-input': {
@@ -252,6 +252,25 @@ export const GroupMeetingDetailPage = () => {
             )}
           />
 
+          {meetingUrlData?.data && (
+            <Button
+              variant="contained"
+              color="primary"
+              href={meetingUrlData?.data}
+              target="_blank"
+              rel="noopener noreferrer"
+              fullWidth
+              sx={{
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                width: { xs: '100%', md: 400, lg: 600 },
+                maxWidth: '600px',
+              }}
+            >
+              Подключиться к встрече
+            </Button>
+          )}
+
           <Box
             sx={{
               display: 'flex',
@@ -259,8 +278,8 @@ export const GroupMeetingDetailPage = () => {
               flexWrap: 'wrap',
               gap: 2,
               mt: 2,
-              width: { xs: '100%', sm: '100%', md: 400, lg: 600 },
-              maxWidth: '600px',
+              width: { xs: '100%', md: 400, lg: 600 },
+              maxWidth: '400px',
             }}
           >
             <Typography>
@@ -272,65 +291,56 @@ export const GroupMeetingDetailPage = () => {
               color={meetingData?.data?.isAttending ? 'error' : 'success'}
               onClick={handleAttendToggle}
               sx={{
-                width: '100%',
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
+                width: { xs: '100%', md: 400, lg: 600 },
+                maxWidth: '184px',
               }}
             >
               {meetingData?.data?.isAttending ? 'Отменить участие' : 'Участвую'}
             </Button>
           </Box>
 
-          <Box sx={{ pb: 6 }}>
-            <Stack direction="row" spacing={3} flexWrap="wrap" justifyContent="center">
-              {isAuthor && (
-                <>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    sx={{
-                      flex: '1 1 200px',
-                      minWidth: 200,
-                    }}
-                  >
-                    Сохранить
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    onClick={() => setOpenDialog(true)}
-                    sx={{
-                      flex: '1 1 200px',
-                      minWidth: 200,
-                      borderColor: theme.palette.error.main,
-                      color: theme.palette.error.main,
-                      '&:hover': {
-                        borderColor: theme.palette.error.dark,
-                        backgroundColor: theme.palette.error.light,
-                        color: '#fff',
-                      },
-                    }}
-                  >
-                    Удалить встречу
-                  </Button>
-                </>
-              )}
-              {meetingUrlData?.data && (
+          <Box
+            sx={{
+              width: { xs: '100%', lg: 600 },
+              maxWidth: '600px',
+              pb: 6,
+              mt: 2,
+            }}
+          >
+            {isAuthor && (
+              <Stack direction="row" flexWrap="wrap" display="flex" gap="16px">
                 <Button
+                  type="submit"
                   variant="contained"
                   color="primary"
-                  href={meetingUrlData?.data}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  fullWidth
                   sx={{
-                    flex: '1 1 200px',
-                    minWidth: 200,
+                    maxWidth: 192,
                   }}
                 >
-                  Подключиться к встрече
+                  Сохранить
                 </Button>
-              )}
-            </Stack>
+                <Button
+                  variant="outlined"
+                  onClick={() => setOpenDialog(true)}
+                  fullWidth
+                  sx={{
+                    maxWidth: 192,
+                    borderColor: theme.palette.error.main,
+                    color: theme.palette.error.main,
+                    '&:hover': {
+                      borderColor: theme.palette.error.dark,
+                      backgroundColor: theme.palette.error.light,
+                      color: '#fff',
+                    },
+                  }}
+                >
+                  Удалить встречу
+                </Button>
+              </Stack>
+            )}
           </Box>
         </Box>
       </form>
