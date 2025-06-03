@@ -449,6 +449,22 @@ export const AdvertDetailPage = () => {
                         >
                           Перейти в чат
                         </Button>
+
+                        <Button
+                          variant="outlined"
+                          onClick={() => navigate(`/profile/${response?.respondent?.id}`)}
+                          sx={{
+                            borderColor: theme.palette.success.main,
+                            color: theme.palette.success.main,
+                            '&:hover': {
+                              backgroundColor: theme.palette.success.light,
+                              borderColor: theme.palette.success.dark,
+                              color: '#fff',
+                            },
+                          }}
+                        >
+                          Просмотр профиля
+                        </Button>
                       </Stack>
                     </Box>
                   ))}

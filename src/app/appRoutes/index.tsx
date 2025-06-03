@@ -17,6 +17,8 @@ import { MyAdvertResponses } from '../../pages/myAdvertResponse/ui/MyAdvertRespo
 import { NotFound } from '../../pages/notFound/ui';
 import { Profile } from '../../pages/profile/ui';
 import { useAppSelector } from '../api';
+import { ProfileDetailPage } from '../../pages/profile/id/ui';
+import { Information } from '../../pages/information/ui';
 
 export const AppRoutes: React.FC = () => {
   const userRole = useAppSelector(state => state.user.role);
@@ -30,9 +32,7 @@ export const AppRoutes: React.FC = () => {
       <Route element={<MainLayout />}>
         <Route
           path="/"
-          element={
-            userRole === RoleEnum.TEACHER ? <MentorApplication /> : <GroupMeetingDetailPage />
-          }
+          element={userRole === RoleEnum.TEACHER ? <MentorApplication /> : <Advert />}
         />
 
         <Route
@@ -53,6 +53,11 @@ export const AppRoutes: React.FC = () => {
         />
 
         <Route path="/profile" element={<Profile />} />
+
+        <Route
+          path="/profile/:id"
+          element={userRole === RoleEnum.TEACHER ? <NotFound /> : <ProfileDetailPage />}
+        />
 
         <Route path="/chat" element={userRole === RoleEnum.TEACHER ? <NotFound /> : <Chat />} />
 
@@ -76,6 +81,11 @@ export const AppRoutes: React.FC = () => {
         <Route
           path="/group-meeting/:id"
           element={userRole === RoleEnum.TEACHER ? <NotFound /> : <GroupMeetingDetailPage />}
+        />
+
+        <Route
+          path="/information"
+          element={userRole === RoleEnum.TEACHER ? <NotFound /> : <Information />}
         />
       </Route>
     </Routes>

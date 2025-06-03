@@ -74,7 +74,12 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
       <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: 2 }}>
         {isMentorReview &&
           (content as MentorReviewContent).whatHelped?.map(tag => (
-            <Chip key={tag} label={`Помогло: ${enumLabelMap[tag] || tag}`} size="small" />
+            <Chip
+              key={tag}
+              label={`Помогло: ${enumLabelMap[tag] || tag}`}
+              color="info"
+              size="small"
+            />
           ))}
         {isMentorReview &&
           (content as MentorReviewContent).whatCanBeImproved?.map(tag => (
@@ -87,7 +92,12 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
           ))}
         {!isMentorReview &&
           (content as StudentReviewContent).whatDidYouLike?.map(tag => (
-            <Chip key={tag} label={`Порадовало: ${enumLabelMap[tag] || tag}`} size="small" />
+            <Chip
+              key={tag}
+              label={`Порадовало: ${enumLabelMap[tag] || tag}`}
+              color="info"
+              size="small"
+            />
           ))}
         {!isMentorReview &&
           (content as StudentReviewContent).difficulties?.map(tag => (
@@ -95,7 +105,7 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
               key={tag}
               label={`Трудности: ${enumLabelMap[tag] || tag}`}
               size="small"
-              color="error"
+              color="warning"
             />
           ))}
       </Stack>

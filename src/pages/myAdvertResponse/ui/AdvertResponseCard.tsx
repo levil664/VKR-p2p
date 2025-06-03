@@ -86,7 +86,7 @@ export const AdvertResponseCard = ({ response }) => {
               variant="outlined"
               onClick={e => {
                 e.stopPropagation();
-                navigate(`/chat/${response.chatId}`);
+                navigate(`/chat/${response?.response.chatId}`);
               }}
               sx={{
                 borderColor: theme.palette.info.main,

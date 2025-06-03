@@ -1,4 +1,11 @@
-import { FaClipboardList, FaComments, FaReply, FaUser, FaUsers } from 'react-icons/fa';
+import {
+  FaClipboardList,
+  FaComments,
+  FaInfoCircle,
+  FaReply,
+  FaUser,
+  FaUsers,
+} from 'react-icons/fa';
 import { RoleEnum } from '../../../entities/user/model/enums';
 
 export const drawerWidth = 200;
@@ -39,5 +46,11 @@ export const menuItems = [
     text: 'Наставники',
     link: '/mentor',
     allowedRoles: [RoleEnum.TEACHER],
+  },
+  {
+    icon: <FaInfoCircle style={{ fontSize: '20px' }} />,
+    text: 'Полезная информация',
+    link: '/information',
+    allowedRoles: [RoleEnum.STUDENT, RoleEnum.MENTOR],
   },
 ];

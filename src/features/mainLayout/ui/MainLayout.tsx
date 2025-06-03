@@ -376,7 +376,14 @@ export const MainLayout: React.FC = () => {
             }}
           >
             {filteredMenuItems.map((item, index) => (
-              <BottomNavigationAction key={index} icon={item.icon} />
+              <BottomNavigationAction
+                key={index}
+                icon={item.icon}
+                sx={{
+                  minWidth: 40,
+                  padding: 0,
+                }}
+              />
             ))}
           </BottomNavigation>
         )}

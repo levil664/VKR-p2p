@@ -95,7 +95,7 @@ export const AdvertResponseTable = ({ responses }) => {
                   variant="outlined"
                   onClick={e => {
                     e.stopPropagation();
-                    navigate(`/chat/${response?.chatId}`);
+                    navigate(`/chat/${response?.response.chatId}`);
                   }}
                   sx={{
                     borderColor: theme.palette.info.main,

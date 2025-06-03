@@ -175,7 +175,7 @@ export const CreateAdvertModal: React.FC<CreateAdvertModalProps> = ({
                 defaultValue={UserRole.STUDENT}
               >
                 <MenuItem value={UserRole.STUDENT}>Студент</MenuItem>
-                <MenuItem value={UserRole.MENTOR}>Ментор</MenuItem>
+                <MenuItem value={UserRole.MENTOR}>Наставник</MenuItem>
               </Select>
             </FormControl>
           )}
