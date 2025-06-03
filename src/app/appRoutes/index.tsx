@@ -9,16 +9,16 @@ import { ChatDetailPage } from '../../pages/chat/id/ui/ChatDetailPage';
 import { Chat } from '../../pages/chat/ui/Chat';
 import { GroupMeetingDetailPage } from '../../pages/groupMeeting/id/ui/GroupMeetingDetailPage';
 import { GroupMeeting } from '../../pages/groupMeeting/ui/GroupMeeting';
+import { Information } from '../../pages/information/ui';
 import { MentorDetailPage } from '../../pages/mentor/id/MentorDetailPage';
 import { Mentor } from '../../pages/mentor/ui/Mentor';
 import { MentorApplication } from '../../pages/mentorApplication/ui';
 import { MyAdverts } from '../../pages/myAdvert/ui/MyAdvert';
 import { MyAdvertResponses } from '../../pages/myAdvertResponse/ui/MyAdvertResponse';
 import { NotFound } from '../../pages/notFound/ui';
+import { ProfileDetailPage } from '../../pages/profile/id/ui';
 import { Profile } from '../../pages/profile/ui';
 import { useAppSelector } from '../api';
-import { ProfileDetailPage } from '../../pages/profile/id/ui';
-import { Information } from '../../pages/information/ui';
 
 export const AppRoutes: React.FC = () => {
   const userRole = useAppSelector(state => state.user.role);
