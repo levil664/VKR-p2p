@@ -10,6 +10,7 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material';
+import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import {
   useApproveMentorApplicationMutation,
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export const MentorApplicationTable = ({ applications }: Props) => {
+  const navigate = useNavigate();
   const [approveApplication] = useApproveMentorApplicationMutation();
   const [rejectApplication] = useRejectMentorApplicationMutation();
 
@@ -44,6 +46,10 @@ export const MentorApplicationTable = ({ applications }: Props) => {
     }
   };
 
+  const handleNavigateProfile = (userId: string) => {
+    navigate(`/profile/${userId}`);
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -58,8 +64,13 @@ export const MentorApplicationTable = ({ applications }: Props) => {
         </TableHead>
         <TableBody>
           {applications.map(app => (
-            <TableRow key={app.id} hover sx={{ cursor: 'default' }}>
-              <TableCell>{`${app.student.lastName} ${app.student.firstName} ${app.student.middleName}`}</TableCell>
+            <TableRow key={app.id} hover>
+              <TableCell
+                sx={{ cursor: 'pointer', color: 'primary.main' }}
+                onClick={() => handleNavigateProfile(app.student.id)}
+              >
+                {`${app.student.lastName} ${app.student.firstName} ${app.student.middleName}`}
+              </TableCell>
               <TableCell sx={{ maxWidth: 300 }}>
                 <Tooltip title={app.description} arrow disableInteractive>
                   <span

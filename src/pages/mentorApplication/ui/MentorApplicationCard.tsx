@@ -1,4 +1,5 @@
 import { Box, Button, Card, CardContent, Typography } from '@mui/material';
+import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import {
   useApproveMentorApplicationMutation,
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export const MentorApplicationCard = ({ application }: Props) => {
+  const navigate = useNavigate();
   const [approve] = useApproveMentorApplicationMutation();
   const [reject] = useRejectMentorApplicationMutation();
 
@@ -31,6 +33,10 @@ export const MentorApplicationCard = ({ application }: Props) => {
     } catch (error) {
       toast.error('Ошибка при отклонении заявки');
     }
+  };
+
+  const handleNavigateProfile = () => {
+    navigate(`/profile/${application.student.id}`);
   };
 
   return (
@@ -68,15 +74,14 @@ export const MentorApplicationCard = ({ application }: Props) => {
         >
           <Box>
             <Typography variant="body2" sx={{ mb: 1 }}>
-              <strong>Статус:</strong>{' '}
-              <span>{MentorApplicationStatus[application.state].label}</span>
+              <strong>Статус:</strong> {MentorApplicationStatus[application.state].label}
             </Typography>
             <Typography variant="body2">
               <strong>Создано:</strong> {new Date(application.createdOn).toLocaleDateString()}
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 1, alignSelf: 'end' }}>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             <Button variant="contained" color="primary" onClick={handleApprove} size="small">
               Принять
             </Button>
@@ -95,6 +100,14 @@ export const MentorApplicationCard = ({ application }: Props) => {
               }}
             >
               Отклонить
+            </Button>
+            <Button
+              variant="text"
+              size="small"
+              onClick={handleNavigateProfile}
+              sx={{ textTransform: 'none' }}
+            >
+              Просмотр профиля
             </Button>
           </Box>
         </Box>

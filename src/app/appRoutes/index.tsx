@@ -19,6 +19,7 @@ import { NotFound } from '../../pages/notFound/ui';
 import { ProfileDetailPage } from '../../pages/profile/id/ui';
 import { Profile } from '../../pages/profile/ui';
 import { useAppSelector } from '../api';
+import { Rules } from '../../pages/rules/ui';
 
 export const AppRoutes: React.FC = () => {
   const userRole = useAppSelector(state => state.user.role);
@@ -54,10 +55,7 @@ export const AppRoutes: React.FC = () => {
 
         <Route path="/profile" element={<Profile />} />
 
-        <Route
-          path="/profile/:id"
-          element={userRole === RoleEnum.TEACHER ? <NotFound /> : <ProfileDetailPage />}
-        />
+        <Route path="/profile/:id" element={<ProfileDetailPage />} />
 
         <Route path="/chat" element={userRole === RoleEnum.TEACHER ? <NotFound /> : <Chat />} />
 
@@ -87,6 +85,8 @@ export const AppRoutes: React.FC = () => {
           path="/information"
           element={userRole === RoleEnum.TEACHER ? <NotFound /> : <Information />}
         />
+
+        <Route path="/rules" element={userRole === RoleEnum.TEACHER ? <NotFound /> : <Rules />} />
       </Route>
     </Routes>
   );
