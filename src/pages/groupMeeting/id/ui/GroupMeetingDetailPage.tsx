@@ -281,17 +281,27 @@ export const GroupMeetingDetailPage = () => {
             </Button>
           </Box>
 
-          <Box sx={{ mt: 4 }}>
-            <Stack direction="row" spacing={2} flexWrap="wrap">
+          <Box sx={{ pb: 6 }}>
+            <Stack direction="row" spacing={3} flexWrap="wrap" justifyContent="center">
               {isAuthor && (
                 <>
-                  <Button type="submit" variant="contained" color="primary">
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                      flex: '1 1 200px',
+                      minWidth: 200,
+                    }}
+                  >
                     Сохранить
                   </Button>
                   <Button
                     variant="outlined"
                     onClick={() => setOpenDialog(true)}
                     sx={{
+                      flex: '1 1 200px',
+                      minWidth: 200,
                       borderColor: theme.palette.error.main,
                       color: theme.palette.error.main,
                       '&:hover': {
@@ -305,7 +315,6 @@ export const GroupMeetingDetailPage = () => {
                   </Button>
                 </>
               )}
-
               {meetingUrlData?.data && (
                 <Button
                   variant="contained"
@@ -313,6 +322,10 @@ export const GroupMeetingDetailPage = () => {
                   href={meetingUrlData?.data}
                   target="_blank"
                   rel="noopener noreferrer"
+                  sx={{
+                    flex: '1 1 200px',
+                    minWidth: 200,
+                  }}
                 >
                   Подключиться к встрече
                 </Button>
