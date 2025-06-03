@@ -18,8 +18,8 @@ import { MyAdvertResponses } from '../../pages/myAdvertResponse/ui/MyAdvertRespo
 import { NotFound } from '../../pages/notFound/ui';
 import { ProfileDetailPage } from '../../pages/profile/id/ui';
 import { Profile } from '../../pages/profile/ui';
-import { useAppSelector } from '../api';
 import { Rules } from '../../pages/rules/ui';
+import { useAppSelector } from '../api';
 
 export const AppRoutes: React.FC = () => {
   const userRole = useAppSelector(state => state.user.role);
