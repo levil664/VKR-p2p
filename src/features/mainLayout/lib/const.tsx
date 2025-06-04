@@ -52,12 +52,12 @@ export const menuItems = [
     icon: <FaInfoCircle style={{ fontSize: '20px' }} />,
     text: 'Полезная информация',
     link: '/information',
-    allowedRoles: [RoleEnum.STUDENT, RoleEnum.MENTOR],
+    allowedRoles: [RoleEnum.STUDENT, RoleEnum.MENTOR, RoleEnum.TEACHER],
   },
   {
     icon: <FaRegFileAlt style={{ fontSize: '20px' }} />,
     text: 'Правила использования',
     link: '/rules',
-    allowedRoles: [RoleEnum.STUDENT, RoleEnum.MENTOR],
+    allowedRoles: [RoleEnum.STUDENT, RoleEnum.MENTOR, RoleEnum.TEACHER],
   },
 ];

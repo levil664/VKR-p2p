@@ -81,12 +81,9 @@ export const AppRoutes: React.FC = () => {
           element={userRole === RoleEnum.TEACHER ? <NotFound /> : <GroupMeetingDetailPage />}
         />
 
-        <Route
-          path="/information"
-          element={userRole === RoleEnum.TEACHER ? <NotFound /> : <Information />}
-        />
+        <Route path="/information" element={<Information />} />
 
-        <Route path="/rules" element={userRole === RoleEnum.TEACHER ? <NotFound /> : <Rules />} />
+        <Route path="/rules" element={<Rules />} />
       </Route>
     </Routes>
   );
