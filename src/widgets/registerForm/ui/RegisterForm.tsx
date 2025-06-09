@@ -1,3 +1,4 @@
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import {
   Box,
   Button,
@@ -12,7 +13,6 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast, ToastContainer } from 'react-toastify';
