@@ -34,6 +34,20 @@ const inputStyles = {
   },
 };
 
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const today = new Date();
+const minDate = formatDate(today);
+
+const oneYearLater = new Date();
+oneYearLater.setFullYear(today.getFullYear() + 1);
+const maxDate = formatDate(oneYearLater);
+
 export const GroupMeetingDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -52,7 +66,7 @@ export const GroupMeetingDetailPage = () => {
 
   const [openDialog, setOpenDialog] = useState(false);
 
-  const { control, handleSubmit, setValue } = useForm({
+  const { control, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       title: '',
       description: '',
@@ -63,13 +77,15 @@ export const GroupMeetingDetailPage = () => {
     },
   });
 
+  const startDt = watch('startDt');
+
   useEffect(() => {
     if (meetingData) {
       const startDate = new Date(meetingData?.data?.startDt);
       const endDate = new Date(meetingData?.data?.endDt);
 
-      const formatDate = (date: Date) => date.toISOString().split('T')[0];
-      const formatTime = (date: Date) => {
+      const formatDateLocal = (date: Date) => date.toISOString().split('T')[0];
+      const formatTimeLocal = (date: Date) => {
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
         return `${hours}:${minutes}`;
@@ -77,10 +93,10 @@ export const GroupMeetingDetailPage = () => {
 
       setValue('title', meetingData?.data?.title);
       setValue('description', meetingData?.data?.description);
-      setValue('startDt', formatDate(startDate));
-      setValue('startTime', formatTime(startDate));
-      setValue('endDt', formatDate(endDate));
-      setValue('endTime', formatTime(endDate));
+      setValue('startDt', formatDateLocal(startDate));
+      setValue('startTime', formatTimeLocal(startDate));
+      setValue('endDt', formatDateLocal(endDate));
+      setValue('endTime', formatTimeLocal(endDate));
     }
   }, [meetingData, setValue]);
 
@@ -190,6 +206,10 @@ export const GroupMeetingDetailPage = () => {
                 sx={inputStyles}
                 InputProps={{
                   readOnly: !isAuthor,
+                  inputProps: {
+                    min: minDate,
+                    max: maxDate,
+                  },
                 }}
               />
             )}
@@ -228,6 +248,10 @@ export const GroupMeetingDetailPage = () => {
                 sx={inputStyles}
                 InputProps={{
                   readOnly: !isAuthor,
+                  inputProps: {
+                    min: startDt || minDate,
+                    max: maxDate,
+                  },
                 }}
               />
             )}

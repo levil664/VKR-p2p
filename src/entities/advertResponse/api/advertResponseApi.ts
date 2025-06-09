@@ -39,7 +39,10 @@ export const advertResponseApi = commonApi.injectEndpoints?.({
         url: `/adverts/${advertId}/responses/${responseId}/accept`,
         method: 'POST',
       }),
-      invalidatesTags: ['AdvertResponses'],
+      invalidatesTags: (result, error, { advertId }) => [
+        { type: 'AdvertResponse', id: advertId },
+        { type: 'Advert', id: advertId },
+      ],
     }),
     getMyAdvertResponses: builder.query<ListResponseAdvertWithResponseDto, void>({
       query: () => ({

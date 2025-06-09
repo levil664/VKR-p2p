@@ -52,6 +52,7 @@ export const advertApi = commonApi.injectEndpoints?.({
         url: `/adverts/${id}`,
         method: 'GET',
       }),
+      providesTags: (result, error, id) => [{ type: 'Advert', id }],
     }),
     deleteAdvert: builder.mutation<EmptyResponse, string>({
       query: id => ({

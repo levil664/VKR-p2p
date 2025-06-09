@@ -35,10 +35,42 @@ import {
   useGetChatQuery,
   useGetMeetingUrlQuery,
   useGetMessagesQuery,
+  useGetUnreadMessagesQuery,
   useSendMessageMutation,
 } from '../../../../entities/chat/api/chatApi';
 import { useGetSubjectsQuery } from '../../../../entities/subjects/api/subjectsApi';
 import { CreateReviewModal } from '../../../../features/createReviewModal/ui/CreateReviewModal';
+
+const inputStyles = {
+  width: { xs: '100%', sm: '100%', md: 400, lg: 600 },
+  maxWidth: '600px',
+  backgroundColor: 'white',
+  '& .MuiInputBase-input': {
+    color: 'black',
+  },
+};
+
+const linkifyText = (text: string) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+
+  return parts.map((part, index) => {
+    if (urlRegex.test(part)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: '#64b5f6', textDecoration: 'underline' }}
+        >
+          {part}
+        </a>
+      );
+    }
+    return <span key={index}>{part}</span>;
+  });
+};
 
 export const ChatDetailPage = () => {
   const { chatId } = useParams();
@@ -61,20 +93,20 @@ export const ChatDetailPage = () => {
   const { data: advertData, isLoading: isAdvertLoading } = useGetAdvertQuery(advertId, {
     skip: !advertId,
   });
-  const { data: messagesData, refetch: refetchMessages } = useGetMessagesQuery(
-    { chatId, pageNumber, pageSize: 20 },
-    { skip: !chatId }
-  );
+  const { data: messagesData } = useGetMessagesQuery({ chatId, pageNumber }, { skip: !chatId });
+  const { data: unreadMessagesData } = useGetUnreadMessagesQuery(chatId, { skip: !chatId });
   const { data: subjectsData } = useGetSubjectsQuery();
   const currentUserId = useAppSelector(state => state.user.id);
-  const isAuthor = advertData?.data.creator.id === currentUserId;
+  const isAuthor = advertData?.data?.creator.id === currentUserId;
+
+  const unreadMessageIds = unreadMessagesData?.data?.map(m => m.id) || [];
 
   const { control, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
-      title: advertData?.data.title || '',
-      description: advertData?.data.description || '',
-      subjectId: advertData?.data.subjectId || '',
-      topicIds: advertData?.data.topicIds || [],
+      title: '',
+      description: '',
+      subjectId: '',
+      topicIds: [],
     },
   });
 
@@ -91,7 +123,7 @@ export const ChatDetailPage = () => {
   }, [advertData, setValue]);
 
   const selectedSubjectId = watch('subjectId');
-  const selectedSubject = subjectsData?.data.find(subject => subject.id === selectedSubjectId);
+  const selectedSubject = subjectsData?.data?.find(subject => subject.id === selectedSubjectId);
 
   useEffect(() => {
     setAllMessages([]);
@@ -101,15 +133,15 @@ export const ChatDetailPage = () => {
   useEffect(() => {
     if (messagesData?.data?.content) {
       setAllMessages(prevMessages => [
-        ...messagesData.data.content,
         ...prevMessages.filter(m => !messagesData.data.content.some(newM => newM.id === m.id)),
+        ...messagesData.data.content,
       ]);
     }
   }, [messagesData]);
 
   useEffect(() => {
     if (bottomRef.current) {
-      bottomRef.current.scrollIntoView();
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [allMessages]);
 
@@ -186,6 +218,11 @@ export const ChatDetailPage = () => {
     }
   };
 
+  const formatTime = isoString => {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   if (isChatLoading || isAdvertLoading) return <CircularProgress />;
 
   return (
@@ -202,7 +239,8 @@ export const ChatDetailPage = () => {
                 label="Заголовок"
                 fullWidth
                 margin="normal"
-                InputProps={{ readOnly: !isAuthor }}
+                sx={inputStyles}
+                InputProps={{ readOnly: true }}
               />
             )}
           />
@@ -217,7 +255,8 @@ export const ChatDetailPage = () => {
                 margin="normal"
                 multiline
                 rows={4}
-                InputProps={{ readOnly: !isAuthor }}
+                sx={inputStyles}
+                InputProps={{ readOnly: true }}
               />
             )}
           />
@@ -225,9 +264,17 @@ export const ChatDetailPage = () => {
             name="subjectId"
             control={control}
             render={({ field }) => (
-              <FormControl fullWidth margin="normal">
-                <InputLabel>Предмет</InputLabel>
-                <Select {...field} inputProps={{ readOnly: !isAuthor }}>
+              <FormControl fullWidth margin="normal" required sx={{ maxWidth: 600 }}>
+                <InputLabel id="subject-label">Предмет</InputLabel>
+                <Select
+                  {...field}
+                  labelId="subject-label"
+                  id="subject"
+                  label="Предмет"
+                  readOnly
+                  IconComponent={() => null}
+                  sx={inputStyles}
+                >
                   {subjectsData?.data.map(subject => (
                     <MenuItem key={subject.id} value={subject.id}>
                       {subject.name}
@@ -241,24 +288,16 @@ export const ChatDetailPage = () => {
             name="topicIds"
             control={control}
             render={({ field }) => (
-              <FormControl fullWidth margin="normal" required>
-                <InputLabel>Темы</InputLabel>
+              <FormControl fullWidth margin="normal" required sx={{ maxWidth: 600 }}>
+                <InputLabel id="topics-label">Темы</InputLabel>
                 <Select
-                  multiple
                   {...field}
+                  multiple
+                  labelId="topics-label"
+                  id="topics"
                   label="Темы"
-                  sx={{
-                    backgroundColor: 'white',
-                    '& .MuiInputBase-input': {
-                      color: 'black',
-                    },
-                    '& .MuiMenuItem-root': {
-                      color: 'black',
-                    },
-                  }}
-                  inputProps={{
-                    readOnly: !isAuthor,
-                  }}
+                  readOnly
+                  IconComponent={() => null}
                   renderValue={selected => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                       {selected.map(topicId => (
@@ -272,9 +311,10 @@ export const ChatDetailPage = () => {
                       ))}
                     </Box>
                   )}
+                  sx={inputStyles}
                 >
                   {selectedSubject?.topics.map(topic => (
-                    <MenuItem key={topic.id} value={topic.id} sx={{ color: 'black' }}>
+                    <MenuItem key={topic.id} value={topic.id}>
                       {topic.name}
                     </MenuItem>
                   ))}
@@ -283,20 +323,6 @@ export const ChatDetailPage = () => {
             )}
           />
         </form>
-        {isAuthor && advertData?.data?.status === 'IN_PROGRESS' && (
-          <Box sx={{ mt: 2, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 1 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setOpenVideoCallDialog(true)}
-            >
-              Создать видеозвонок
-            </Button>
-            <Button variant="contained" color="success" onClick={() => setOpenFinalizeDialog(true)}>
-              Завершить заявку
-            </Button>
-          </Box>
-        )}
       </Box>
 
       <Box sx={{ flex: 2 }}>
@@ -310,20 +336,20 @@ export const ChatDetailPage = () => {
         <Paper
           ref={messagesContainerRef}
           sx={{
-            maxHeight: { xs: '40vh', md: '50vh' },
+            height: { xs: '40vh', md: '50vh' },
             overflowY: 'auto',
             p: 2,
             borderRadius: 2,
             border: '1px solid #e0e0e0',
             backgroundColor: '#f0f2f5',
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'column-reverse',
             gap: 1,
           }}
         >
           <List sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
             <Box ref={topObserverRef} />
-            {allMessages.map(message => {
+            {[...allMessages].reverse().map(message => {
               const isMyMessage = message.senderId === currentUserId;
               return (
                 <ListItem
@@ -338,11 +364,39 @@ export const ChatDetailPage = () => {
                     maxWidth: '70%',
                   }}
                 >
-                  {message.type === 'VIDEO_CHAT_CREATED' ? (
-                    <MeetingLink meetingId={message.content.meetingId} />
-                  ) : (
-                    <ListItemText primary={message.content.text} />
-                  )}
+                  <ListItemText
+                    primary={
+                      <>
+                        <Typography
+                          sx={{
+                            whiteSpace: 'pre-wrap',
+                            wordBreak: 'break-word',
+                            fontSize: '1rem',
+                          }}
+                        >
+                          {linkifyText(message.content.text)}
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: isMyMessage ? 'flex-end' : 'flex-start',
+                            alignItems: 'center',
+                            mt: 0.5,
+                            gap: 0.5,
+                          }}
+                        >
+                          <Typography
+                            sx={{
+                              fontSize: '0.75rem',
+                              opacity: 0.7,
+                            }}
+                          >
+                            {formatTime(message.createdOn)}
+                          </Typography>
+                        </Box>
+                      </>
+                    }
+                  />
                 </ListItem>
               );
             })}
@@ -357,7 +411,9 @@ export const ChatDetailPage = () => {
             onChange={e => setMessageText(e.target.value)}
             onKeyDown={handleKeyDown}
             fullWidth
-            size="small"
+            multiline
+            minRows={2}
+            maxRows={6}
             sx={{ backgroundColor: '#fff', borderRadius: 2 }}
           />
           <Button
@@ -365,13 +421,18 @@ export const ChatDetailPage = () => {
             variant="contained"
             color="primary"
             sx={{
-              minWidth: 48,
-              minHeight: 48,
+              width: 40,
+              height: 40,
               borderRadius: '50%',
-              p: 0,
+              padding: 0,
+              minWidth: 0,
+              minHeight: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            <MdSend size={24} color="white" />
+            <MdSend size={20} color="white" />
           </Button>
         </Box>
       </Box>
@@ -423,7 +484,7 @@ const MeetingLink = ({ meetingId }) => {
   return (
     <ListItemText
       primary={
-        <>
+        <Typography>
           Создана комната для проведения занятия. Вы можете подключиться по{' '}
           <Link
             to={meetingUrlData?.data}
@@ -434,7 +495,7 @@ const MeetingLink = ({ meetingId }) => {
             ссылке
           </Link>
           .
-        </>
+        </Typography>
       }
     />
   );

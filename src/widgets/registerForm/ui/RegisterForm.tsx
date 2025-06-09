@@ -3,13 +3,16 @@ import {
   Button,
   FormControl,
   FormHelperText,
+  InputAdornment,
   InputLabel,
   Link,
   MenuItem,
   Select,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast, ToastContainer } from 'react-toastify';
@@ -43,12 +46,15 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
   const navigate = useNavigate();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  const usernameRegex = /^[a-zA-Z0-9]+$/;
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: '' }));
+    setFormData(prev => ({ ...prev, [name!]: value }));
+    setErrors(prev => ({ ...prev, [name!]: '' }));
   };
 
   const fieldLabels: Record<string, string> = {
@@ -65,15 +71,28 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
-    if (!formData.username) newErrors.username = 'Имя обязательно';
+
+    if (!formData.username) {
+      newErrors.username = 'Логин обязателен';
+    } else if (!usernameRegex.test(formData.username)) {
+      newErrors.username = 'Логин может содержать только латинские буквы и цифры';
+    }
+
     if (!formData.email) newErrors.email = 'Email обязателен';
     if (!formData.firstName) newErrors.firstName = 'Имя обязательно';
     if (!formData.lastName) newErrors.lastName = 'Фамилия обязательна';
     if (!formData.middleName) newErrors.middleName = 'Отчество обязательно';
     if (!formData.university) newErrors.university = 'Университет обязателен';
     if (!formData.faculty) newErrors.faculty = 'Факультет обязателен';
-    if (formData.course < 1 || formData.course > 6) newErrors.course = 'Курс должен быть от 1 до 6';
-    if (!formData.password) newErrors.password = 'Пароль обязателен';
+    if (formData.course < 1 || formData.course > 6) {
+      newErrors.course = 'Курс должен быть от 1 до 6';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Пароль обязателен';
+    } else if (!passwordRegex.test(formData.password)) {
+      newErrors.password = 'Пароль должен содержать минимум 8 символов и содержать буквы и цифры';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -166,6 +185,18 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
               onChange={handleInputChange}
               error={!!errors.username}
               helperText={errors.username}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Tooltip title="Только латинские буквы и цифры">
+                      <InfoOutlinedIcon
+                        fontSize="small"
+                        sx={{ cursor: 'pointer', color: 'action.active' }}
+                      />
+                    </Tooltip>
+                  </InputAdornment>
+                ),
+              }}
             />
             <TextField
               label="Email"
@@ -263,6 +294,18 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
             onChange={handleInputChange}
             error={!!errors.password}
             helperText={errors.password}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Tooltip title="Минимум 8 символов, обязательно латинские буквы и цифры">
+                    <InfoOutlinedIcon
+                      fontSize="small"
+                      sx={{ cursor: 'pointer', color: 'action.active' }}
+                    />
+                  </Tooltip>
+                </InputAdornment>
+              ),
+            }}
           />
 
           <Button

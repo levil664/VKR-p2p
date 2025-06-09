@@ -8,12 +8,26 @@ interface CreateGroupMeetingModalProps {
   onSubmit: (data: CreateGroupMeetingRequest) => void;
 }
 
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const today = new Date();
+const minDate = formatDate(today);
+
+const oneYearLater = new Date();
+oneYearLater.setFullYear(today.getFullYear() + 1);
+const maxDate = formatDate(oneYearLater);
+
 export const CreateGroupMeetingModal: React.FC<CreateGroupMeetingModalProps> = ({
   open,
   onClose,
   onSubmit,
 }) => {
-  const { control, handleSubmit, reset } = useForm<CreateGroupMeetingRequest>({
+  const { control, handleSubmit, reset, watch } = useForm<CreateGroupMeetingRequest>({
     defaultValues: {
       title: '',
       description: '',
@@ -21,6 +35,8 @@ export const CreateGroupMeetingModal: React.FC<CreateGroupMeetingModalProps> = (
       endDt: '',
     },
   });
+
+  const startDt = watch('startDt');
 
   const handleFormSubmit = (data: CreateGroupMeetingRequest) => {
     const startDateTime = new Date(`${data.startDt}T${data.startTime}`);
@@ -93,6 +109,10 @@ export const CreateGroupMeetingModal: React.FC<CreateGroupMeetingModalProps> = (
                 InputLabelProps={{
                   shrink: true,
                 }}
+                inputProps={{
+                  min: minDate,
+                  max: maxDate,
+                }}
               />
             )}
           />
@@ -126,6 +146,10 @@ export const CreateGroupMeetingModal: React.FC<CreateGroupMeetingModalProps> = (
                 required
                 InputLabelProps={{
                   shrink: true,
+                }}
+                inputProps={{
+                  min: startDt || minDate,
+                  max: maxDate,
                 }}
               />
             )}

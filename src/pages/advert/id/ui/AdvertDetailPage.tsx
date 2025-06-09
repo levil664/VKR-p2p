@@ -43,6 +43,26 @@ const inputStyles = {
   },
 };
 
+const getHintText = (type: string) => {
+  if (type === 'STUDENT') {
+    return 'Напишите о том, что вам необходима помощь по данной теме и опишите проблему.';
+  } else if (type === 'MENTOR') {
+    return 'Опишите, чем вы можете помочь студенту: поделитесь опытом, расскажите о своих компетенциях и доступности для консультаций.';
+  } else {
+    return 'Опишите, чем можете быть полезны или какие вопросы хотите обсудить.';
+  }
+};
+
+const getPlaceholder = (type: string) => {
+  if (type === 'STUDENT') {
+    return 'Например: «Мне нужна помощь с подготовкой к экзамену. Не понимаю тему.»';
+  } else if (type === 'MENTOR') {
+    return 'Например: «Готов помочь с темой. Есть опыт преподавания и учебные материалы.»';
+  } else {
+    return 'Напишите свой отклик здесь...';
+  }
+};
+
 export const AdvertDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -216,6 +236,7 @@ export const AdvertDetailPage = () => {
                         <Select
                           {...field}
                           label="Предмет"
+                          IconComponent={isAuthor ? undefined : () => null}
                           sx={{
                             ...inputStyles,
                             '& .MuiOutlinedInput-root': {
@@ -253,6 +274,7 @@ export const AdvertDetailPage = () => {
                           multiple
                           {...field}
                           label="Темы"
+                          IconComponent={isAuthor ? undefined : () => null}
                           sx={{
                             ...inputStyles,
                             '& .MuiOutlinedInput-root': {
@@ -334,8 +356,7 @@ export const AdvertDetailPage = () => {
                     Заинтересовала заявка?
                   </Typography>
                   <Typography variant="body1" sx={{ mb: 2, color: 'text.secondary' }}>
-                    Если вас заинтересовала эта заявка — оставьте свой отклик. Напишите, чем можете
-                    помочь или какие вопросы хотите обсудить.
+                    {getHintText(advertData?.data?.type)}
                   </Typography>
 
                   <TextField
@@ -346,7 +367,7 @@ export const AdvertDetailPage = () => {
                     multiline
                     rows={4}
                     margin="normal"
-                    placeholder="Например: «Готов помочь с темой. Есть опыт преподавания и материалы»"
+                    placeholder={getPlaceholder(advertData?.data?.type)}
                     sx={{
                       backgroundColor: 'white',
                       '& .MuiOutlinedInput-root': {
