@@ -323,6 +323,26 @@ export const ChatDetailPage = () => {
             )}
           />
         </form>
+        {advertData?.data?.status === 'IN_PROGRESS' && (
+          <Box sx={{ mt: 2, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 1 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setOpenVideoCallDialog(true)}
+            >
+              Создать видеозвонок
+            </Button>
+            {!isAuthor && (
+              <Button
+                variant="contained"
+                color="success"
+                onClick={() => setOpenFinalizeDialog(true)}
+              >
+                Завершить заявку
+              </Button>
+            )}
+          </Box>
+        )}
       </Box>
 
       <Box sx={{ flex: 2 }}>
