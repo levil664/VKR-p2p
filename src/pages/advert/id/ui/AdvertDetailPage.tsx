@@ -44,9 +44,9 @@ const inputStyles = {
 };
 
 const getHintText = (type: string) => {
-  if (type === 'STUDENT') {
+  if (type === 'MENTOR') {
     return 'Напишите о том, что вам необходима помощь по данной теме и опишите проблему.';
-  } else if (type === 'MENTOR') {
+  } else if (type === 'STUDENT') {
     return 'Опишите, чем вы можете помочь студенту: поделитесь опытом, расскажите о своих компетенциях и доступности для консультаций.';
   } else {
     return 'Опишите, чем можете быть полезны или какие вопросы хотите обсудить.';
@@ -54,9 +54,9 @@ const getHintText = (type: string) => {
 };
 
 const getPlaceholder = (type: string) => {
-  if (type === 'STUDENT') {
+  if (type === 'MENTOR') {
     return 'Например: «Мне нужна помощь с подготовкой к экзамену. Не понимаю тему.»';
-  } else if (type === 'MENTOR') {
+  } else if (type === 'STUDENT') {
     return 'Например: «Готов помочь с темой. Есть опыт преподавания и учебные материалы.»';
   } else {
     return 'Напишите свой отклик здесь...';
