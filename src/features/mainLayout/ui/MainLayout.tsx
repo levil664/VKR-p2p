@@ -123,9 +123,9 @@ export const MainLayout: React.FC = () => {
     return `${firstInitial}${lastInitial}`.toUpperCase();
   };
 
-  const filteredMenuItems = menuItems.filter(item =>
-    item.allowedRoles.includes(userRole as RoleEnum)
-  );
+  const filteredMenuItems = menuItems
+    .filter(item => item.allowedRoles.includes(userRole as RoleEnum))
+    .filter(item => !(isMobile && item.text === 'Полезная информация'));
 
   const handleNavigationChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
