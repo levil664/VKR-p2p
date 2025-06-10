@@ -50,7 +50,8 @@ const inputStyles = {
   },
 };
 
-const linkifyText = (text: string) => {
+const linkifyText = text => {
+  if (!text) return null;
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const parts = text.split(urlRegex);
 
@@ -70,6 +71,26 @@ const linkifyText = (text: string) => {
     }
     return <span key={index}>{part}</span>;
   });
+};
+
+const MeetingLink = ({ meetingId, meetingName }) => {
+  const { data: meetingUrlData, isLoading: isLoadingMeetingUrl } = useGetMeetingUrlQuery(meetingId);
+
+  if (isLoadingMeetingUrl) return <CircularProgress size={20} />;
+
+  return (
+    <Typography>
+      Создана комната для видеозвонка: {meetingName}. Подключитесь по{' '}
+      <Link
+        to={meetingUrlData?.data}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ color: 'blue', textDecoration: 'underline' }}
+      >
+        ссылке
+      </Link>
+    </Typography>
+  );
 };
 
 export const ChatDetailPage = () => {
@@ -221,6 +242,32 @@ export const ChatDetailPage = () => {
   const formatTime = isoString => {
     const date = new Date(isoString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const renderMessageContent = message => {
+    switch (message.type) {
+      case 'VIDEO_CHAT_CREATED':
+        return (
+          <MeetingLink
+            meetingId={message.content.meetingId}
+            meetingName={message.content.meetingName}
+          />
+        );
+      case 'USER':
+        return (
+          <Typography
+            sx={{
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+              fontSize: '1rem',
+            }}
+          >
+            {linkifyText(message.content.text)}
+          </Typography>
+        );
+      default:
+        return null;
+    }
   };
 
   if (isChatLoading || isAdvertLoading) return <CircularProgress />;
@@ -387,15 +434,7 @@ export const ChatDetailPage = () => {
                   <ListItemText
                     primary={
                       <>
-                        <Typography
-                          sx={{
-                            whiteSpace: 'pre-wrap',
-                            wordBreak: 'break-word',
-                            fontSize: '1rem',
-                          }}
-                        >
-                          {linkifyText(message.content.text)}
-                        </Typography>
+                        {renderMessageContent(message)}
                         <Box
                           sx={{
                             display: 'flex',
@@ -493,30 +532,5 @@ export const ChatDetailPage = () => {
         </DialogActions>
       </Dialog>
     </Box>
-  );
-};
-
-const MeetingLink = ({ meetingId }) => {
-  const { data: meetingUrlData, isLoading: isLoadingMeetingUrl } = useGetMeetingUrlQuery(meetingId);
-
-  if (isLoadingMeetingUrl) return <Typography>Загрузка ссылки...</Typography>;
-
-  return (
-    <ListItemText
-      primary={
-        <Typography>
-          Создана комната для проведения занятия. Вы можете подключиться по{' '}
-          <Link
-            to={meetingUrlData?.data}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: 'blue', textDecoration: 'underline' }}
-          >
-            ссылке
-          </Link>
-          .
-        </Typography>
-      }
-    />
   );
 };
