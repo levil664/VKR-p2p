@@ -332,7 +332,7 @@ export const ChatDetailPage = () => {
             >
               Создать видеозвонок
             </Button>
-            {!isAuthor && (
+            {isAuthor && (
               <Button
                 variant="contained"
                 color="success"
